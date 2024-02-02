@@ -17,7 +17,7 @@ Third, create a directory named "Raw_Data" within the directory named "Data". Th
 
 
 ## Step 2: Download of input data
-The input data used comes from multiple sources (see table below). To fully replicate our procedure, all of the listed input files are required. Download them from their source following the provided link. The column "file name" indicates how the downloaded files must be named by the user in order to be found by the python scripts. Curly braces {} indicate a variable that must be set by the user: for example, {2-digit-countrycode} indicates that this part of the filename is "FR" when considering France etc. Make sure to always use the same format of the file as indicated by the file name (e.g., csv or zip...)
+The input data used comes from multiple sources (see table below). To fully replicate our procedure, all of the listed input files are required. Download them from their source following the provided link. The column "file name" indicates how the downloaded files must be named by the user in order to be found by the python scripts. Curly braces {} indicate a variable that must be set by the user: for example, {2-digit-countrycode} indicates that this part of the filename is "FR" when considering France etc. Make sure to always use the same format of the file as indicated by the file name (e.g., csv or zip...).
 
 ### Sources of the raw data
 
@@ -80,9 +80,9 @@ The input data used comes from multiple sources (see table below). To fully repl
 3. klick on "Download", then make sure "compress text files.." is not checked, then download by klicking on "SDMX-CSV 1.0"
 ![grafik](https://github.com/JoBaumert/Project-1-Code/assets/59195892/47eee8ca-5ff1-4134-b522-13f4954aad95)
 
-
-
-## Python files <br>
+## Step 3: Running the Python code
+The following table indicates which python files require which input data and which output files are created by them. The table should give the user a better understanding of how the files are related. The order in which they are run is specified below.
+### Python files <br>
 
 |python file | input files | output files|
 |----|----|----|
