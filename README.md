@@ -1,1 +1,218 @@
 # Probabilistic_Crop_Mapping_EU
+
+first, specify the path to the directory that is named "Data" in the explanation and contains the folders Raw_Data, Intermediary_Data etc. as follows, using the command line:
+```
+echo '/path/to/data/folder/' >data_main_path.txt
+```
+Alternatively,  you can just create a text file named "data_main_path.txt" that contains the content '/path/to/Data/folder/' 
+
+
+## Sources of the raw data
+
+|file name | link |note|save to| reference |
+|----|----|----|----|----|
+|**LUCAS data**|
+|lucas_harmo_uf.csv|https://data.jrc.ec.europa.eu/dataset/f85907ae-d123-471f-a44a-8cca993485a2#dataaccess||Data/Raw_Data/LUCAS|[1]|
+|LUCAS_TOPSOIL_v1.xlsx|https://esdac.jrc.ec.europa.eu/content/lucas-2009-topsoil-data||Data/Raw_Data/LUCAS|[2]|
+|**Precipitation Data**|
+|{2-digit-countrycode}\_precipitation_{StartyearEndyear}.csv|https://agri4cast.jrc.ec.europa.eu/DataPortal/RequestDataResource.aspx?idResource=7&o=d|select "sum of precipitation" and respective country, then the start date 01/01/2003 and the end date 31/12/2020. If the data is too large to download, first download the years 2001 until some later year and then download in another file all the years that remain. Download as a csv, unzip the downloaded file and save CSV at the indicated storage location|Data/Raw_Data/Precipitation/|[3]|
+|**Temperature Data**|
+|{2-digit-countrycode}\_temperature_{StartyearEndyear}.csv|https://agri4cast.jrc.ec.europa.eu/DataPortal/RequestDataResource.aspx?idResource=7&o=d|select "mean air temperature" and then proceed exactly as for the precipitation data|Data/Raw_Data/Temperature|[3]|
+|**Soil Data**|
+|Sand_Extra (zip file)|https://esdac.jrc.ec.europa.eu/content/topsoil-physical-properties-europe-based-lucas-topsoil-data|the description of the data claims it's only for the EU-25. However, where you can download the data there is the option to download it extrapolated for the EU-28. For all soil variables, download the extrapolated |Data/Raw_Data/Soil/|[4]|
+|Silt_Extra (zip file)| " |"|"|"|
+|Clay_Extra (zip file)| " |"|"|"|
+|CoarseFragments_Extra (zip file)| " |"|"|"|
+|BulkDensity_Extra (zip file)| " |"|"|"|
+|AWC_Extra (zip file)| " |"|"|"|
+|**Terrain Data**|
+|eudem_dem_3035_europe.tif|[https://land.copernicus.eu/imagery-in-situ/eu-dem/eu-dem-v1-0-and-derived-products/eu-dem-v1.0?tab=metadata](https://sdi.eea.europa.eu/catalogue/eea/api/records/66fa7dca-8772-4a5d-9d56-2caba4ecd36a)|apparently no longer maintained - any other elevation map will do|Raw_Data/DEM/|[5]|
+|eudem_slop_3035_europe.tif|https://land.copernicus.eu/imagery-in-situ/eu-dem/eu-dem-v1-0-and-derived-products/slope?tab=download|apparently no longer maintained - any other slope map will do|Data/Raw_Data/DEM/|[5]|
+|**Reference Grid**|
+|{2-digit_countrycode}_1km (or 10km) (zip file)|[https://sdi.eea.europa.eu/data/d9d4684e-0a8d-496c-8be8-110f4b9465f6](https://www.eea.europa.eu/en/datahub/datahubitem-view/3c362237-daa4-45e2-8c16-aaadfb1a003b?activeAccordion=1069873%2C1159)|download 1km (and 10km reference grid for those countries for which validation is performed at 10km level), i.e., one (two) zip files per country|Data/Raw_Data/Grid/|[6]|
+|grid25.zip|https://agri4cast.jrc.ec.europa.eu/DataPortal/Index.aspx?o=d|to download, in the agri4cast data portal click on the button "Resource Info" belonging to "Gridded Agro-Meteorological Data in Europe". Then, click on "Download file" in the window that opens, next to "Grid Definition".|Data/Raw_Data/Grid/|[6]|
+|**NUTS regions boundaries**|
+|NUTS_RG_01M_{year}_3035.shp.zip|https://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/administrative-units-statistical-units/nuts|select the years 2006, 2010, 2013, 2016, scale 01M, file format SHP, geometry type Polygons (RG) and CRS EPSG:3035|Data/Raw_Data/NUTS/|[7]|
+|**Aggregated crop and UAA data**|
+|apro_cpshr_20102020_area.csv|https://ec.europa.eu/eurostat/databrowser/view/apro_cpshr/default/table?lang=en|see additional instructions below|Data/Raw_Data/Eurostat/|[8]|
+|apro_cpshr_20102020_main_area.csv|https://ec.europa.eu/eurostat/databrowser/view/apro_cpshr/default/table?lang=en|see additional instructions below|Data/Raw_Data/Eurostat/|[8]|
+|EUROSTAT_crops_total_NUTS3_2010_final.xlsx|data was provided by Eurostat on request, not publically available for download|||[8]|
+|UAA_all_regions_all_years.csv|https://ec.europa.eu/eurostat/databrowser/view/apro_cpshr/default/table?lang=en|see additional instructions below|Data/Raw_Data/Eurostat/|[8]|
+|**Data for UAA at cell level**|
+|clc{year}_v2020_20u1_raster100m (folder)|https://land.copernicus.eu/en/products/corine-land-cover|download for 2006, 2012, and 2018. Extract the (nested) downloaded files until you get a folder named clc{year}_v2020_20u1_raster100m (it might be that you have to change name of the last folder a bit so that it is such as defined in the first column) |Data/Raw_Data/CORINE/|[9]|
+|**Validation and output comparison data**|
+|{country}_{year}.zip|https://syncandshare.lrz.de/getlink/fiAD95cTrXbnKMrdZYrFFcN8/|Data/Raw_Data/IACS/||[10]|
+|EUCROPMAP_2018.tif|https://data.jrc.ec.europa.eu/dataset/15f86c84-eae1-4723-8e00-c1b35c8f56b9|Data/Raw_Data/RSCM/|[11]|
+
+
+<br>
+[1] Palmieri, Alessandra; Eiselt, Beatrice; Lemoine, Guido; Reuter, Hannes Isaak; Martinez-Sanchez, Laura; van der Velde, Marijn; Iordanov, Momtchil; Dominici, Paolo; D'Andrimont, Raphael; Gallego, Javier; Joebges, Christian (2020): Harmonised LUCAS in-situ land cover and use database for field surveys from 2006 to 2018 in the European Union. European Commission, Joint Research Centre (JRC) <br>
+[2] Tóth, G., Jones, A., Montanarella, L. (eds.) 2013. LUCAS Topsoil Survey. Methodology, data and results. JRC Technical Reports. Luxembourg. Publications Office of the European Union, EUR26102 – Scientific and Technical Research series <br>
+[3] EC-JRC-AGRI4CAST. 2022. “Gridded Agro-Meteorological Data in Europe. European Commission Joint Research Centre. Institute for Environment and Sustainability. Monitor-ing Agricultural Resources (MARS) Unit.” Accessed December 09, 2022 
+[4] Ballabio, C., P. Panagos, and L. Monatanarella. 2016. “Mapping topsoil physical properties at European scale using the LUCAS database.” Geoderma 261:110–23. doi:10.1016/j.geoderma.2015.07.006. <br>
+[5] EU Copernicus <br>
+[6] based on the recommendation at the 1st European Workshop on Reference Grids in 2003 and later INSPIRE geographical grid systems <br>
+[7] eurostat/ GISCO <br>
+[8] eurostat
+[9] EEA https://doi.org/10.2909/960998c1-1870-4e82-8051-6485205ebbac 
+[10] Schneider, Maja; Broszeit, Amelie; Körner, Marco (2021). EuroCrops: A Pan-European Dataset for Time Series Crop Type Classification. DOI: 10.48550/arXiv.2106.08151
+[11] d’Andrimont, Raphaël; Verhegghen, Astrid; Lemoine, Guido; Kempeneers, Pieter; Meroni, Michele; van der Velde, Marijn (2021). From parcel to continental scale – A first European crop type map based on Sentinel-1 and LUCAS Copernicus in-situ observations. DOI: 10.1016/j.rse.2021.112708 
+
+### additional instructions for the download of the Eurostat data
+1. under "format" select "codes" (to make sure NUTS regions and crops are displayed as code and not with their names)
+![grafik](https://github.com/JoBaumert/Project-1-Code/assets/59195892/84350588-3b0a-4561-a702-c9c9d106b833)
+
+2. select all geopolitical entities (number of available entities might vary, depending on other selections), the years 2010-2020 and all crops, as well as under "structure of production" --> "Area" (when generating the file "apro_cpshr_20102020_area) or "Main Area"(for generating the file "...main_area"). When generating the file "UAA_all_regions_all_years.csv" select under "Crops" only "Utilized agricultural area" and under "structure of production" only "Main area (1000ha)".
+![grafik](https://github.com/JoBaumert/Project-1-Code/assets/59195892/29fde7c4-9e38-453d-9850-a58425dd4137)
+
+3. klick on "Download", then make sure "compress text files.." is not checked, then download by klicking on "SDMX-CSV 1.0"
+![grafik](https://github.com/JoBaumert/Project-1-Code/assets/59195892/47eee8ca-5ff1-4134-b522-13f4954aad95)
+
+
+
+## Python files <br>
+
+|python file | input files | output files|
+|----|----|----|
+|O1A_LUCAS_preprocessing.py|Raw_Data/LUCAS/lucas_harmo_uf.csv|Intermediary_Data/Preprocessed_Inputs/LUCAS_preprocessed.csv|
+||Raw_Data/LUCAS/LUCAS_TOPSOIL_v1.xlsx||
+|climate_data_preprocessing.py|Raw_Data/Temperature/*.csv|Intermediary_Data/Preprocessed_Inputs/all_temperature_data.parquet|
+||Raw_Data/Precipitation/*.csv|Intermediary_Data/Preprocessed_Inputs/all_precipitation_data.parquet|
+|NUTS_preprocessing.py|delineation_and_parameters/DGPCM_user_parameters.xlsx|Intermediary_Data/Preprocessed_Inputs/NUTS_all_regions_all_years.(csv and shp)|
+||Raw_Data/NUTS/NUTS_RG_01M_{nuts_year}_3035.shp.zip||
+|Eurostat_preprocessing.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv|Intermediary_Data/Preprocessed_Inputs/Eurostat/Eurostat_cropdata_compiled_{FirstyearLastyear}_DGPCMcodes.csv|
+||Raw_Data/Eurostat/apro_cpshr_20102020_main_area.csv|Intermediary_Data/Preprocessed_Inputs/Eurostat/Eurostat_UAA_compiled_{FirstyearLastyear}.csv|
+||Raw_Data/Eurostat/apro_cpshr_20102020_area.csv||
+||Raw_Data/Eurostat/EUROSTAT_crops_total_NUTS3_2010_final.xlsx (if available)||
+||Raw_Data/Eurostat/UAA_all_regions_all_years.csv||
+|O2A_target_feature_matching.py|Raw_Data/DEM/eudem_dem_3035_europe.tif|Intermediary_Data/LUCAS_feature_merges/{country}/elevation.csv|
+||Raw_Data/DEM/eudem_slop_3035_europe/eudem_slop_3035_europe.tif|Intermediary_Data/LUCAS_feature_merges/{country}/slope.csv|
+||Raw_Data/Soil/Sand_Extra.zip/Sand1.tif|Intermediary_Data/LUCAS_feature_merges/{country}/sand.csv|
+||Raw_Data/Soil/Clay_Extra.zip/Clay.tif|Intermediary_Data/LUCAS_feature_merges/{country}/clay.csv|
+||Raw_Data/Soil/Silt_Extra.zip/Silt1.tif|Intermediary_Data/LUCAS_feature_merges/{country}/silt.csv|
+||Raw_Data/Soil/BulkDensity_Extra.zip/Bulk_density.tif|Intermediary_Data/LUCAS_feature_merges/{country}/bulk_density.csv|
+||Raw_Data/Soil/CoarseFragments_Extra.zip/Coarse_fragments.tif|Intermediary_Data/LUCAS_feature_merges/{country}/coarse_fragments.csv|
+||Raw_Data/Soil/AWC_Extra.zip/AWC.tif|Intermediary_Data/LUCAS_feature_merges/{country}/awc.csv|
+||Intermediary_Data/Preprocessed_Inputs/Climate/all_temperature_data.parquet|Intermediary_Data/LUCAS_feature_merges/{country}/avg_annual_temp_sum.csv and avg_annual_veg_period.csv|
+||Intermediary_Data/Preprocessed_Inputs/Climate/all_precipitation_data.parquet|Intermediary_Data/LUCAS_feature_merges/{country}/avg_annual_precipitation.csv|
+||Intermediary_Data/Preprocessed_Inputs/LUCAS/LUCAS_preprocessed.csv|Intermediary_Data/LUCAS_feature_merges/{country}/latitude4326.csv|
+||Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.shp||
+||Raw_Data/Grid/grid25.zip||
+|croparea_and_UAA_<br> preparation_new.py|Intermediary_Data/Preprocessed_Inputs/Eurostat/Eurostat_cropdata_compiled_{FirstyearLastyear}_DGPCMcodes.csv|Intermediary_Data/Regional_Aggregates/cropdata_{FirstyearLastyear}.csv|
+||Intermediary_Data/Preprocessed_Inputs/Eurostat/Eurostat_UAA_compiled_{FirstyearLastyear}.csv|Intermediary_Data/Regional_Aggregates/coherent_UAA_{FirstyearLastyear}.csv|
+||Intermediary_Data/NUTS/NUTS_all_regions_all_years.csv|Intermediary_Data/Regional_Aggregates/crop_levels_selected_countries_{FirstyearLastyear}|
+|O1C_grid_preparation.py|Raw_Data/Grid/{country}_1km.zip|Intermediary_Data/Zonal_Stats/{country}/cell_size/1kmgrid_{nuts}_all_years.csv|
+||Raw_Data/NUTS/NUTS_RG_01M_{year}_3035.shp||
+|O2B_feature_grid_calculation.py|Raw_Data/DEM/eudem_dem_3035_europe.tif|Intermediary_Data/Zonal_Stats/{country}/elevation/1kmgrid_{nuts1}.csv|
+||Raw_Data/DEM/eudem_slop_3035_europe/eudem_slop_3035_europe.tif|Intermediary_Data/Zonal_Stats/{country}/slope/1kmgrid_{nuts1}.csv|
+||Raw_Data/Soil/Sand_Extra.zip/Sand1.tif|Intermediary_Data/Zonal_Stats/{country}/sand/1kmgrid_{nuts1}.csv|
+||Raw_Data/Soil/Clay_Extra.zip/Clay.tif|Intermediary_Data/Zonal_Stats/{country}/clay/1kmgrid_{nuts1}.csv|
+||Raw_Data/Soil/Silt_Extra.zip/Silt1.tif|Intermediary_Data/Intermediary_Data/Zonal_Stats/{country}/silt/1kmgrid_{nuts1}.csv|
+||Raw_Data/Soil/BulkDensity_Extra.zip/Bulk_density.tif|Intermediary_Data/Zonal_Stats/{country}/bulk_density/1kmgrid_{nuts1}.csv|
+||Raw_Data/Soil/CoarseFragments_Extra.zip/Coarse_fragments.tif|Intermediary_Data/Zonal_Stats/{country}/coarse_fragments/1kmgrid_{nuts1}.csv|
+||Raw_Data/Soil/AWC_Extra.zip/AWC.tif|Intermediary_Data/Zonal_Stats/{country}/awc/1kmgrid_{nuts1}.csv|
+||Intermediary_Data/Preprocessed_Inputs/Climate/all_temperature_data.parquet|Intermediary_Data/Zonal_Stats/{country}/avg_annual_temp_sum_{previous_years}/1kmgrid_{nuts1}.csv|
+||Intermediary_Data/Preprocessed_Inputs/Climate/all_temperature_data.parquet|Intermediary_Data/Zonal_Stats/{country}/avg_annual_veg_period_{previous_years}/1kmgrid_{nuts1}.csv|
+||Intermediary_Data/Preprocessed_Inputs/Climate/all_precipitation_data.parquet|Intermediary_Data/Zonal_Stats/{country}/avg_annual_precipitation_{previous_years}/1kmgrid_{nuts1}.csv|
+||Raw_Data/CORINE/clc{clc_year}_v2020_20u1_raster100m|Intermediary_Data/Zonal_Stats/{country}/CORINE_agshare/1kmgrid_{nuts1}_{year}|
+||Intermediary_Data/Zonal_Stats/{country}/cell_size/1kmgrid_{nuts}_all_years.csv|Intermediary_Data/Zonal_Stats/{country}/inferred_UAA/1kmgrid_{nuts1}_all_years.csv|
+||Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.shp||
+||Raw_Data/Grid/grid25.zip||
+||Raw_Data/Grid/{country}_1km.zip|Intermediary_Data/Zonal_Stats/{country}/latitude4326/1kmgrid_{nuts1}.csv|
+|generate_optimization_constraints <br> _cellweights.py|Intermediary_Data/Regional_Aggregates/coherent_UAA_{FirstyearLastyear}.csv|Intermediary_Data/Regional_Aggregates/Cell_Weights/{AT}/cell_weights_{FirstyearLastyear}.csv|
+||Intermediary_Data/Regional_Aggregates/cropdata_{FirstyearLastyear}.csv||
+||Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv||
+||Intermediary_Data/Zonal_stats/{country}/inferred_UAA/1kmgrid_{nuts1}.csv||
+|O1G_LUCAS_field_size.py|Intermediary_Data/Preprocessed_INputs/LUCAS/LUCAS_preprocessed.csv|Intermediary_Data/Zonal_Stats/{country}/n_of_fields/n_of_fields_allcountry_{FirstyearLastyear}.csv|
+||Intermediary_Data/preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv||
+||Intermediary_Data/Zonal_Stats/{country}/inferred_UAA/1kmgrid_{nuts1}.csv||
+|O5B_multinomial_logit_230406.py|Intermediary_Data/Preprocessed_Inputs/LUCAS/LUCAS_preprocessed.csv|Results/Model_Parameter_Estimates/multinomial_logit_{country}_statsmodel_params_obsthreshold{minthreshold}.xlsx|
+||Intermediary_Data/LUCAS_feature_merges/{country}/*.csv|Results/Model_Parameter_Estimates/multinomial_logit_{country}_statsmodel_covariance_obsthreshold{minthreshold}.xlsx|
+|||Results/Model_Parameter_Estimates/scale_factors/standardscaler_multinom_logit_{country}|
+|O6A_prediction_statsmodel <br> _alternative.py|Intermediary_Data/Zonal_Stats/{country}/*|Results/Prior_crop_probability_estimates/{country}/{nuts1}_{year}|
+||Intermediary_Data/preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv||
+||Results/Model_Parameter_Estimates/scale_factors/standardscaler_multinom_logit_{country}||
+||Results/Model_Parameter_Estimates/multinomial_logit_{country}_statsmodel_params_obsthreshold{minthreshold}.xlsx||
+||Results/Model_Parameter_Estimates/multinomial_logit_{country}_statsmodel_covariance_obsthreshold{minthreshold}.xlsx||
+|O7B_consistent_share_ <br> calculation_new.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv|Results/Posterior_crop_probability_estimates/{country}/{country}{year}entire_country.parquet|
+||Results/Prior_crop_probability_estimates/{country}/{nuts1}_{year}.parquet|Results/Posterior_crop_probability_estimates/{country}/{country}{year}entire_country_hyperparameters.csv|
+||Intermediary_Data/Regional_Aggregates/coherent_UAA_{FirstyearLastyear}.csv||
+||Intermediary_Data/Regional_Aggregates/cropdata_{FirstyearLastyear}.csv||
+||Intermediary_Data/Regional_Aggregates/crop_levels_selected_countries_{FirstyearLastyear}.csv||
+|O9_generate_random_consistent <br>_shares_new.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv|Results/Simulated_consistent_crop_shares/{country}/{year}/{country}{year}_{nuts1}.parquet|
+||Intermediary_Data/Regional_Aggregates/coherent_UAA_{FirstyearLastyear}.csv|Results/Simulated_consistent_crop_shares/{country}/{year}/{country}{year}_deviation_from_aggregated.csv|
+||Intermediary_Data/Regional_Aggregates/cropdata_{FirstyearLastyear}.csv||
+||Intermediary_Data/Regional_Aggregates/crop_levels_selected_countries_{FirstyearLastyear}.csv||
+||Results/Posterior_crop_probability_estimates/{country}/{country}{year}entire_country.parquet||
+||Intermediary_Data/Zonal_Stats/{country}/n_of_fields/n_of_fields_allcountry_{FirstyearLastyear}.csv||
+||Intermediary_Data/Regional_Aggregates/Cell_Weights/{country}/cell_weights_{FirstyearLastyear}.csv||
+|RSCM_to_DGPCM_grid.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv|Intermediary_Data/Preprocessed_Inputs/RSCM/{country}/{nuts1}_1km_reference_grid.csv|
+||Raw_Data/RSCM/EUCROPMAP_2018.tif||
+||Intermediary_Data/Zonal_Stats/{country}/cell_size/1km_grid_{nuts1}_all_years.csv||
+|visualize_crop_map_all_countries.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.shp|Results/Validations_and_Visualizations/Expected_crop_shares/share_of_{crop}_{year}.png|
+||Raw_Data/Grid/{country}_1km.zip||
+||Results/Posterior_crop_probability_estimates/{country}/{country}{year}entire_country.parquet||
+|IACS_to_DGPCM_grid.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.shp|Intermediary_Data/Preprocessed_Input/IACS/true_shares_{NUTS2}_{year}.csv|
+||Raw_Data/IACS/{country}_{year}.zip||
+||Raw_Data/Grid/{country}_1km.zip||
+||Intermediary_Data/Zonal_Stats/{country}/cell_size/1km_grid_{nuts1}_all_years.csv||
+|dominant_crops_DGPCM_RSCM_IACS.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv/.shp|Results/Validations_and_Visualizations/Comparison_dominant_crops/{map}dominant_crops_{country}_{year}.png|
+||Intermediary_Data/Preprocessed_Inputs/IACS/true_shares/true_shares_{NUTS2}_{year}.csv||
+||Intermediary_Data/Preprocessed_Inputs/RSCM/{country}/{nuts1}_1km_reference_grid.csv||
+||Results/Posterior_crop_probability_estimates/{country}/{country}{year}enture_country.parquet||
+||Raw_Data/Grid/{country}_1km.zip||
+|O1F_transform_grid.py|Raw_Data/Grid/{country}_10km.zip|Intermediary_Data/Preprocessed_Inputs/Grid/Grid_conversion_1km_10km_{country}.csv|
+|wMAE_calculation.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv|Results/Validations_and_Visualizations/Comparison_metrics/{country}{year}_pearsonr_and_wMAE_comparison_DGPCM_RSCM_1km/10km.csv|
+||Intermediary_Data/Preprocessed_Inputs/IACS/true_shares/true_shares_{NUTS2}_{year}.csv|Results/Validations_and_Visualizations/Comparison_metrics/wMAE_1km(10km)_boxplot.png|
+||Intermediary_Data/Preprocessed_Inputs/RSCM/{country}/{nuts1}_1km_reference_grid.csv||
+||Results/Posterior_crop_probability_estimates/{country}/{country}{year}enture_country.parquet||
+||Raw_Data/Grid/{country}_1km.zip/10km.zip||
+||Intermediary_Data/Preprocessed_Inputs/Grid/Grid_conversion_1km_10km_{country}.csv||
+|calculation_and_visualization_of_HDI.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv|Results/Credible_Intervals/{country}/{nuts2}{year}_%_HDI.csv|
+||Results/Simulated_consistent_crop_shares/{country}/{year}/{country}{year}_{nuts1}|Results/Validations_and_Visualizations/HDI_width/{country}{year}_{crop}.png|
+||Intermediary_Data/Preprocessed_Inputs/IACS/true_shares/true_shares_{nuts2}_{year}.csv||
+||Raw_Data/Grid/{country}_1km.zip||
+||Results/Posterior_crop_probability_estimates/{country}/{country}{year}entire_country.parquet||
+
+
+
+
+
+## Recommended order of running python files
+---preprocessing files---
+1. O1A_LUCAS_preprocessing.py
+2. climate_data_preprocessing.py
+3. NUTS_preprocessing.py
+4. Eurostat_preprocessing.py
+5. croparea_and_UAA_preparation_new.py
+6. O1C_grid_preparation.py
+7. O2A_target_feature_matching.py
+8. O2B_feature_grid_calculation.py
+9. generate_optimization_constraints_cellweights.py
+10. O1G_LUCAS_field_size.py <br>
+
+---parameter estimation---  <br>
+
+11. O5B_multinomial_logit_230406.py <br>
+    
+---prior crop probability prediction for entire country--- <br>
+
+12. O6A_prediction_statsmodel_alternative.py <br>
+
+---incorporation of regional/national aggregates---  <br>
+
+13. O7B_consistent_share_calculation_new.py <br>
+
+---simulation of crop shares--- <br>
+
+14. O9_generate_random_consistent_shares_new.py
+    
+---validation and visualization of results--- <br>
+
+15. visualize_crop_map_all_countries.py
+16. IACS_to_DGPCM_grid.py
+17. RSCM_to_DGPCM_grid.py
+18. dominant_crops_DGPCM_RSCM_IACS.py
+19. O1F_transform_grid.py
+20. wMAE_calculation.py
+21. calculation_and_visualization_of_HDI.py
