@@ -1,5 +1,5 @@
 # Probabilistic_Crop_Mapping_EU
-The code is seperated into two directory according to it's purpose: 1) The directory "data_preparation_and_alaysis" contains multiple files that must be run first to preprocess the raw data in such a way that it can be used for the generation of the probabilistic crop maps. The analysis, validation and visualization of the modelling results is also performed with files in this directory. The other directory, "generation_of_prob_crop_map" contains the code for the generation of the maps, including parameter estimation. 
+The code is seperated into two directories according to it's purpose: 1) The directory "data_preparation_and_alaysis" contains multiple files that must be run first to preprocess the raw data in such a way that it can be used for the generation of the probabilistic crop maps. The analysis, validation and visualization of the modelling results is also performed with files in this directory. The other directory, "generation_of_prob_crop_map" contains the code for the generation of the maps, including parameter estimation. 
 
 first, specify the path to the directory that is named "Data" in the explanation and contains the folders Raw_Data, Intermediary_Data etc. as follows, using the command line:
 ```
