@@ -1,4 +1,5 @@
 # Probabilistic_Crop_Mapping_EU
+The code is seperated into two directory according to it's purpose: 1) The directory "data_preparation_and_alaysis" contains multiple files that must be run first to preprocess the raw data in such a way that it can be used for the generation of the probabilistic crop maps. The analysis, validation and visualization of the modelling results is also performed with files in this directory. The other directory, "generation_of_prob_crop_map" contains the code for the generation of the maps, including parameter estimation. 
 
 first, specify the path to the directory that is named "Data" in the explanation and contains the folders Raw_Data, Intermediary_Data etc. as follows, using the command line:
 ```
@@ -74,7 +75,7 @@ Alternatively,  you can just create a text file named "data_main_path.txt" that 
 
 |python file | input files | output files|
 |----|----|----|
-|O1A_LUCAS_preprocessing.py|Raw_Data/LUCAS/lucas_harmo_uf.csv|Intermediary_Data/Preprocessed_Inputs/LUCAS_preprocessed.csv|
+|LUCAS_preprocessing.py|Raw_Data/LUCAS/lucas_harmo_uf.csv|Intermediary_Data/Preprocessed_Inputs/LUCAS_preprocessed.csv|
 ||Raw_Data/LUCAS/LUCAS_TOPSOIL_v1.xlsx||
 |climate_data_preprocessing.py|Raw_Data/Temperature/*.csv|Intermediary_Data/Preprocessed_Inputs/all_temperature_data.parquet|
 ||Raw_Data/Precipitation/*.csv|Intermediary_Data/Preprocessed_Inputs/all_precipitation_data.parquet|
@@ -85,7 +86,7 @@ Alternatively,  you can just create a text file named "data_main_path.txt" that 
 ||Raw_Data/Eurostat/apro_cpshr_20102020_area.csv||
 ||Raw_Data/Eurostat/EUROSTAT_crops_total_NUTS3_2010_final.xlsx (if available)||
 ||Raw_Data/Eurostat/UAA_all_regions_all_years.csv||
-|O2A_target_feature_matching.py|Raw_Data/DEM/eudem_dem_3035_europe.tif|Intermediary_Data/LUCAS_feature_merges/{country}/elevation.csv|
+|linking_LUCAS_and_explanatory_vars.py|Raw_Data/DEM/eudem_dem_3035_europe.tif|Intermediary_Data/LUCAS_feature_merges/{country}/elevation.csv|
 ||Raw_Data/DEM/eudem_slop_3035_europe/eudem_slop_3035_europe.tif|Intermediary_Data/LUCAS_feature_merges/{country}/slope.csv|
 ||Raw_Data/Soil/Sand_Extra.zip/Sand1.tif|Intermediary_Data/LUCAS_feature_merges/{country}/sand.csv|
 ||Raw_Data/Soil/Clay_Extra.zip/Clay.tif|Intermediary_Data/LUCAS_feature_merges/{country}/clay.csv|
@@ -98,12 +99,12 @@ Alternatively,  you can just create a text file named "data_main_path.txt" that 
 ||Intermediary_Data/Preprocessed_Inputs/LUCAS/LUCAS_preprocessed.csv|Intermediary_Data/LUCAS_feature_merges/{country}/latitude4326.csv|
 ||Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.shp||
 ||Raw_Data/Grid/grid25.zip||
-|croparea_and_UAA_<br> preparation_new.py|Intermediary_Data/Preprocessed_Inputs/Eurostat/Eurostat_cropdata_compiled_{FirstyearLastyear}_DGPCMcodes.csv|Intermediary_Data/Regional_Aggregates/cropdata_{FirstyearLastyear}.csv|
+|croparea_and_UAA_<br> preparation.py|Intermediary_Data/Preprocessed_Inputs/Eurostat/Eurostat_cropdata_compiled_{FirstyearLastyear}_DGPCMcodes.csv|Intermediary_Data/Regional_Aggregates/cropdata_{FirstyearLastyear}.csv|
 ||Intermediary_Data/Preprocessed_Inputs/Eurostat/Eurostat_UAA_compiled_{FirstyearLastyear}.csv|Intermediary_Data/Regional_Aggregates/coherent_UAA_{FirstyearLastyear}.csv|
 ||Intermediary_Data/NUTS/NUTS_all_regions_all_years.csv|Intermediary_Data/Regional_Aggregates/crop_levels_selected_countries_{FirstyearLastyear}|
-|O1C_grid_preparation.py|Raw_Data/Grid/{country}_1km.zip|Intermediary_Data/Zonal_Stats/{country}/cell_size/1kmgrid_{nuts}_all_years.csv|
+|grid_preparation.py|Raw_Data/Grid/{country}_1km.zip|Intermediary_Data/Zonal_Stats/{country}/cell_size/1kmgrid_{nuts}_all_years.csv|
 ||Raw_Data/NUTS/NUTS_RG_01M_{year}_3035.shp||
-|O2B_feature_grid_calculation.py|Raw_Data/DEM/eudem_dem_3035_europe.tif|Intermediary_Data/Zonal_Stats/{country}/elevation/1kmgrid_{nuts1}.csv|
+|linking_gridcells_and_explanatory_vars.py|Raw_Data/DEM/eudem_dem_3035_europe.tif|Intermediary_Data/Zonal_Stats/{country}/elevation/1kmgrid_{nuts1}.csv|
 ||Raw_Data/DEM/eudem_slop_3035_europe/eudem_slop_3035_europe.tif|Intermediary_Data/Zonal_Stats/{country}/slope/1kmgrid_{nuts1}.csv|
 ||Raw_Data/Soil/Sand_Extra.zip/Sand1.tif|Intermediary_Data/Zonal_Stats/{country}/sand/1kmgrid_{nuts1}.csv|
 ||Raw_Data/Soil/Clay_Extra.zip/Clay.tif|Intermediary_Data/Zonal_Stats/{country}/clay/1kmgrid_{nuts1}.csv|
@@ -123,23 +124,23 @@ Alternatively,  you can just create a text file named "data_main_path.txt" that 
 ||Intermediary_Data/Regional_Aggregates/cropdata_{FirstyearLastyear}.csv||
 ||Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv||
 ||Intermediary_Data/Zonal_stats/{country}/inferred_UAA/1kmgrid_{nuts1}.csv||
-|O1G_LUCAS_field_size.py|Intermediary_Data/Preprocessed_INputs/LUCAS/LUCAS_preprocessed.csv|Intermediary_Data/Zonal_Stats/{country}/n_of_fields/n_of_fields_allcountry_{FirstyearLastyear}.csv|
+|LUCAS_field_size_calculation.py|Intermediary_Data/Preprocessed_INputs/LUCAS/LUCAS_preprocessed.csv|Intermediary_Data/Zonal_Stats/{country}/n_of_fields/n_of_fields_allcountry_{FirstyearLastyear}.csv|
 ||Intermediary_Data/preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv||
 ||Intermediary_Data/Zonal_Stats/{country}/inferred_UAA/1kmgrid_{nuts1}.csv||
-|O5B_multinomial_logit_230406.py|Intermediary_Data/Preprocessed_Inputs/LUCAS/LUCAS_preprocessed.csv|Results/Model_Parameter_Estimates/multinomial_logit_{country}_statsmodel_params_obsthreshold{minthreshold}.xlsx|
+|model_parameter_estimation.py|Intermediary_Data/Preprocessed_Inputs/LUCAS/LUCAS_preprocessed.csv|Results/Model_Parameter_Estimates/multinomial_logit_{country}_statsmodel_params_obsthreshold{minthreshold}.xlsx|
 ||Intermediary_Data/LUCAS_feature_merges/{country}/*.csv|Results/Model_Parameter_Estimates/multinomial_logit_{country}_statsmodel_covariance_obsthreshold{minthreshold}.xlsx|
 |||Results/Model_Parameter_Estimates/scale_factors/standardscaler_multinom_logit_{country}|
-|O6A_prediction_statsmodel <br> _alternative.py|Intermediary_Data/Zonal_Stats/{country}/*|Results/Prior_crop_probability_estimates/{country}/{nuts1}_{year}|
+|calculation_of_prior_crop_probabilities <br> _alternative.py|Intermediary_Data/Zonal_Stats/{country}/*|Results/Prior_crop_probability_estimates/{country}/{nuts1}_{year}|
 ||Intermediary_Data/preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv||
 ||Results/Model_Parameter_Estimates/scale_factors/standardscaler_multinom_logit_{country}||
 ||Results/Model_Parameter_Estimates/multinomial_logit_{country}_statsmodel_params_obsthreshold{minthreshold}.xlsx||
 ||Results/Model_Parameter_Estimates/multinomial_logit_{country}_statsmodel_covariance_obsthreshold{minthreshold}.xlsx||
-|O7B_consistent_share_ <br> calculation_new.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv|Results/Posterior_crop_probability_estimates/{country}/{country}{year}entire_country.parquet|
+|incorporation_of_aggregated_info.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv|Results/Posterior_crop_probability_estimates/{country}/{country}{year}entire_country.parquet|
 ||Results/Prior_crop_probability_estimates/{country}/{nuts1}_{year}.parquet|Results/Posterior_crop_probability_estimates/{country}/{country}{year}entire_country_hyperparameters.csv|
 ||Intermediary_Data/Regional_Aggregates/coherent_UAA_{FirstyearLastyear}.csv||
 ||Intermediary_Data/Regional_Aggregates/cropdata_{FirstyearLastyear}.csv||
 ||Intermediary_Data/Regional_Aggregates/crop_levels_selected_countries_{FirstyearLastyear}.csv||
-|O9_generate_random_consistent <br>_shares_new.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv|Results/Simulated_consistent_crop_shares/{country}/{year}/{country}{year}_{nuts1}.parquet|
+|simulation_of_crop_shares.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv|Results/Simulated_consistent_crop_shares/{country}/{year}/{country}{year}_{nuts1}.parquet|
 ||Intermediary_Data/Regional_Aggregates/coherent_UAA_{FirstyearLastyear}.csv|Results/Simulated_consistent_crop_shares/{country}/{year}/{country}{year}_deviation_from_aggregated.csv|
 ||Intermediary_Data/Regional_Aggregates/cropdata_{FirstyearLastyear}.csv||
 ||Intermediary_Data/Regional_Aggregates/crop_levels_selected_countries_{FirstyearLastyear}.csv||
@@ -149,7 +150,7 @@ Alternatively,  you can just create a text file named "data_main_path.txt" that 
 |RSCM_to_DGPCM_grid.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv|Intermediary_Data/Preprocessed_Inputs/RSCM/{country}/{nuts1}_1km_reference_grid.csv|
 ||Raw_Data/RSCM/EUCROPMAP_2018.tif||
 ||Intermediary_Data/Zonal_Stats/{country}/cell_size/1km_grid_{nuts1}_all_years.csv||
-|visualize_crop_map_all_countries.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.shp|Results/Validations_and_Visualizations/Expected_crop_shares/share_of_{crop}_{year}.png|
+|visualize_cropmap.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.shp|Results/Validations_and_Visualizations/Expected_crop_shares/share_of_{crop}_{year}.png|
 ||Raw_Data/Grid/{country}_1km.zip||
 ||Results/Posterior_crop_probability_estimates/{country}/{country}{year}entire_country.parquet||
 |IACS_to_DGPCM_grid.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.shp|Intermediary_Data/Preprocessed_Input/IACS/true_shares_{NUTS2}_{year}.csv|
@@ -161,8 +162,8 @@ Alternatively,  you can just create a text file named "data_main_path.txt" that 
 ||Intermediary_Data/Preprocessed_Inputs/RSCM/{country}/{nuts1}_1km_reference_grid.csv||
 ||Results/Posterior_crop_probability_estimates/{country}/{country}{year}enture_country.parquet||
 ||Raw_Data/Grid/{country}_1km.zip||
-|O1F_transform_grid.py|Raw_Data/Grid/{country}_10km.zip|Intermediary_Data/Preprocessed_Inputs/Grid/Grid_conversion_1km_10km_{country}.csv|
-|wMAE_calculation.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv|Results/Validations_and_Visualizations/Comparison_metrics/{country}{year}_pearsonr_and_wMAE_comparison_DGPCM_RSCM_1km/10km.csv|
+|grid_transformation_1km_10km.py|Raw_Data/Grid/{country}_10km.zip|Intermediary_Data/Preprocessed_Inputs/Grid/Grid_conversion_1km_10km_{country}.csv|
+|calculate_wMAE.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv|Results/Validations_and_Visualizations/Comparison_metrics/{country}{year}_pearsonr_and_wMAE_comparison_DGPCM_RSCM_1km/10km.csv|
 ||Intermediary_Data/Preprocessed_Inputs/IACS/true_shares/true_shares_{NUTS2}_{year}.csv|Results/Validations_and_Visualizations/Comparison_metrics/wMAE_1km(10km)_boxplot.png|
 ||Intermediary_Data/Preprocessed_Inputs/RSCM/{country}/{nuts1}_1km_reference_grid.csv||
 ||Results/Posterior_crop_probability_estimates/{country}/{country}{year}enture_country.parquet||
@@ -180,39 +181,39 @@ Alternatively,  you can just create a text file named "data_main_path.txt" that 
 
 ## Recommended order of running python files
 ---preprocessing files---
-1. O1A_LUCAS_preprocessing.py
+1. LUCAS_preprocessing.py
 2. climate_data_preprocessing.py
 3. NUTS_preprocessing.py
 4. Eurostat_preprocessing.py
-5. croparea_and_UAA_preparation_new.py
-6. O1C_grid_preparation.py
-7. O2A_target_feature_matching.py
-8. O2B_feature_grid_calculation.py
+5. croparea_and_UAA_preparation.py
+6. grid_preparation.py
+7. linking_LUCAS_and_explanatory_vars.py
+8. linking_gridcells_and_explanatory_vars.py
 9. generate_optimization_constraints_cellweights.py
-10. O1G_LUCAS_field_size.py <br>
+10. LUCAS_field_size_calculation.py <br>
 
 ---parameter estimation---  <br>
 
-11. O5B_multinomial_logit_230406.py <br>
+11. model_parameter_estimation.py <br>
     
 ---prior crop probability prediction for entire country--- <br>
 
-12. O6A_prediction_statsmodel_alternative.py <br>
+12. calculation_of_prior_crop_probabilities.py <br>
 
 ---incorporation of regional/national aggregates---  <br>
 
-13. O7B_consistent_share_calculation_new.py <br>
+13. incorporation_of_aggregated_info.py <br>
 
 ---simulation of crop shares--- <br>
 
-14. O9_generate_random_consistent_shares_new.py
+14. simulation_of_crop_shares.py
     
 ---validation and visualization of results--- <br>
 
-15. visualize_crop_map_all_countries.py
+15. visualize_cropmap.py
 16. IACS_to_DGPCM_grid.py
 17. RSCM_to_DGPCM_grid.py
 18. dominant_crops_DGPCM_RSCM_IACS.py
-19. O1F_transform_grid.py
-20. wMAE_calculation.py
+19. grid_transformation_1km_10km.py
+20. calculate_wMAE.py
 21. calculation_and_visualization_of_HDI.py
