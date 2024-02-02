@@ -16,7 +16,8 @@ Third, create a directory named "Raw_Data" within the directory named "Data". Th
 
 
 
-## Step 2: Download of Raw Data
+## Step 2: Download of input data
+The input data used comes from multiple sources (see table below). To fully replicate our procedure, all of the listed input files are required. Download them from their source following the provided link.
 
 ### Sources of the raw data
 
