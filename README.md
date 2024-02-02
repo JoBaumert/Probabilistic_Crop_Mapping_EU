@@ -17,7 +17,7 @@ Third, create a directory named "Raw_Data" within the directory named "Data". Th
 
 
 ## Step 2: Download of input data
-The input data used comes from multiple sources (see table below). To fully replicate our procedure, all of the listed input files are required. Download them from their source following the provided link.
+The input data used comes from multiple sources (see table below). To fully replicate our procedure, all of the listed input files are required. Download them from their source following the provided link. The column "file name" indicates how the downloaded files must be named by the user in order to be found by the python scripts. Curly braces {} indicate a variable that must be set by the user: for example, {2-digit-countrycode} indicates that this part of the filename is "FR" when considering France etc. Make sure to always use the same format of the file as indicated by the file name (e.g., csv or zip...)
 
 ### Sources of the raw data
 
