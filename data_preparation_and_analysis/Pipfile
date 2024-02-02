@@ -1,0 +1,36 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pandas = "*"
+numpy = "*"
+seaborn = "*"
+geopandas = "*"
+rasterio = "*"
+shapely = "*"
+matplotlib = "*"
+rasterstats = "*"
+earthengine-api = "*"
+geemap = "*"
+xlrd = "*"
+richdem = "*"
+osmnx = "*"
+simpledbf = "*"
+openpyxl = "*"
+py-cordex = "*"
+gdxpds = "*"
+english-words = "*"
+plotly = "*"
+pyarrow = "*"
+pytest-shutil = "*"
+netcdf4 = "*"
+arviz = "*"
+argparse = "*"
+geocube = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
