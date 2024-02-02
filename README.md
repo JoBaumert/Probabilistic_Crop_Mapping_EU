@@ -97,7 +97,7 @@ The following table indicates which python files require which input data and wh
 ||Raw_Data/Eurostat/apro_cpshr_20102020_area.csv||
 ||Raw_Data/Eurostat/EUROSTAT_crops_total_NUTS3_2010_final.xlsx (if available)||
 ||Raw_Data/Eurostat/UAA_all_regions_all_years.csv||
-|linking_LUCAS_and_explanatory_vars.py|Raw_Data/DEM/eudem_dem_3035_europe.tif|Intermediary_Data/LUCAS_feature_merges/{country}/elevation.csv|
+|linking_LUCAS_and_<br>explanatory_vars.py|Raw_Data/DEM/eudem_dem_3035_europe.tif|Intermediary_Data/LUCAS_feature_merges/{country}/elevation.csv|
 ||Raw_Data/DEM/eudem_slop_3035_europe/eudem_slop_3035_europe.tif|Intermediary_Data/LUCAS_feature_merges/{country}/slope.csv|
 ||Raw_Data/Soil/Sand_Extra.zip/Sand1.tif|Intermediary_Data/LUCAS_feature_merges/{country}/sand.csv|
 ||Raw_Data/Soil/Clay_Extra.zip/Clay.tif|Intermediary_Data/LUCAS_feature_merges/{country}/clay.csv|
@@ -115,7 +115,7 @@ The following table indicates which python files require which input data and wh
 ||Intermediary_Data/NUTS/NUTS_all_regions_all_years.csv|Intermediary_Data/Regional_Aggregates/crop_levels_selected_countries_{FirstyearLastyear}|
 |grid_preparation.py|Raw_Data/Grid/{country}_1km.zip|Intermediary_Data/Zonal_Stats/{country}/cell_size/1kmgrid_{nuts}_all_years.csv|
 ||Raw_Data/NUTS/NUTS_RG_01M_{year}_3035.shp||
-|linking_gridcells_and_explanatory_vars.py|Raw_Data/DEM/eudem_dem_3035_europe.tif|Intermediary_Data/Zonal_Stats/{country}/elevation/1kmgrid_{nuts1}.csv|
+|linking_gridcells_and_<br>explanatory_vars.py|Raw_Data/DEM/eudem_dem_3035_europe.tif|Intermediary_Data/Zonal_Stats/{country}/elevation/1kmgrid_{nuts1}.csv|
 ||Raw_Data/DEM/eudem_slop_3035_europe/eudem_slop_3035_europe.tif|Intermediary_Data/Zonal_Stats/{country}/slope/1kmgrid_{nuts1}.csv|
 ||Raw_Data/Soil/Sand_Extra.zip/Sand1.tif|Intermediary_Data/Zonal_Stats/{country}/sand/1kmgrid_{nuts1}.csv|
 ||Raw_Data/Soil/Clay_Extra.zip/Clay.tif|Intermediary_Data/Zonal_Stats/{country}/clay/1kmgrid_{nuts1}.csv|
@@ -141,7 +141,7 @@ The following table indicates which python files require which input data and wh
 |model_parameter_estimation.py|Intermediary_Data/Preprocessed_Inputs/LUCAS/LUCAS_preprocessed.csv|Results/Model_Parameter_Estimates/multinomial_logit_{country}_statsmodel_params_obsthreshold{minthreshold}.xlsx|
 ||Intermediary_Data/LUCAS_feature_merges/{country}/*.csv|Results/Model_Parameter_Estimates/multinomial_logit_{country}_statsmodel_covariance_obsthreshold{minthreshold}.xlsx|
 |||Results/Model_Parameter_Estimates/scale_factors/standardscaler_multinom_logit_{country}|
-|calculation_of_prior_crop_probabilities <br> _alternative.py|Intermediary_Data/Zonal_Stats/{country}/*|Results/Prior_crop_probability_estimates/{country}/{nuts1}_{year}|
+|calculation_of_prior_ <br>crop_probabilities.py|Intermediary_Data/Zonal_Stats/{country}/*|Results/Prior_crop_probability_estimates/{country}/{nuts1}_{year}|
 ||Intermediary_Data/preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv||
 ||Results/Model_Parameter_Estimates/scale_factors/standardscaler_multinom_logit_{country}||
 ||Results/Model_Parameter_Estimates/multinomial_logit_{country}_statsmodel_params_obsthreshold{minthreshold}.xlsx||
