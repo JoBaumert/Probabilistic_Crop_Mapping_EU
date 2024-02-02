@@ -168,7 +168,7 @@ The following table indicates which python files require which input data and wh
 ||Raw_Data/IACS/{country}_{year}.zip||
 ||Raw_Data/Grid/{country}_1km.zip||
 ||Intermediary_Data/Zonal_Stats/{country}/cell_size/1km_grid_{nuts1}_all_years.csv||
-|dominant_crops_DGPCM_RSCM_IACS.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv/.shp|Results/Validations_and_Visualizations/Comparison_dominant_crops/{map}dominant_crops_{country}_{year}.png|
+|dominant_crops_<br>DGPCM_RSCM_IACS.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv/.shp|Results/Validations_and_Visualizations/Comparison_dominant_crops/{map}dominant_crops_{country}_{year}.png|
 ||Intermediary_Data/Preprocessed_Inputs/IACS/true_shares/true_shares_{NUTS2}_{year}.csv||
 ||Intermediary_Data/Preprocessed_Inputs/RSCM/{country}/{nuts1}_1km_reference_grid.csv||
 ||Results/Posterior_crop_probability_estimates/{country}/{country}{year}enture_country.parquet||
@@ -180,7 +180,7 @@ The following table indicates which python files require which input data and wh
 ||Results/Posterior_crop_probability_estimates/{country}/{country}{year}enture_country.parquet||
 ||Raw_Data/Grid/{country}_1km.zip/10km.zip||
 ||Intermediary_Data/Preprocessed_Inputs/Grid/Grid_conversion_1km_10km_{country}.csv||
-|calculation_and_visualization_of_HDI.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv|Results/Credible_Intervals/{country}/{nuts2}{year}_%_HDI.csv|
+|calculation_and_visualization<br>_of_HDI.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv|Results/Credible_Intervals/{country}/{nuts2}{year}_%_HDI.csv|
 ||Results/Simulated_consistent_crop_shares/{country}/{year}/{country}{year}_{nuts1}|Results/Validations_and_Visualizations/HDI_width/{country}{year}_{crop}.png|
 ||Intermediary_Data/Preprocessed_Inputs/IACS/true_shares/true_shares_{nuts2}_{year}.csv||
 ||Raw_Data/Grid/{country}_1km.zip||
