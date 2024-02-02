@@ -146,7 +146,7 @@ The following table indicates which python files require which input data and wh
 ||Results/Model_Parameter_Estimates/scale_factors/standardscaler_multinom_logit_{country}||
 ||Results/Model_Parameter_Estimates/multinomial_logit_{country}_statsmodel_params_obsthreshold{minthreshold}.xlsx||
 ||Results/Model_Parameter_Estimates/multinomial_logit_{country}_statsmodel_covariance_obsthreshold{minthreshold}.xlsx||
-|incorporation_of_aggregated_info.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv|Results/Posterior_crop_probability_estimates/{country}/{country}{year}entire_country.parquet|
+|incorporation_of_<br>aggregated_info.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv|Results/Posterior_crop_probability_estimates/{country}/{country}{year}entire_country.parquet|
 ||Results/Prior_crop_probability_estimates/{country}/{nuts1}_{year}.parquet|Results/Posterior_crop_probability_estimates/{country}/{country}{year}entire_country_hyperparameters.csv|
 ||Intermediary_Data/Regional_Aggregates/coherent_UAA_{FirstyearLastyear}.csv||
 ||Intermediary_Data/Regional_Aggregates/cropdata_{FirstyearLastyear}.csv||
