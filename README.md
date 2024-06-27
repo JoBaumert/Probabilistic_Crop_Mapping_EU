@@ -86,29 +86,29 @@ The following table indicates which python files require which input data and wh
 
 |python file | input files | output files|
 |----|----|----|
-|LUCAS_preprocessing.py|Raw_Data/LUCAS/lucas_harmo_uf.csv|Intermediary_Data/Preprocessed_Inputs/LUCAS_preprocessed.csv|
+|LUCAS_preprocessing.py|Raw_Data/LUCAS/lucas_harmo_uf.csv|Intermediary_Data/Preprocessed_Inputs/<br>LUCAS_preprocessed.csv|
 ||Raw_Data/LUCAS/LUCAS_TOPSOIL_v1.xlsx||
-|climate_data_preprocessing.py|Raw_Data/Temperature/*.csv|Intermediary_Data/Preprocessed_Inputs/all_temperature_data.parquet|
-||Raw_Data/Precipitation/*.csv|Intermediary_Data/Preprocessed_Inputs/all_precipitation_data.parquet|
-|NUTS_preprocessing.py|delineation_and_parameters/<br>DGPCM_user_parameters.xlsx|Intermediary_Data/Preprocessed_Inputs/NUTS_all_regions_all_years.(csv and shp)|
-||Raw_Data/NUTS/NUTS_RG_01M_{nuts_year}_3035.shp.zip||
-|Eurostat_preprocessing.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv|Intermediary_Data/Preprocessed_Inputs/Eurostat/Eurostat_cropdata_compiled_{FirstyearLastyear}_DGPCMcodes.csv|
-||Raw_Data/Eurostat/apro_cpshr_20102020_main_area.csv|Intermediary_Data/Preprocessed_Inputs/Eurostat/Eurostat_UAA_compiled_{FirstyearLastyear}.csv|
-||Raw_Data/Eurostat/apro_cpshr_20102020_area.csv||
-||Raw_Data/Eurostat/EUROSTAT_crops_total_NUTS3_2010_final.xlsx (if available)||
-||Raw_Data/Eurostat/UAA_all_regions_all_years.csv||
-|linking_LUCAS_and_<br>explanatory_vars.py|Raw_Data/DEM/eudem_dem_3035_europe.tif|Intermediary_Data/LUCAS_feature_merges/{country}/elevation.csv|
-||Raw_Data/DEM/eudem_slop_3035_europe/eudem_slop_3035_europe.tif|Intermediary_Data/LUCAS_feature_merges/{country}/slope.csv|
-||Raw_Data/Soil/Sand_Extra.zip/Sand1.tif|Intermediary_Data/LUCAS_feature_merges/{country}/sand.csv|
-||Raw_Data/Soil/Clay_Extra.zip/Clay.tif|Intermediary_Data/LUCAS_feature_merges/{country}/clay.csv|
-||Raw_Data/Soil/Silt_Extra.zip/Silt1.tif|Intermediary_Data/LUCAS_feature_merges/{country}/silt.csv|
-||Raw_Data/Soil/BulkDensity_Extra.zip/Bulk_density.tif|Intermediary_Data/LUCAS_feature_merges/{country}/bulk_density.csv|
-||Raw_Data/Soil/CoarseFragments_Extra.zip/Coarse_fragments.tif|Intermediary_Data/LUCAS_feature_merges/{country}/coarse_fragments.csv|
-||Raw_Data/Soil/AWC_Extra.zip/AWC.tif|Intermediary_Data/LUCAS_feature_merges/{country}/awc.csv|
-||Intermediary_Data/Preprocessed_Inputs/Climate/all_temperature_data.parquet|Intermediary_Data/LUCAS_feature_merges/{country}/avg_annual_temp_sum.csv and avg_annual_veg_period.csv|
-||Intermediary_Data/Preprocessed_Inputs/Climate/all_precipitation_data.parquet|Intermediary_Data/LUCAS_feature_merges/{country}/avg_annual_precipitation.csv|
-||Intermediary_Data/Preprocessed_Inputs/LUCAS/LUCAS_preprocessed.csv|Intermediary_Data/LUCAS_feature_merges/{country}/latitude4326.csv|
-||Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.shp||
+|climate_data_preprocessing.py|Raw_Data/Temperature/*.csv|Intermediary_Data/Preprocessed_Inputs/<br>all_temperature_data.parquet|
+||Raw_Data/Precipitation/*.csv|Intermediary_Data/Preprocessed_Inputs/<br>all_precipitation_data.parquet|
+|NUTS_preprocessing.py|delineation_and_parameters/<br>DGPCM_user_parameters.xlsx|Intermediary_Data/Preprocessed_Inputs/<br>NUTS_all_regions_all_years.(csv and shp)|
+||Raw_Data/NUTS/<br>NUTS_RG_01M_{nuts_year}_3035.shp.zip||
+|Eurostat_preprocessing.py|Intermediary_Data/Preprocessed_Inputs/NUTS/<br>NUTS_all_regions_all_years.csv|Intermediary_Data/Preprocessed_Inputs/Eurostat<br>/Eurostat_cropdata_compiled_{FirstyearLastyear}_DGPCMcodes.csv|
+||Raw_Data/Eurostat/<br>apro_cpshr_20102020_main_area.csv|Intermediary_Data/Preprocessed_Inputs/<br>Eurostat/Eurostat_UAA_compiled_{FirstyearLastyear}.csv|
+||Raw_Data/Eurostat/<br>apro_cpshr_20102020_area.csv||
+||Raw_Data/Eurostat<br>/EUROSTAT_crops_total_NUTS3_2010_final.xlsx (if available)||
+||Raw_Data/Eurostat/<br>UAA_all_regions_all_years.csv||
+|linking_LUCAS_and_<br>explanatory_vars.py|Raw_Data/DEM/eudem_dem_3035_europe.tif|Intermediary_Data/LUCAS_feature_merges/<br>{country}/elevation.csv|
+||Raw_Data/DEM/eudem_slop_3035_europe/eudem_slop_3035_europe.tif|Intermediary_Data/LUCAS_feature_merges/<br>{country}/slope.csv|
+||Raw_Data/Soil/Sand_Extra.zip/<br>Sand1.tif|Intermediary_Data/LUCAS_feature_merges/{country}/sand.csv|
+||Raw_Data/Soil/Clay_Extra.zip/<br>Clay.tif|Intermediary_Data/LUCAS_feature_merges/{country}/clay.csv|
+||Raw_Data/Soil/Silt_Extra.zip/<br>Silt1.tif|Intermediary_Data/LUCAS_feature_merges/{country}/silt.csv|
+||Raw_Data/Soil/BulkDensity_Extra.zip/<br>Bulk_density.tif|Intermediary_Data/LUCAS_feature_merges/{country}/bulk_density.csv|
+||Raw_Data/Soil/CoarseFragments_Extra.zip/<br>Coarse_fragments.tif|Intermediary_Data/LUCAS_feature_merges/{country}/coarse_fragments.csv|
+||Raw_Data/Soil/AWC_Extra.zip/<br>AWC.tif|Intermediary_Data/LUCAS_feature_merges/{country}/awc.csv|
+||Intermediary_Data/Preprocessed_Inputs/<br>Climate/all_temperature_data.parquet|Intermediary_Data/LUCAS_feature_merges/{country}/avg_annual_temp_sum.csv and avg_annual_veg_period.csv|
+||Intermediary_Data/Preprocessed_Inputs/<br>Climate/all_precipitation_data.parquet|Intermediary_Data/LUCAS_feature_merges/{country}/avg_annual_precipitation.csv|
+||Intermediary_Data/Preprocessed_Inputs/<br>LUCAS/LUCAS_preprocessed.csv|Intermediary_Data/LUCAS_feature_merges/{country}/latitude4326.csv|
+||Intermediary_Data/Preprocessed_Inputs/<br>NUTS/NUTS_all_regions_all_years.shp||
 ||Raw_Data/Grid/grid25.zip||
 |croparea_and_UAA_<br> preparation.py|Intermediary_Data/Preprocessed_Inputs/Eurostat/Eurostat_cropdata_compiled_{FirstyearLastyear}_DGPCMcodes.csv|Intermediary_Data/Regional_Aggregates/cropdata_{FirstyearLastyear}.csv|
 ||Intermediary_Data/Preprocessed_Inputs/Eurostat/Eurostat_UAA_compiled_{FirstyearLastyear}.csv|Intermediary_Data/Regional_Aggregates/coherent_UAA_{FirstyearLastyear}.csv|
