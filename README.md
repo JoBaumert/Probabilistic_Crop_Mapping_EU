@@ -90,7 +90,7 @@ The following table indicates which python files require which input data and wh
 ||Raw_Data/LUCAS/LUCAS_TOPSOIL_v1.xlsx||
 |climate_data_preprocessing.py|Raw_Data/Temperature/*.csv|Intermediary_Data/Preprocessed_Inputs/all_temperature_data.parquet|
 ||Raw_Data/Precipitation/*.csv|Intermediary_Data/Preprocessed_Inputs/all_precipitation_data.parquet|
-|NUTS_preprocessing.py|delineation_and_parameters/DGPCM_user_parameters.xlsx|Intermediary_Data/Preprocessed_Inputs/NUTS_all_regions_all_years.(csv and shp)|
+|NUTS_preprocessing.py|delineation_and_parameters/<br>DGPCM_user_parameters.xlsx|Intermediary_Data/Preprocessed_Inputs/NUTS_all_regions_all_years.(csv and shp)|
 ||Raw_Data/NUTS/NUTS_RG_01M_{nuts_year}_3035.shp.zip||
 |Eurostat_preprocessing.py|Intermediary_Data/Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years.csv|Intermediary_Data/Preprocessed_Inputs/Eurostat/Eurostat_cropdata_compiled_{FirstyearLastyear}_DGPCMcodes.csv|
 ||Raw_Data/Eurostat/apro_cpshr_20102020_main_area.csv|Intermediary_Data/Preprocessed_Inputs/Eurostat/Eurostat_UAA_compiled_{FirstyearLastyear}.csv|
