@@ -134,7 +134,7 @@ betas=np.unique(posterior_probas["beta"])
 band_list=[]
 #add cellweight as first band
 posterior_probas.sort_values(by=["NOFORIGIN","EOFORIGIN"],ascending=[False,True],inplace=True)
-expectation_matrix=np.ndarray((crops.shape[0]+2,int(height),int(width)))
+resulting_matrix=np.ndarray((crops.shape[0]*postsampling_reps*betas.shape[0]+crops.shape[0]+2,int(height),int(width)))
 print("rasterizing cell weight...")
 selection=posterior_probas.drop_duplicates(["CELLCODE"])
 geom_value = ((geom,value) for geom, value in zip(selection.geometry, selection.weight))
@@ -145,7 +145,7 @@ rasterized=features.rasterize(
     default_value=1 
 )
 #first band is the cellweight
-expectation_matrix[0]=rasterized
+resulting_matrix[0]=rasterized
 band_list.append("weight")
 #add number of fields per cell as second band
 print("rasterizing number of fields...")
@@ -157,59 +157,40 @@ rasterized=features.rasterize(
     default_value=1 
 )
 #second band is assumed number of fields per cell (minimum= 5)
-expectation_matrix[1]=rasterized
+resulting_matrix[1]=rasterized
 band_list.append("n_of_fields")
-n_of_fields_array=expectation_matrix[1,np.where(expectation_matrix[0]>0)[0],np.where(expectation_matrix[0]>0)[1]]
+n_of_fields_array=resulting_matrix[1,np.where(resulting_matrix[0]>0)[0],np.where(resulting_matrix[0]>0)[1]]
 
-band=2
-beta=0 #expectation
-for crop in crops:
-    print(crop)
-    selection=posterior_probas[(posterior_probas["crop"]==crop)&(posterior_probas["beta"]==beta)]
-    result_array=np.zeros(int(height*width),dtype=np.float16)
-    result_array[np.where(expectation_matrix[0].flatten()>0)[0]]=np.array(selection.posterior_probability,dtype=np.float16)
-    #add expected shares as bands 2:n_crops-3
-    expectation_matrix[band]=result_array.reshape(expectation_matrix[0].shape)
-    band_list.append(f"expected_share_{crop}")
-    band+=1
-
-with rio.open(Posterior_probability_path+country+"/"+country+str(year)+"expected_cropshares_entire_country.tif", 'w',
-              width=int(width),height=int(height),transform=transform,count=expectation_matrix.shape[0],dtype=rio.float32,crs="EPSG:3035") as dst:
-    dst.write(expectation_matrix.astype(rio.float32))
-
-#%%
-
-for beta in betas[:1]:
-    resulting_matrix=np.ndarray((crops.shape[0]*postsampling_reps,int(height),int(width)))
-    print("rasterizing beta "+str(beta))
+for beta in betas:
+    print("beta "+str(beta))
     helper_matrix=np.ndarray((crops.shape[0],int(height),int(width)))
-    i=0
+    c=0
     for crop in crops:
         print(crop)
         selection=posterior_probas[(posterior_probas["crop"]==crop)&(posterior_probas["beta"]==beta)]
         result_array=np.zeros(int(height*width),dtype=np.float16)
-        result_array[np.where(expectation_matrix[0].flatten()>0)[0]]=np.array(selection.posterior_probability,dtype=np.float16)
-        helper_matrix[i]=result_array.reshape(expectation_matrix[0].shape)   
-        i+=1
+        result_array[np.where(resulting_matrix[0].flatten()>0)[0]]=np.array(selection.posterior_probability,dtype=np.float16)
+        #add expected shares as bands 2:n_crops-3
+        helper_matrix[c]=result_array.reshape(resulting_matrix[0].shape)
+        c+=1
+        band_list.append(f"expected_share_{crop}")
+    if beta==0:
+        resulting_matrix[2:len(crops)+2]=helper_matrix
+        
 
     #sample from multinomial distribution with the respective crop probabilities and number of fields
-    p_matrix=helper_matrix[:,np.where(expectation_matrix[0]>0)[0],np.where(expectation_matrix[0]>0)[1]].T
+    p_matrix=helper_matrix[:,np.where(resulting_matrix[0]>0)[0],np.where(resulting_matrix[0]>0)[1]].T
     print("generate "+str(postsampling_reps)+" random samples...")
     random_results=generate_random_results(p_matrix,postsampling_reps=postsampling_reps,n_of_fields_array=n_of_fields_array)
 
     empty_array=np.zeros((int(width*height),postsampling_reps,len(crops)))
-    empty_array[np.where(expectation_matrix[0].flatten()>0)[0]]=random_results
-    resulting_matrix=empty_array.transpose(1,2,0).reshape((postsampling_reps*len(crops),int(height),int(width)))
+    empty_array[np.where(resulting_matrix[0].flatten()>0)[0]]=random_results
+    
+    resulting_matrix[2+len(crops)+beta*crops.shape[0]*postsampling_reps:(beta+1)*crops.shape[0]*postsampling_reps+2+len(crops)]=empty_array.transpose(1,2,0).reshape((postsampling_reps*len(crops),int(height),int(width)))
     del empty_array
     del p_matrix
+    del helper_matrix
     gc.collect()
-#%%
-    with rio.open(Simulated_cropshares_path+country+"/"+country+str(year)+"_beta"+str(beta)+".tif", 'w',
-              width=int(width),height=int(height),transform=transform,count=resulting_matrix.shape[0],dtype=rio.float32,crs="EPSG:3035") as dst:
-        dst.write(resulting_matrix.astype(rio.float32))
-    del resulting_matrix
-    gc.collect()
-#%%
     band_list.append(np.char.add(
     np.char.add(
         np.char.add(
@@ -217,38 +198,38 @@ for beta in betas[:1]:
             np.repeat("_",len(crops)*postsampling_reps)),
         np.repeat(str(beta),len(crops)*postsampling_reps)),
     np.repeat(np.arange(postsampling_reps),len(crops)).astype(str)))
-# %%
-band_indices=pd.DataFrame({"crop":np.repeat(crops,len(betas)),"beta":np.tile(betas,len(crops))})
-band_indices=pd.concat((pd.DataFrame({"crop":["weight"],"beta":[np.nan]}),band_indices))
-band_indices["band"]=np.arange(len(band_indices))
-#%%
-band_indices[band_indices["crop"]=="GRAS"]
-#%%
-show(resulting_matrix[151])
-#%%
-resulting_matrix_float16=np.array(resulting_matrix,dtype=np.float16)
-#%%
 
-# %%
-transform
-# %%
-with rio.open(Posterior_probability_path+country+"/"+country+str(year)+"entire_country_tif.tif", 'w',
-              width=int(width),height=int(height),transform=transform,count=281,dtype=rio.float32,crs="EPSG:3035") as dst:
+with rio.open(Simulated_cropshares_path+country+"/"+country+str(year)+"simulated_cropshare_"+str(postsampling_reps)+"reps.tif", 'w',
+              width=int(width),height=int(height),transform=transform,count=resulting_matrix.shape[0],dtype=rio.float32,crs="EPSG:3035") as dst:
     dst.write(resulting_matrix.astype(rio.float32))
+
 #%%
-band_indices.to_csv(Posterior_probability_path+country+"/tif_files_bands.tif")
+band_list=["weight","n_of_fields"]
+for crop in crops:
+     band_list.append("expected_share_"+crop)
+for beta in betas:
+    bands=list(np.char.add(
+             np.char.add(
+                np.char.add(
+                np.tile(crops,postsampling_reps).astype(str),
+                np.repeat("_",len(crops)*postsampling_reps)),
+            np.repeat(str(beta),len(crops)*postsampling_reps)),
+            np.repeat(np.arange(postsampling_reps),len(crops)).astype(str)))
+    for band in bands:
+        band_list.append(band)
+
+#%%
+band_df=pd.DataFrame({"band":np.arange(len(band_list)),"name":np.array(band_list)})
+#%%
+band_df.to_csv(
+    Simulated_cropshares_path+country+"/"+country+str(year)+"simulated_cropshare_"+str(postsampling_reps)+"reps_bands.csv"
+)
+#%%
+resulting_matrix.shape
 # %%
-test=rio.open("example.tif")
+band_df[band_df["name"]=="SUNF_11"]
 # %%
-show(test.read()[0])
+show(resulting_matrix[360])
 # %%
-testfile=rio.open(Posterior_probability_path+country+"/"+country+str(year)+"entire_country_tif.tif")
-# %%
-testfile=testfile.read()
-# %%
-show(testfile[53])
-# %%
-testfile.transform
-# %%
-band_indices
+resulting_matrix.shape[0]*resulting_matrix.shape[1]*resulting_matrix.shape[2]
 # %%
