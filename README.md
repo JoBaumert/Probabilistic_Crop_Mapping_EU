@@ -131,7 +131,7 @@ The following table indicates which python files require which input data and wh
 ||Intermediary_Data/Preprocessed_Inputs/<br>NUTS/NUTS_all_regions_all_years.shp||
 ||Raw_Data/Grid/grid25.zip||
 ||Raw_Data/Grid/{country}_1km.zip|Intermediary_Data/Zonal_Stats/{country}/latitude4326/1kmgrid_{nuts1}.csv|
-|generate_optimization_constraints <br> _cellweights.py|Intermediary_Data/Regional_Aggregates/coherent_UAA_{FirstyearLastyear}.csv|Intermediary_Data/Regional_Aggregates/Cell_Weights/{AT}/cell_weights_{FirstyearLastyear}.csv|
+|generate_optimization_constraints <br> _cellweights.py|Intermediary_Data/Regional_Aggregates/coherent_UAA_{FirstyearLastyear}.csv|Intermediary_Data/Regional_Aggregates/Cell_Weights/{nuts0}/cell_weights_{FirstyearLastyear}.csv|
 ||Intermediary_Data/Regional_Aggregates/<br>cropdata_{FirstyearLastyear}.csv||
 ||Intermediary_Data/Preprocessed_Inputs/<br>NUTS/NUTS_all_regions_all_years.csv||
 ||Intermediary_Data/Zonal_stats/{country}<br>/inferred_UAA/1kmgrid_{nuts1}.csv||
@@ -151,6 +151,7 @@ The following table indicates which python files require which input data and wh
 ||Intermediary_Data/Regional_Aggregates/<br>coherent_UAA_{FirstyearLastyear}.csv||
 ||Intermediary_Data/Regional_Aggregates/<br>cropdata_{FirstyearLastyear}.csv||
 ||Intermediary_Data/Regional_Aggregates/<br>crop_levels_selected_countries_{FirstyearLastyear}.csv||
+||Intermediary_Data/Regional_Aggregates/Cell_Weights/<br>{country}/cell_weights_{FirstyearLastyear}.csv||
 |simulation_of_crop_shares.py|Intermediary_Data/Preprocessed_Inputs/NUTS/<br>NUTS_all_regions_all_years.csv|Results/Simulated_consistent_crop_shares/{country}/{year}/{country}{year}_{nuts1}.parquet|
 ||Intermediary_Data/Regional_Aggregates/<br>coherent_UAA_{FirstyearLastyear}.csv|Results/Simulated_consistent_crop_shares/{country}/{year}/{country}{year}_deviation_from_aggregated.csv|
 ||Intermediary_Data/Regional_Aggregates/<br>cropdata_{FirstyearLastyear}.csv||
