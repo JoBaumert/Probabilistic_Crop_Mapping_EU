@@ -37,6 +37,7 @@ cellsize_input_path = data_main_path + "Intermediary_Data/Zonal_Stats/"
 
 # output files
 cell_weight_path = regional_aggregates_path+"Cell_Weights/"
+
 # %%
 # import parameters
 selected_years=np.array(pd.read_excel(parameter_path, sheet_name="selected_years")["years"])
@@ -55,6 +56,7 @@ for i in range(len(levl_info)):
 #%%
 UAA = pd.read_csv(regional_aggregates_path+"coherent_UAA_"+str(selected_years.min())+str(selected_years.max())+".csv")
 cropdata=pd.read_csv(regional_aggregates_path+"cropdata_"+str(selected_years.min())+str(selected_years.max())+".csv")
+
 #%%
 #cropdata is only needed to get information on the lowest level at which crop information is available for a country in a year
 cropdata["NUTS_LEVL"]=np.vectorize(len)(np.array(cropdata["NUTS_ID"]))-2
@@ -70,12 +72,30 @@ NUTS_data = pd.read_csv(nuts_input_path)
 NUTS_data=NUTS_data[(NUTS_data["CNTR_CODE"].isin(country_codes_relevant))&(NUTS_data["year"].isin(selected_years))]
 
 #%%
+pd.read_csv(
+                    cellsize_input_path
+                    + "HR"
+                    + "/inferred_UAA/1kmgrid_"
+                    + "HR0"
+                    + ".csv"
+                )
+#%%
+
+
+#%%
+
+#%%
 if __name__ == "__main__":
 
-    for country in country_codes_relevant:
+    for country in country_codes_relevant[:1]:
+        lowest_level_selected_country_allyears=lowest_level_country_year[
+                (lowest_level_country_year["country"] == country)
+            ]["NUTS_LEVL"].max()
         print(f"starting for {country}")
         weight_df_complete = pd.DataFrame()
         for year in selected_years:
+            relevant_UAA = UAA[(UAA["country"] == country) & (UAA["year"] == year)]
+            relevant_UAA["UAA_in_ha"] = relevant_UAA["UAA_corrected"] * 1000
 
             cellsize_country_df = pd.DataFrame()
             nuts1_regs = np.array(
@@ -93,8 +113,7 @@ if __name__ == "__main__":
                 (lowest_level_country_year["country"] == country)
                 & (lowest_level_country_year["year"] == year)
             ]["NUTS_LEVL"].iloc[0]
-            relevant_UAA = UAA[(UAA["country"] == country) & (UAA["year"] == year)]
-            relevant_UAA["UAA_in_ha"] = relevant_UAA["UAA_corrected"] * 1000
+
             for nuts1 in nuts1_regs:
                 relevant_cells_df = pd.read_csv(
                     cellsize_input_path
@@ -122,10 +141,11 @@ if __name__ == "__main__":
             weight_df["inferred_UAA_in_ha"] = weight_df["inferred_UAA"] / 10000
 
             weight_df["lowest_relevant_NUTS_level"] = np.array(
-                weight_df[f"nuts{country_levls[country]}"]
+                weight_df[f"nuts{lowest_level_selected_country_allyears}"]
             ).astype(f"U{lowest_level_selected_country_year+2}")
 
             weight_array = np.ndarray(len(weight_df))
+
             for reg in np.sort(
                 np.array(weight_df["lowest_relevant_NUTS_level"].value_counts().keys())
             ):
@@ -145,8 +165,9 @@ if __name__ == "__main__":
             weight_df["year"] = np.repeat(year, len(weight_df))
             weight_df_complete = pd.concat((weight_df_complete, weight_df))
             weight_df_complete["NUTS1"] = np.array(
-                weight_df_complete[f"nuts{country_levls[country]}"]
+                weight_df_complete[f"nuts{lowest_level_selected_country_allyears}"]
             ).astype("U3")
+
 
         # export data for country
         Path(cell_weight_path + country ).mkdir(
@@ -156,4 +177,45 @@ if __name__ == "__main__":
             cell_weight_path + country + "/cell_weights_"+str(selected_years.min())+str(selected_years.max())+".csv"
         )
         print("data for " + country + " exported")
+# %%
+relevant_cells_df
+# %%
+relevant_cells_df = pd.read_csv(
+    cellsize_input_path
+    + country
+    + "/inferred_UAA/1kmgrid_"
+    + nuts1
+    + ".csv"
+)
+# %%
+cellsize_country_df
+# %%
+country_levls
+# %%
+lowest_level_country_year
+# %%
+weight_df_complete
+# %%
+grid=gpd.read_file("/home/baumert/fdiexchange/baumert/project1/Data/Raw_Data/Grid/HR_1km.zip!/hr_1km.shp")
+# %%
+weight_df_complete=pd.merge(weight_df_complete,grid[["CELLCODE","geometry"]],how="left",on="CELLCODE")
+# %%
+weight_df_complete=gpd.GeoDataFrame(weight_df_complete)
+# %%
+weight_df_complete[weight_df_complete["year"]==2012].plot(column="weight")
+# %%
+weight_df_complete[weight_df_complete["year"]==2020]
+# %%
+nuts1="HR0"
+relevant_cells_df = pd.read_csv(
+                    cellsize_input_path
+                    + country
+                    + "/inferred_UAA/1kmgrid_"
+                    + nuts1
+                    + ".csv"
+                )
+# %%
+relevant_cells_df
+# %%
+reg
 # %%

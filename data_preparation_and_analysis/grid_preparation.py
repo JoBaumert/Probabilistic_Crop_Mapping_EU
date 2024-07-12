@@ -58,8 +58,6 @@ relevant_nuts_years = np.array(nuts_info["nuts_year"])
 countries = pd.read_excel(parameter_path, sheet_name="selected_countries")
 country_codes_relevant = np.array(countries["country_code"])
 nuts_levels=pd.read_excel(parameter_path,sheet_name="lowest_agg_level")
-#%%
-
 
 #%%
 # import NUTS data
@@ -80,7 +78,8 @@ for y, year in enumerate(all_years):
 #%%
 nuts_allyear_gdf = gpd.GeoDataFrame(nuts_allyear_df)
 #%%
-
+nuts_allyear_gdf[(nuts_allyear_gdf["CNTR_CODE"] == "HR")
+                    & (nuts_allyear_gdf["year"] == 2010)]
 #%%
 # countries = {"UK": "United_Kingdom"}
 # level1, level2, level3 = False, False, True
@@ -101,14 +100,15 @@ if "3" in args.level:
     level3 = True
 
 """
+#%%
+nuts_allyear_gdf
 
 #%%
-
-
 if __name__ == "__main__":
 
     for country in country_codes_relevant[:1]:
-       
+        country="HR"
+
         print(
             f"grid preparation starting for {country}"
         )
@@ -122,7 +122,7 @@ if __name__ == "__main__":
         )
         zip=zipfile.ZipFile(grid_1km_path_country)
         for file in zip.namelist():
-            if file[-3:]=="shp":
+            if (file[-3:]=="shp")&(file[3:7]=="1km"):
                 break
 
         grid_1km_country = gpd.read_file(grid_1km_path_country+"!/"+file)
@@ -160,8 +160,7 @@ if __name__ == "__main__":
                 .keys()
             )
         )
-        
-        
+
         # some regions (e.g., French overseas) are excluded
         excluded_NUTS_regions = pd.read_excel(excluded_NUTS_regions_path)
         excluded_NUTS_regions = np.array(
@@ -171,7 +170,7 @@ if __name__ == "__main__":
         nuts_regs = [NUTS1_regs, NUTS2_regs, NUTS3_regs]
         highest_NUTS_level=nuts_levels[nuts_levels["country_code"]==country]["lowest_agg_level"].iloc[0]
 
-       
+
         print("loop starts")
         for level in range(highest_NUTS_level):
             for nuts in nuts_regs[level]:

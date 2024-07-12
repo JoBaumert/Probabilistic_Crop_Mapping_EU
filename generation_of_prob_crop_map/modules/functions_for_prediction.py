@@ -37,11 +37,11 @@ def replace_nanvalues(feature_df, featurename):
 
 
 def get_cell_predictions(X_scaled, parameters):
-    latentvars = jnp.matmul(jnp.transpose(X_scaled), parameters)
+    latentvars = np.matmul(np.transpose(X_scaled), parameters)
     """LIMIT VALUES TO AVOID INFINITY VALUES"""
     latentvars=np.where(latentvars>40,40,latentvars)
     latentvars=np.where(latentvars<-40,-40,latentvars)
-    latentvars_exp = jnp.exp(latentvars)
+    latentvars_exp = np.exp(latentvars)
     latentvars_exp_sum = latentvars_exp.sum(axis=1)
     p = (latentvars_exp.transpose() / latentvars_exp_sum).transpose()
     return p

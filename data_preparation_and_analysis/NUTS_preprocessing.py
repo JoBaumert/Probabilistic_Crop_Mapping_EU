@@ -74,7 +74,8 @@ nuts_allyear_df = nuts_allyear_df[
 ]
 nuts_allyear_gdf = gpd.GeoDataFrame(nuts_allyear_df)
 
-
+#%%
+nuts_allyear_df[(nuts_allyear_df["CNTR_CODE"]=="HR")]
 #%%
 # export data
 Path(nuts_output_path).mkdir(parents=True, exist_ok=True)
@@ -82,5 +83,3 @@ nuts_allyear_df.to_csv(nuts_output_path + "NUTS_all_regions_all_years.csv")
 nuts_allyear_gdf.to_file(nuts_output_path + "NUTS_all_regions_all_years.shp")
 print("successfully completed task")
 #%%
-
-# %%

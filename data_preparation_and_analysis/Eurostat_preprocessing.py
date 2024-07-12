@@ -78,7 +78,6 @@ country_codes_relevant = np.array(countries["country_code"])
 #import NUTS information
 nuts_allyear_df=pd.read_csv(nuts_path)
 
-
 # ===============================================================================================================================================
 # %%
 """
@@ -159,8 +158,12 @@ crop_conversion_eurostat, crop_conversion_DGPCM = np.array(
 area.rename(columns={"crops": "CROPS"}, inplace=True)
 main_area.rename(columns={"crops": "CROPS"}, inplace=True)
 #%%
+nuts_allyear_df
+#%%
+#get relevant crop area information from Eurostat input files for each NUTS region in every year
 df_all_aggregates = pd.DataFrame()
 for year in selected_years:
+    print(year)
     all_nuts = np.array(
         nuts_allyear_df["NUTS_ID"].iloc[np.where(nuts_allyear_df["year"] == year)]
     )
@@ -193,10 +196,19 @@ for year in selected_years:
         df_all_aggregates = pd.concat((df_all_aggregates, df))
 
 #%%
+data_2010_nuts3_raw
+#%%
+a=None
+if type(a)==pd.DataFrame:
+    print("yxa")
+#%%
+if data_2010_nuts3_raw:
+    print("fds")
+#%%
 """
 if 2010 is among the selected years and if the NUTS3 level info is available,
 import and preprocess information on crop production at NUTS3 level for 2010"""
-if (2010 in selected_years)&(data_2010_nuts3_raw!=None):
+if (2010 in selected_years)&(type(data_2010_nuts3_raw)==pd.DataFrame):
     data_2010_nuts3 = data_2010_nuts3_raw.iloc[
         2:, 8:
     ]  # get only rows and columns that contain information
@@ -266,7 +278,6 @@ df_cropdata_selected_years = df_cropdata_selected_years[
         np.isin(df_cropdata_selected_years["country"], country_codes_relevant).astype(int)
     )[0]
 ]
-#%%
 
 #%%
 # export the compiled Eurostat cropdata
@@ -291,6 +302,7 @@ UAA = pd.read_csv(UAA_path)
 # listed only at a higher level of aggregation
 all_UAA = {"NUTS_ID": [], "year": [], "UAA": []}
 for year in selected_years:
+    print(year)
     all_nuts = np.array(
         nuts_allyear_df["NUTS_ID"].iloc[np.where(nuts_allyear_df["year"] == year)]
     )
@@ -303,7 +315,7 @@ for year in selected_years:
                     (main_area["TIME_PERIOD"] == year)
                     & (main_area["geo"] == nuts)
                     & (main_area["CROPS"] == "UAA")
-                ]["float_value"]
+                ]["float_value"].iloc[0]
             )
 
         except:
@@ -312,12 +324,11 @@ for year in selected_years:
 
 all_UAA_df = pd.DataFrame(all_UAA)
 
-
 #%%
 """ if 2010 is among the selected years and the NUTS3 level information available,
  compile the information at NUTS3 level for 2010
 """
-if (2010 in selected_years)&(data_2010_nuts3_raw!=None):
+if (2010 in selected_years)&(type(data_2010_nuts3_raw)==pd.DataFrame):
     UAA_2010_nuts3 = pd.DataFrame(
         {
             "NUTS_ID": data_2010_nuts3_raw.iloc[3:, 3],

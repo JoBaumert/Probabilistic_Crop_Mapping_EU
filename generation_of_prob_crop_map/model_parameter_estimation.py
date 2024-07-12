@@ -33,7 +33,7 @@ sys.path.append(
     str(Path(Path(os.path.abspath(__file__)).parents[0]))+"/modules/"
 )
 print(str(Path(Path(os.path.abspath(__file__)).parents[0]))+"/modules/")
-import functions_for_estimation as fufore
+import modules.functions_for_estimation as fufore
 #%%
 data_main_path=open(str(Path(Path(os.path.abspath(__file__)).parents[1])/"data_main_path.txt"))
 data_main_path=data_main_path.read()[:-1]
@@ -111,6 +111,8 @@ for country in country_codes_relevant:
         data=pd.read_csv(LUCAS_feature_path+country+"/"+feature+".csv")
         feature_df=pd.merge(feature_df,data,how='left',on=['year','id','point_id'])
     #%%
+    feature_df
+    #%%
 
     selected_feature_df=feature_df[selected_columns]
     years,index=np.unique(selected_feature_df['year'], return_inverse=True)
@@ -147,6 +149,7 @@ for country in country_codes_relevant:
 
     print('Max values for each column:')
     print(selected_feature_df.max())
+    
 
     #%%
     #if all nan values are discarded, how many observations would remain?
@@ -166,7 +169,7 @@ for country in country_codes_relevant:
     selected_feature_df=selected_feature_df[selected_feature_df['lc1'].isin(list(cropname_conversion_dict.keys()))]
     selected_feature_df['DGPCM_code']=selected_feature_df['lc1'].apply(lambda x: cropname_conversion_dict[x])
     #%%
-    selected_feature_df
+    selected_features_final
     #%%
     #LUCAS_selected[LUCAS_selected['lu1']=='U112']
 

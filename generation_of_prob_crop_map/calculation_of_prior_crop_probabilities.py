@@ -195,6 +195,9 @@ if __name__ == "__main__":
         reference_crop_estimation = all_crops[
             np.where(np.isin(all_crops, np.array(params.columns), invert=True))[0][0]
         ]
+
+        
+        
         for nuts in relevant_nuts_regs:
             # if country=="EL":
             #    nuts="GR"+nuts[-1:]
@@ -305,6 +308,17 @@ if __name__ == "__main__":
             """PARAMETER PREPARATION"""
             randomly_selected_params = fufop.parameter_preparation(
                 params, covariance, len(considered_crops)
+            )
+
+
+            
+            all_probas = fufop.probability_calculation(
+                randomly_selected_params,
+                X_statsmodel,
+                len(considered_crops),
+                X_statsmodel.shape[1],
+                sample_params=True,
+                nofreps=20,
             )
 
             #%%

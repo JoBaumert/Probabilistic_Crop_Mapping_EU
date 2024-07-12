@@ -61,7 +61,6 @@ excluded_NUTS_regions = np.array(excluded_NUTS_regions["excluded NUTS1 regions"]
 
 # load data on NUTS regions in a year
 NUTS_data = pd.read_csv(nuts_path)
-#%%
 
 #%%
 cropdata_raw = pd.read_csv(preprocessed_eurostat_path+"Eurostat_cropdata_compiled_"+str(selected_years.min())+str(selected_years.max())+"_DGPCMcodes.csv")
@@ -102,7 +101,8 @@ cropdata_raw = pd.merge(
     on=["country", "NUTS_ID", "year", "crop"],
 )
 cropdata_raw.fillna(0, inplace=True)
-
+#%%
+cropdata_raw[cropdata_raw["NUTS_ID"]=="AT112"]
 
 #%%
 cropdata_corrected_1 = cropdata_raw.copy()
@@ -153,7 +153,8 @@ cropdata_corrected_1 = cropdata_corrected_1.iloc[
         == 0
     )[0]
 ]
-
+#%%
+cropdata_corrected_1[cropdata_corrected_1["NUTS_LEVL"]==3]
 #%%
 """CORRECTION OF OBVIOUS DATA ERRORS"""
 """some data entries don't make sense at all (for example, no grass for UK in 2020)
@@ -267,6 +268,7 @@ for country in country_codes_relevant:
         corrected_df.insert(1, "year", np.repeat(year, len(corrected_df)))
         cropdata_corrected_3 = pd.concat((cropdata_corrected_3, corrected_df))
 
+
 #%%
 """UAA"""
 
@@ -301,42 +303,15 @@ UAA_corrected1 = pd.merge(
 UAA_corrected1["NUTS_LEVL"] = np.vectorize(len)(UAA_corrected1["NUTS_ID"]) - 2
 
 #%%
-"""
-for some regions in Italy, both the UAA and the crop area are erroneously stated by Eurostat
-to be 0 in 2011,2012, 2013, and 2014. We replace the nan value for the UAA in these years by
-the mean for the respective regions in all other years
-"""
-invalid_regions_italy = [
-    "ITH1",
-    "ITH2",
-    "ITH3",
-    "ITH4",
-    "ITH5",
-    "ITI1",
-    "ITI2",
-    "ITI3",
-    "ITI4",
-]
-invalid_years_italy = [2010, 2011, 2012, 2013, 2014]
+#replace Nan values by the mean of the respective UAA region in all years for which the value is not nan
+UAA_corrected1_mean=UAA_corrected1[["NUTS_ID","UAA"]].groupby("NUTS_ID").mean().rename(columns={"UAA":"mean_UAA"})
+UAA_corrected1=pd.merge(UAA_corrected1,UAA_corrected1_mean,how="left",on="NUTS_ID")
+UAA_corrected1_array=np.array(UAA_corrected1["UAA"])
+UAA_corrected1_array[np.where(np.isnan(UAA_corrected1_array))[0]]=np.array(UAA_corrected1["mean_UAA"])[np.where(np.isnan(UAA_corrected1_array))[0]]
+UAA_corrected1["UAA"]=UAA_corrected1_array
 
-if ("IT" in country_codes_relevant) & (len(np.where(np.isin(selected_years,invalid_years_italy))[0])>0): 
-    UAA_corrected1_array = np.array(UAA_corrected1["UAA"])
+UAA_corrected1.drop("mean_UAA",axis=1,inplace=True)
 
-
-    for region in invalid_regions_italy:
-        # calculate mean for those years for which the UAA is not nan
-        relevant_average_UAA = np.nanmean(
-            UAA_corrected1_array[np.where(UAA_corrected1["NUTS_ID"] == region)[0]]
-        )
-        for year in invalid_years_italy:
-            index_replaced_value = np.where(
-                (UAA_corrected1["year"] == year) & (UAA_corrected1["NUTS_ID"] == region)
-            )[0]
-            UAA_corrected1_array[index_replaced_value] = relevant_average_UAA
-
-
-    UAA_corrected1.drop(columns="UAA", inplace=True)
-    UAA_corrected1["UAA"] = UAA_corrected1_array
 
 #%%
 #only keept UAA information at the lowest administrative levle available (at higher levels, it is just the sum of those lower levels)
@@ -354,8 +329,8 @@ for country in country_codes_relevant:
         ]
         UAA_corrected2 = pd.concat((UAA_corrected2, UAA_corrected1_selection))
 
-
 #%%
+
 
 """ ensure that the UAA is for every region, year and country at least as large as the required area.
 Besides, ensure that the UAA at one level is for every country, year and region equal to the sum of the lower level UAAs
@@ -539,7 +514,9 @@ for i in range(len(comparison_national_UAA_and_croparea)):
 cropdata_corrected_4 = cropdata_corrected_3.copy()
 cropdata_corrected_4.drop(columns="area", inplace=True)
 cropdata_corrected_4["area"] = cropdata_corrected_3_array
-# %%
+
+
+#%%
 #Exort data
 print("export data...")
 Path(output_path).mkdir(parents=True, exist_ok=True)
@@ -677,7 +654,8 @@ crop_consistency_df["2level_information_share"]=(crop_consistency_df["2level_val
 crop_consistency_df["1level_information_share"]=(crop_consistency_df["1level_value"]-crop_consistency_df["2level_value"])/crop_consistency_df["0level_value"]
 crop_consistency_df["0level_information_share"]=(crop_consistency_df["0level_value"]-crop_consistency_df["1level_value"])/crop_consistency_df["0level_value"]
 
-
+#%%
+crop_consistency_df
 
 #%%
 crop_consistency_df.to_csv(output_path+"crop_levels_selected_countries_"+str(selected_years.min())+str(selected_years.max())+".csv")

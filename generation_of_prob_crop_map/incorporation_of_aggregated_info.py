@@ -650,7 +650,7 @@ crop_levels
 #%%
 
 if __name__ == "__main__":
-    for c in range(len(country_year_list[0]))[:1]:
+    for c in range(len(country_year_list[0])):
         country = country_year_list[0][c]
         year = country_year_list[1][c]
         print(f"starting optimization for {country} in {year}...")
@@ -659,12 +659,6 @@ if __name__ == "__main__":
 
         priorprob_path = (
             prior_crop_probability_estimates_path + country + "/"
-        )
-        cellsize_input_path = (
-            intermediary_data_path
-            + "/Zonal_Stats/"
-            + country
-            + "/inferred_UAA/1kmgrid_"
         )
  
         cell_weight_path = (

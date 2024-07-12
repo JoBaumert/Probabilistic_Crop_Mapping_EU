@@ -26,6 +26,7 @@ from pathlib import Path
 
 import modules.functions_for_data_preparation as ffd
 
+#%%
 data_main_path=open(str(Path(Path(os.path.abspath(__file__)).parents[1])/"data_main_path.txt"))
 data_main_path=data_main_path.read()[:-1]
 
@@ -60,6 +61,7 @@ out_path = zonal_stats_path
 
 # assign user specific parameters and values
 
+"""
 find_elevation = True
 find_slope_and_aspect = True
 find_temperature = True
@@ -72,6 +74,21 @@ find_silt_content = True
 find_awc = True
 find_bulk_density = True
 find_latitude4326 = True
+find_corine_class=True
+calculate_UAA=True
+"""
+find_elevation = False
+find_slope_and_aspect = False
+find_temperature = False
+find_veg_period = False
+find_precipitation = False
+find_sand_content = False
+find_clay_content = False
+find_coarse_fragments = False
+find_silt_content = False
+find_awc = False
+find_bulk_density = False
+find_latitude4326 = False
 find_corine_class=True
 calculate_UAA=True
 
@@ -108,7 +125,8 @@ climate_mean_lastyear = selected_years.max()-1
 
 
 #%%
-for country in country_codes_relevant[:1]:
+for country in country_codes_relevant:
+  
     print(country)
 
 
@@ -135,7 +153,7 @@ for country in country_codes_relevant[:1]:
 
     zip=zipfile.ZipFile(grid_1km_path_country)
     for file in zip.namelist():
-        if file[-3:]=="shp":
+        if (file[-3:]=="shp")&(file[3:7]=="1km"):
             break
 
 
@@ -172,7 +190,9 @@ for country in country_codes_relevant[:1]:
             precipitation_data["COUNTRY"] == country
         ]
 
-    # %%
+
+
+    #%%
     """merge data"""
     if __name__ == "__main__":
 
@@ -288,7 +308,7 @@ for country in country_codes_relevant[:1]:
                     print(
                         f"file '{out_path}/{country}/elevation/1kmgrid_{NUTS1}.csv' was created successfully"
                     )
-#%%
+
                 if (find_temperature) or (find_veg_period) or (find_precipitation):
                     """CLIMATE"""
                     cellcode1km_gridno25km_df = ffd.grid25km_to_grid1km(
@@ -748,6 +768,7 @@ for country in country_codes_relevant[:1]:
                         )
        
 
+
                         """AGRICULTURAL SHARE"""
 
                         # agricultural_classes=[12,13,14,15,16,17,18,19,20,21,22,26] <-- this was used previously but then discarded
@@ -914,5 +935,11 @@ for country in country_codes_relevant[:1]:
                     )
 
 # %%
-
+agshare_grid_1km_selected
+# %%
+corine_class_grid_df
+# %%
+CORINE_CLASS
+# %%
+grid_1km_selected
 # %%
