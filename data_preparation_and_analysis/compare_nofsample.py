@@ -2,6 +2,7 @@
 import rasterio as rio
 from rasterio import features
 from rasterio.plot import show
+from rasterio.merge import merge
 from rasterio.transform import from_gcps
 from rasterio.control import GroundControlPoint as GCP
 from rasterio.windows import from_bounds
@@ -186,3 +187,5 @@ plt.plot(lower_bound_500samples_quantile_mean,color="orange")
 plt.plot(lower_bound_100samples_quantile_mean,color="red")
 plt.plot(upper_bound_500samples_quantile_mean,color="lightblue")
 plt.plot(upper_bound_100samples_quantile_mean)
+
+#%%

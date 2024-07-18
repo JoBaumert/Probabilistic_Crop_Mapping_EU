@@ -38,8 +38,13 @@ Simulated_cropshares_path=(data_main_path+"Results/Simulated_consistent_crop_sha
 countries = pd.read_excel(parameter_path, sheet_name="selected_countries")
 country_codes_relevant = np.array(countries["country_code"])
 nuts_info = pd.read_excel(parameter_path, sheet_name="NUTS")
-all_years = np.array(nuts_info["crop_map_year"])
-# %%
+all_years = pd.read_excel(parameter_path, sheet_name="selected_years")
+all_years=np.array(all_years["years"])
+#%%
+
+
+
+#%%
 def generate_random_results(p_matrix,postsampling_reps,n_of_fields_array):
     p_matrix_corrected = np.array(
         [p_vector / (p_vector.sum() + 0.0001) for p_vector in p_matrix]
@@ -87,6 +92,9 @@ if __name__ == "__main__":
 
         for year in all_years:
             print("---"+country+"--"+str(year)+"---")
+            if os.path.exists(Simulated_cropshares_path+country+"/"+country+str(year)+"simulated_cropshare_"+str(postsampling_reps)+"reps_int.tif"):
+                print("file already exists...")
+                continue
             posterior_probas=pd.read_parquet(Posterior_probability_path+country+"/"
                                             +country+str(year)+"entire_country")
             print("successfully imported posterior probabilities...")
@@ -207,6 +215,7 @@ if __name__ == "__main__":
           
             refactored_data=factor.reshape(-1,1,1)*resulting_matrix
 
+            Path(Simulated_cropshares_path+country+"/").mkdir(parents=True, exist_ok=True)
             with rio.open(Simulated_cropshares_path+country+"/"+country+str(year)+"simulated_cropshare_"+str(postsampling_reps)+"reps_int.tif", 'w',
                         width=int(width),height=int(height),transform=transform,count=refactored_data.shape[0],dtype=rio.int16,crs="EPSG:3035") as dst:
                 dst.write(refactored_data.astype(rio.int16))
