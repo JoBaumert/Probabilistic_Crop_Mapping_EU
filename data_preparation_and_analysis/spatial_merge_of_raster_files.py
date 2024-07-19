@@ -23,7 +23,8 @@ postsampling_reps = 10
 
 #%%
 Simulated_cropshares_path=(data_main_path+"Results/Simulated_consistent_crop_shares/")
-for year in range(2010,2020):
+for year in range(2012,2016):
+    #year=2020
     print(year)
 
     country_data=[]
@@ -35,7 +36,9 @@ for year in range(2010,2020):
     print("merge raster files...")
     country_data_map,out_trans=merge(country_data)
 
-    country_data_map_expected_shares=country_data_map[2:30]
+    country_data_map_expected_shares=country_data_map[:30]
+    #delete band with n of fields
+    country_data_map_expected_shares=np.delete(country_data_map_expected_shares,1,axis=0)
 
     print("export rsaterfile expected shares EU...")
     with rio.open(Simulated_cropshares_path+"EU/expected_crop_share_entire_EU_"+str(year)+".tif", 'w',
@@ -49,14 +52,16 @@ for year in range(2010,2020):
     bands=pd.read_csv(Simulated_cropshares_path+country+"/"+country+str(year)+"simulated_cropshare_"+str(postsampling_reps)+"reps_bands.csv")
 
 
+
     all_crops=[]
     for i in np.char.split(np.array(bands["name"].iloc[2:30]).astype(str)):
+        #crop name starts after 15th character
         all_crops.append(i[0][15:])
 
+    testcrops=["GRAS","LMAIZ","SWHE"]
+    #for c,crop in enumerate(all_crops):
+    for crop in testcrops:
 
-    for c,crop in enumerate(all_crops):
-        if crop=="APPL+OFRU":
-            continue
         print(f"calculating 90% hdi for {crop}")
         relevant_bands=country_data_map[np.where(np.char.find(np.array(bands["name"]).astype(str),crop)==0)[0]]
         hdis=az.hdi(np.expand_dims(relevant_bands,0),hdi_prob=0.9).T
