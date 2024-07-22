@@ -23,7 +23,7 @@ postsampling_reps = 10
 
 #%%
 Simulated_cropshares_path=(data_main_path+"Results/Simulated_consistent_crop_shares/")
-for year in range(2012,2016):
+for year in range(2013,2016):
     #year=2020
     print(year)
 
@@ -41,11 +41,12 @@ for year in range(2012,2016):
     country_data_map_expected_shares=np.delete(country_data_map_expected_shares,1,axis=0)
 
     print("export rsaterfile expected shares EU...")
+    """
     with rio.open(Simulated_cropshares_path+"EU/expected_crop_share_entire_EU_"+str(year)+".tif", 'w',
                 width=int(country_data_map_expected_shares.shape[2]),height=int(country_data_map_expected_shares.shape[1]),
                 transform=out_trans,count=country_data_map_expected_shares.shape[0],dtype=rio.int16,crs="EPSG:3035") as dst:
         dst.write(country_data_map_expected_shares.astype(rio.int16))
-
+    """
     del country_data_map_expected_shares
     gc.collect()
 
@@ -59,9 +60,10 @@ for year in range(2012,2016):
         all_crops.append(i[0][15:])
 
     testcrops=["GRAS","LMAIZ","SWHE"]
-    #for c,crop in enumerate(all_crops):
-    for crop in testcrops:
-
+    for c,crop in enumerate(all_crops):
+    #for crop in testcrops:
+        if crop in testcrops:
+            continue
         print(f"calculating 90% hdi for {crop}")
         relevant_bands=country_data_map[np.where(np.char.find(np.array(bands["name"]).astype(str),crop)==0)[0]]
         hdis=az.hdi(np.expand_dims(relevant_bands,0),hdi_prob=0.9).T
