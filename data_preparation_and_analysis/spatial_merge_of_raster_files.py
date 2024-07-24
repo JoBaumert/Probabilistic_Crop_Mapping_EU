@@ -20,9 +20,9 @@ import arviz as az
 data_main_path=open(str(Path(Path(os.path.abspath(__file__)).parents[1])/"data_main_path.txt"))
 data_main_path=data_main_path.read()[:-1]
 postsampling_reps = 10 
-
-#%%
 Simulated_cropshares_path=(data_main_path+"Results/Simulated_consistent_crop_shares/")
+#%%
+
 for year in range(2013,2016):
     #year=2020
     print(year)
@@ -77,3 +77,28 @@ for year in range(2013,2016):
     del country_data_map
     gc.collect()
 #%%
+"""merge all HDI files to one average HDI-width file"""
+#should take 4- minutes
+all_HDIs_list=[]
+for file in os.listdir(Simulated_cropshares_path+"HDIs/"):
+    all_HDIs_list.append(rio.open(Simulated_cropshares_path+"HDIs/"+file).read())
+
+# %%
+transform=rio.open(Simulated_cropshares_path+"HDIs/"+file).transform
+#%%
+all_HDIs_array=np.array(all_HDIs_list)
+# %%
+HDI_width=all_HDIs_array.transpose(1,0,2,3)[1]-all_HDIs_array.transpose(1,0,2,3)[0]
+# %%
+mean_HDI_width=HDI_width.mean(axis=0)
+# %%
+show(mean_HDI_width)
+# %%
+plt.hist(mean_HDI_width[np.where(mean_HDI_width>0)].flatten(),bins=50)
+
+# %%
+with rio.open(Simulated_cropshares_path+"HDIs/mean_HDI_width_all_crops_all_years.tif", 'w',
+            width=int(mean_HDI_width.shape[1]),height=int(mean_HDI_width.shape[0]),
+            transform=transform,count=1,dtype=rio.int16,crs="EPSG:3035") as dst:
+    dst.write(np.expand_dims(mean_HDI_width,0).astype(rio.int16))
+# %%

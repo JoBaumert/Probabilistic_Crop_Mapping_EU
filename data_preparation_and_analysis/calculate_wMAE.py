@@ -74,9 +74,13 @@ nuts_input = pd.read_csv(nuts_path+".csv")
 posterior_probabilities=pd.read_parquet(posterior_probability_path+country+"/"+country+str(year)+"entire_country")
 posterior_probabilities_relevant=posterior_probabilities[posterior_probabilities["beta"]==beta]
 #%%
-nuts_regions_relevant = nuts_input[
-    (nuts_input["CNTR_CODE"] == country) & (nuts_input["year"] == year)
-]
+try:
+    nuts_regions_relevant = nuts_input[
+        (nuts_input["CNTR_CODE"] == country) & (nuts_input["year"] == year)
+    ]
+except:
+    nuts_regions_relevant = nuts_input[
+        (nuts_input["CNTR_CODE"] == country)  ]
 
 nuts_regions_relevant = nuts_regions_relevant.iloc[
     np.where(
@@ -87,13 +91,11 @@ nuts_regions_relevant = nuts_regions_relevant.iloc[
         == 0
     )[0]
 ]
+
 #%%
 selected_nuts2_regs = np.sort(nuts_regions_relevant[nuts_regions_relevant["LEVL_CODE"]==2]["NUTS_ID"])
 selected_nuts1_regs=selected_nuts2_regs.astype("U3")
 
-
-
-#%%
 
 #%%
 
@@ -103,8 +105,11 @@ prev_nuts1=""
 for nuts2 in selected_nuts2_regs:
     
     if nuts2[:3]!=prev_nuts1:
-        eucm=pd.read_csv(RSCM_path+country+"/"+nuts2[:3]+"_1km_reference_grid.csv")
-        prev_nuts1=nuts2[:3]
+        try:
+            eucm=pd.read_csv(RSCM_path+country+"/"+nuts2[:3]+"_1km_reference_grid.csv")
+            prev_nuts1=nuts2[:3]
+        except:
+            continue
 
     print(f"calculating region {nuts2}")
     true_shares = pd.read_csv(IACS_path+nuts2+"_"+str(year)+".csv")
@@ -234,8 +239,11 @@ prev_nuts1=""
 for nuts2 in selected_nuts2_regs:
     
     if nuts2[:3]!=prev_nuts1:
-        eucm=pd.read_csv(RSCM_path+country+"/"+nuts2[:3]+"_1km_reference_grid.csv")
-        prev_nuts1=nuts2[:3]
+        try:
+            eucm=pd.read_csv(RSCM_path+country+"/"+nuts2[:3]+"_1km_reference_grid.csv")
+            prev_nuts1=nuts2[:3]
+        except:
+            continue
 
     print(f"calculating region {nuts2}")
     true_shares = pd.read_csv(IACS_path+nuts2+"_"+str(year)+".csv")
@@ -405,6 +413,7 @@ all_pearsonr_df_comparison_10km.to_csv(output_path+country+str(year)+"_pearsonr_
 selected_crops=["GRAS","SWHE","OFAR","LMAIZ","BARL","LRAPE","SUNF","OCER","DWHE","POTA","OATS","SOYA","ROOF","RYEM","PARI"]
 
 #%%
+#import calculated wMAE 
 all_pearsonr_and_wMAE_df_comparison_1km=pd.read_csv(output_path+country+str(year)+"_pearsonr_and_wMAE_comparison_DGPCM_RSCM_1km.csv")
 all_pearsonr_and_wMAE_df_comparison_10km=pd.read_csv(output_path+country+str(year)+"_pearsonr_and_wMAE_comparison_DGPCM_RSCM_10km.csv")
 
@@ -450,8 +459,8 @@ plt.title("weighted Mean Absolute Error - 1km resolution - France 2018")
 plt.ylim(0,0.23)
 plt.xticks(rotation=90)
 sns.move_legend(ax, "lower center", bbox_to_anchor=(.5,-0.3), ncol=2, title=None, frameon=False)
-plt.savefig(output_path+"wMAE_1km_boxplot.png")
-plt.close()
+#plt.savefig(output_path+"wMAE_1km_boxplot.png")
+#plt.close()
 #%%
 ax=sns.boxplot(data=all_wMAE_df_melted_10km,x="crop",y="wMAE",hue="crop map")
 #plt.hlines(xmin=-0.5,xmax=len(selected_crops)-0.5,y=0,linestyles="dotted",color="black")
@@ -460,10 +469,10 @@ plt.title("weighted Mean Absolute Error - 10km resolution - France 2018")
 plt.ylim(0,0.23)
 plt.xticks(rotation=90)
 sns.move_legend(ax, "lower center", bbox_to_anchor=(.5,-0.3), ncol=2, title=None, frameon=False)
-plt.savefig(output_path+"wMAE_10km_boxplot.png")
-plt.close()
+#plt.savefig(output_path+"wMAE_10km_boxplot.png")
+#plt.close()
 # %%
-ax=sns.boxplot(data=all_wRMSE_df_melted_10km,x="crop",y="wRMSE",hue="crop map")
+ax=sns.boxplot(data=all_wRMSE_df_melted_1km,x="crop",y="wRMSE",hue="crop map")
 #plt.hlines(xmin=-0.5,xmax=len(selected_crops)-0.5,y=0,linestyles="dotted",color="black")
 plt.ylabel("weighted Root Mean Squared Error")
 plt.title("weighted Root Mean Squared Error - 10km resolution - France 2018")
@@ -478,3 +487,107 @@ plt.title("Pearson r - 10km resolution - France 2018")
 plt.ylim(-0.35,1)
 plt.xticks(rotation=90)
 sns.move_legend(ax, "lower center", bbox_to_anchor=(.5,-0.3), ncol=2, title=None, frameon=False)
+
+# %%
+
+# %%
+"""LOOK IN MORE DETAIL AT AMAE AND DIFFERENCES BETWEEN REGIONS"""
+wMAE_1km=all_pearsonr_and_wMAE_df_comparison_1km[["NUTS_ID","crop","wMAE_DGPCM_truth","wMAE_RSCM_truth"]]
+# %%
+NUTS_gpd=gpd.read_file(raw_data_path+"NUTS/NUTS_RG_01M_2016_3035.shp.zip!/NUTS_RG_01M_2016_3035.shp")
+#%%
+
+DGPCM_bt_RSCM_df=pd.DataFrame()
+for crop in selected_crops:
+    
+    selection=wMAE_1km[wMAE_1km["crop"]==crop].drop_duplicates()
+    max=np.max([selection.wMAE_DGPCM_truth.max(),selection.wMAE_RSCM_truth.max()])
+    plt.scatter(x=selection.wMAE_DGPCM_truth,y=selection.wMAE_RSCM_truth)
+    plt.plot([0,max],[0,max])
+    selection["DGPCM<RSCM"]=np.where(selection.wMAE_DGPCM_truth<selection.wMAE_RSCM_truth,1,0)
+    DGPCM_bt_RSCM_df=pd.concat((DGPCM_bt_RSCM_df,selection[["NUTS_ID","crop","DGPCM<RSCM"]]))
+    plt.xlabel("wMAE_DGPCM")
+    plt.ylabel("wMAE_RSCM")
+    plt.title(crop)
+plt.show()
+# %%
+
+DGPCM_bt_RSCM_df_regs=DGPCM_bt_RSCM_df[["NUTS_ID","DGPCM<RSCM"]].groupby("NUTS_ID").sum().reset_index()
+
+#%%
+DGPCM_bt_RSCM_df_regs=pd.merge(DGPCM_bt_RSCM_df_regs,
+                               NUTS_gpd[NUTS_gpd["NUTS_ID"].isin(DGPCM_bt_RSCM_df_regs.NUTS_ID)][["NUTS_ID","geometry"]],
+                               how="left",
+                               on="NUTS_ID")
+
+#%%
+gpd.GeoDataFrame(DGPCM_bt_RSCM_df_regs).plot(column="DGPCM<RSCM",cmap="Blues")
+# %%
+
+
+"""COMPARE SHARE OF CROPS IN THOSE REGIONS WHERE dgpcm IS BETTER VS THOSE WHERE RSCM IS BETTER"""
+cropdata=pd.read_csv("/home/baumert/fdiexchange/baumert/project1/Intermediary Data_copied_from_server/Eurostat/optimization_constraints/cropdata_20102020_final.csv")
+# %%
+cropdata_selection=cropdata[(cropdata["country"]==country)&(cropdata["year"]==year)]
+cropdata_selection=cropdata_selection[["NUTS_ID","crop","area"]]
+# %%
+crop_quantities_region=cropdata_selection[["NUTS_ID","area"]].groupby("NUTS_ID").sum().reset_index()
+crop_quantities_region=pd.merge(cropdata_selection,crop_quantities_region,how="left",on=["NUTS_ID"])
+crop_quantities_region["crop_share"]=crop_quantities_region["area_x"]/crop_quantities_region["area_y"]
+
+# %%
+DGPCM_bt_RSCM_df=pd.merge(DGPCM_bt_RSCM_df,crop_quantities_region[["NUTS_ID","crop","crop_share"]],
+                          how="left",on=["NUTS_ID","crop"])
+# %%
+crop_quantities_region
+#%%
+n_of_NUTS2=len(DGPCM_bt_RSCM_df[DGPCM_bt_RSCM_df["crop_share"]>0]["NUTS_ID"].value_counts())
+share_regs_positive_cropshare=[]
+share_regs_positive_cropshare_DGPCM_better=[]
+mean_share_of_crop_where_DGPCM_better=[]
+mean_share_of_crop_where_RSCM_better=[]
+mean_deviation_from_national_mean_DGPCM_better=[]
+mean_deviation_from_national_mean_RSCM_better=[]
+national_crop_share_list=[]
+for crop in selected_crops:
+    national_crop_share=crop_quantities_region[(crop_quantities_region["NUTS_ID"]=="FR")&(crop_quantities_region["crop"]==crop)].crop_share.iloc[0]
+    selection=DGPCM_bt_RSCM_df[(DGPCM_bt_RSCM_df["crop"]==crop)&(DGPCM_bt_RSCM_df["crop_share"]>0)]
+    selection["deviation_mean_cropshare"]=abs(selection.crop_share-national_crop_share)
+    share_regs_positive_cropshare.append(len(selection)/(n_of_NUTS2))
+    share_regs_positive_cropshare_DGPCM_better.append(selection["DGPCM<RSCM"].sum()/len(selection))
+    if len(selection[["DGPCM<RSCM","crop_share"]].groupby("DGPCM<RSCM").mean().reset_index())>1: #if there is a region at all where DGPCM is better
+        mean_share_of_crop_where_DGPCM_better.append(selection[["DGPCM<RSCM","crop_share"]].groupby("DGPCM<RSCM").mean().reset_index().iloc[1][1])
+        mean_share_of_crop_where_RSCM_better.append(selection[["DGPCM<RSCM","crop_share"]].groupby("DGPCM<RSCM").mean().reset_index().iloc[0][1])
+        mean_deviation_from_national_mean_DGPCM_better.append(selection[["DGPCM<RSCM","deviation_mean_cropshare"]].groupby("DGPCM<RSCM").mean().reset_index().iloc[1][1])
+        mean_deviation_from_national_mean_RSCM_better.append(selection[["DGPCM<RSCM","deviation_mean_cropshare"]].groupby("DGPCM<RSCM").mean().reset_index().iloc[0][1])
+    else:
+        mean_share_of_crop_where_DGPCM_better.append(np.nan)
+        mean_share_of_crop_where_RSCM_better.append(selection[["DGPCM<RSCM","crop_share"]].groupby("DGPCM<RSCM").mean().reset_index().iloc[0][1])
+        mean_deviation_from_national_mean_DGPCM_better.append(np.nan)
+        mean_deviation_from_national_mean_RSCM_better.append(selection[["DGPCM<RSCM","deviation_mean_cropshare"]].groupby("DGPCM<RSCM").mean().reset_index().iloc[0][1])
+    national_crop_share_list.append(national_crop_share)
+# %%
+pd.DataFrame({
+    "crop":selected_crops,
+    "share_regs_positive_cropshare":share_regs_positive_cropshare,
+    "share_regs_positive_cropshare_DGPCM_better":share_regs_positive_cropshare_DGPCM_better,
+    "mean_share_of_crop_where_DGPCM_better":mean_share_of_crop_where_DGPCM_better,
+    "mean_share_of_crop_where_RSCM_better":mean_share_of_crop_where_RSCM_better,
+    "mean_deviation_from_national_mean_DGPCM_better":mean_deviation_from_national_mean_DGPCM_better,
+    "mean_deviation_from_national_mean_RSCM_better":mean_deviation_from_national_mean_RSCM_better,
+    "national_crop_share":national_crop_share_list
+}).to_csv(output_path+"regionalized_comparison_between_DGPCM_and_RSCM_allcrops.csv")
+# %%
+DGPCM_bt_RSCM_df[["crop","crop_share"]].groupby("crop").mean().r
+# %%
+"""COMPARE DISTRIBUTION OF TRUE CROP SHARES WITH ESTIMATEED DISTRIBUTION"""
+all_true_shares_df=pd.DataFrame()
+for nuts2 in np.unique(selected_nuts2_regs)[:1]:
+    true_shares = pd.read_csv(IACS_path+nuts2+"_"+str(year)+".csv")
+# %%
+a=true_shares[["CAPRI_code","cropshare_true"]]
+# %%
+crop="GRAS"
+plt.hist(a[a["CAPRI_code"]==crop].cropshare_true,bins=10,density=True)
+plt.hist(posterior_probabilities_relevant[posterior_probabilities_relevant["crop"]==crop].posterior_probability,bins=10,density=True,alpha=0.7)
+# %%
