@@ -38,14 +38,21 @@ true_shares_df=pd.DataFrame()
 for file in os.listdir(IACS_path):
     if file[12:14]=="FR":
         true_shares=pd.read_csv(IACS_path+file)
-        true_shares_df=pd.concat((true_shares_df,true_shares[["CAPRI_code","cropshare_true"]]))
-# %%
+        true_shares_df=pd.concat((true_shares_df,true_shares[["CAPRI_code","cropshare_true","area_in_cell"]]))
+
+#%%
 true_shares_df.dropna(inplace=True)
 #%%
-
+true_shares_df["crop_area_ha"]=true_shares_df.area_in_cell/10000
+#%%
 posterior_probabilities=pd.read_parquet(posterior_probability_path+"FR/FR2018entire_country")
 posterior_probabilities_relevant=posterior_probabilities[posterior_probabilities["beta"]==0]
-
+#%%
+#true_shares_df=pd.merge(true_shares_df,posterior_probabilities_relevant[["CELLCODE","weight"]],how="left",on="CELLCODE")
+#true_shares_df["crop_area_ha"]=true_shares_df["cropshare_true"]*true_shares_df["weight"]
+#true_shares_df.dropna(inplace=True)
+#%%
+posterior_probabilities_relevant["posterior_crop_area_ha"]=posterior_probabilities_relevant["posterior_probability"]*posterior_probabilities_relevant["weight"]
 # %%
 selected_crops=["GRAS","SWHE","OFAR","LMAIZ","BARL","LRAPE","SUNF","OCER","DWHE","POTA","OATS","SOYA","ROOF","RYEM","PARI"]
 """
@@ -55,37 +62,10 @@ for c,crop in enumerate(selected_crops[:3]):
     density_all_crops[c]=density
 
 """
+#%%
+posterior_probabilities_relevant=posterior_probabilities_relevant[posterior_probabilities_relevant["posterior_crop_area_ha"]<=100]
 
 # %%
-step=0.05
-bins=np.arange(0,1+step,step)
-for crop in selected_crops:
-    plt.hist(true_shares_df[true_shares_df["CAPRI_code"]==crop].cropshare_true,density=True,bins=bins)
-    plt.hist(posterior_probabilities_relevant[posterior_probabilities_relevant["crop"]==crop].posterior_probability,density=True,bins=bins,alpha=0.6,color="orange")
-    plt.title(crop)
-    plt.show()
-# %%
-
-# %%
-for crop in selected_crops:
-    true_quantiles=np.quantile(
-        true_shares_df[true_shares_df["CAPRI_code"]==crop].cropshare_true,
-        q=np.linspace(0,1,101)    
-        
-    )
-
-    estimated_quantiles=np.quantile(
-        posterior_probabilities_relevant[posterior_probabilities_relevant["crop"]==crop].posterior_probability,
-       # q=np.linspace(0,1,101)
-        q=np.linspace(0,1,11) 
-    
-    )
-    plt.scatter(estimated_quantiles,true_quantiles)
-    plt.plot([0,1],[0,1])
-    plt.title(crop)
-    plt.show()
-# %%
-np.array(true_shares_df[true_shares_df["CAPRI_code"]==crop].cropshare_true)[np.where((np.array(true_shares_df[true_shares_df["CAPRI_code"]==crop].cropshare_true))>0.9)[0]]
 # %%
 selected_crops=["GRAS","SWHE","OFAR","LMAIZ","BARL","LRAPE","SUNF","OCER","DWHE"]
 selected_crop_names=["Grass","Soft wheat","Forage plants","Maize","Barley","Rapeseed","Sunflower","Other cereals","Durum wheat"]
@@ -105,23 +85,24 @@ fig, ax = plt.subplots(nrows=3, ncols=3,figsize=(8,6))
 fig.tight_layout() 
 for c,crop in enumerate(selected_crops):
 
-    true_crop_shares_array=np.array(true_shares_df[true_shares_df["CAPRI_code"]==crop].cropshare_true)
+    true_crop_shares_array=np.array(true_shares_df[true_shares_df["CAPRI_code"]==crop].crop_area_ha)
     true_crop_shares_array=np.sort(true_crop_shares_array[:len(true_crop_shares_array)//n_quantiles*n_quantiles])
     true_crop_shares_matrix=true_crop_shares_array.reshape((n_quantiles,len(true_crop_shares_array)//n_quantiles))
     true_quantile_mean=true_crop_shares_matrix.mean(axis=1)
 
-    estimated_crop_shares_array=np.array(posterior_probabilities_relevant[posterior_probabilities_relevant["crop"]==crop].posterior_probability)
+    estimated_crop_shares_array=np.array(posterior_probabilities_relevant[posterior_probabilities_relevant["crop"]==crop].posterior_crop_area_ha)
     estimated_crop_shares_array=np.sort(estimated_crop_shares_array[:len(estimated_crop_shares_array)//n_quantiles*n_quantiles])
     estimated_crop_shares_matrix=estimated_crop_shares_array.reshape((n_quantiles,len(estimated_crop_shares_array)//n_quantiles))
     estimated_quantile_mean=estimated_crop_shares_matrix.mean(axis=1)
 
     ax[c//3,c%3].scatter(estimated_quantile_mean,true_quantile_mean,s=15)
-    limit=min(max(max(estimated_quantile_mean),max(true_quantile_mean))*1.1,1)
+    limit=min(max(max(estimated_quantile_mean),max(true_quantile_mean))*1.1,100)
     ax[c//3,c%3].plot([0,limit],[0,limit],color="black")
     ax[c//3,c%3].set_title(selected_crop_names[c])
-Path(output_path).mkdir(parents=True, exist_ok=True)
-plt.savefig(output_path+"quantile_means_DGPCM_GT.png")
-plt.close() 
+#Path(output_path).mkdir(parents=True, exist_ok=True)
+#plt.savefig(output_path+"quantile_means_DGPCM_GT.png")
+#plt.close() 
+
 # %%
 RSCM_all_regs=pd.DataFrame()
 for file in os.listdir(RSCM_path+"FR/"):
@@ -141,8 +122,18 @@ for file in os.listdir(RSCM_path+"FR/"):
 #%%
 RSCM_all_regs["OCER_new"]=np.array(RSCM_all_regs["OCER"]).sum(axis=1)
 RSCM_all_regs.drop("OCER",inplace=True,axis=1)
-
 RSCM_all_regs.rename(columns={"OCER_new":"OCER"},inplace=True)
+
+#%%
+RSCM_all_regs=pd.merge(RSCM_all_regs,posterior_probabilities_relevant[["CELLCODE","weight"]].drop_duplicates("CELLCODE"),how="left",on="CELLCODE")
+#%%
+RSCM_crop_area=pd.DataFrame(np.array(RSCM_all_regs.iloc[:,1:-1])*np.array(RSCM_all_regs.weight).reshape(-1,1),columns=RSCM_all_regs.columns[1:-1])
+#%%
+RSCM_crop_area.drop(np.where(np.array(RSCM_crop_area)>100)[0],inplace=True)
+#%%
+RSCM_crop_area.dropna(inplace=True)
+
+
 #%%
 selected_crops=["GRAS","SWHE","OFAR","LMAIZ","BARL","LRAPE","SUNF","OCER","DWHE"]
 selected_crop_names=["Grass","Soft wheat","Forage plants","Maize","Barley","Rapeseed","Sunflower","Other cereals","Durum wheat"]
@@ -162,18 +153,21 @@ fig, ax = plt.subplots(nrows=3, ncols=3,figsize=(8,6))
 fig.tight_layout() 
 for c,crop in enumerate(selected_crops):
 
-    true_crop_shares_array=np.array(true_shares_df[true_shares_df["CAPRI_code"]==crop].cropshare_true)
+    true_crop_shares_array=np.array(true_shares_df[true_shares_df["CAPRI_code"]==crop].crop_area_ha)
     true_crop_shares_array=np.sort(true_crop_shares_array[:len(true_crop_shares_array)//n_quantiles*n_quantiles])
     true_crop_shares_matrix=true_crop_shares_array.reshape((n_quantiles,len(true_crop_shares_array)//n_quantiles))
     true_quantile_mean=true_crop_shares_matrix.mean(axis=1)
 
-    estimated_crop_shares_array=np.array(RSCM_all_regs[crop])
+
+
+
+    estimated_crop_shares_array=np.array(RSCM_crop_area[crop])
     estimated_crop_shares_array=np.sort(estimated_crop_shares_array[:len(estimated_crop_shares_array)//n_quantiles*n_quantiles])
     estimated_crop_shares_matrix=estimated_crop_shares_array.reshape((n_quantiles,len(estimated_crop_shares_array)//n_quantiles))
     estimated_quantile_mean=estimated_crop_shares_matrix.mean(axis=1)
 
     ax[c//3,c%3].scatter(estimated_quantile_mean,true_quantile_mean,s=15)
-    limit=min(max(max(estimated_quantile_mean),max(true_quantile_mean))*1.1,1)
+    limit=min(max(max(estimated_quantile_mean),max(true_quantile_mean))*1.1,100)
     ax[c//3,c%3].plot([0,limit],[0,limit],color="black")
     ax[c//3,c%3].set_title(selected_crop_names[c])
 Path(output_path).mkdir(parents=True, exist_ok=True)
@@ -184,9 +178,11 @@ estimated_crop_shares_array.shape
 # %%
 estimated_crop_shares_array.reshape((n_quantiles,len(estimated_crop_shares_array)//n_quantiles))
 # %%
-crop
+true_quantile_mean
 # %%
-
+plt.scatter(estimated_quantile_mean,true_quantile_mean,s=15)
 # %%
-
+estimated_quantile_mean
+# %%
+np.where(np.isnan(np.array(RSCM_crop_area[crop])))
 # %%
