@@ -23,7 +23,7 @@ postsampling_reps = 10
 
 #%%
 #Posterior_probability_path=(data_main_path+"Results/Posterior_crop_probability_estimates/")
-Posterior_probability_path="/home/baumert/fdiexchange/baumert/posterior_probabilities/"
+Posterior_probability_path="/home/baumert/fdiexchange/baumert/project1/Data/Results/Posterior_crop_probability_estimates/"
 parameter_path = (
     data_main_path+"delineation_and_parameters/DGPCM_user_parameters.xlsx"
 )
@@ -41,7 +41,7 @@ nuts_info = pd.read_excel(parameter_path, sheet_name="NUTS")
 all_years = pd.read_excel(parameter_path, sheet_name="selected_years")
 all_years=np.array(all_years["years"])
 #%%
-
+countries
 
 
 #%%
@@ -243,6 +243,3 @@ if __name__ == "__main__":
             )
 #%%
 """"""
-
-
-# %%

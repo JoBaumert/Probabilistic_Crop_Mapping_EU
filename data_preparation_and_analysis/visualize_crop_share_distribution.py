@@ -95,14 +95,16 @@ for c,crop in enumerate(selected_crops):
     estimated_crop_shares_matrix=estimated_crop_shares_array.reshape((n_quantiles,len(estimated_crop_shares_array)//n_quantiles))
     estimated_quantile_mean=estimated_crop_shares_matrix.mean(axis=1)
 
-    ax[c//3,c%3].scatter(estimated_quantile_mean,true_quantile_mean,s=15)
-    limit=min(max(max(estimated_quantile_mean),max(true_quantile_mean))*1.1,100)
+    ax[c//3,c%3].scatter(estimated_quantile_mean/100,true_quantile_mean/100,s=15)
+    #limit=min(max(max(estimated_quantile_mean),max(true_quantile_mean))*1.1,100)
+    limit=1
     ax[c//3,c%3].plot([0,limit],[0,limit],color="black")
     ax[c//3,c%3].set_title(selected_crop_names[c])
-#Path(output_path).mkdir(parents=True, exist_ok=True)
-#plt.savefig(output_path+"quantile_means_DGPCM_GT.png")
-#plt.close() 
-
+Path(output_path).mkdir(parents=True, exist_ok=True)
+plt.savefig(output_path+"quantile_means_DGPCM_GT.png")
+plt.close() 
+#%%
+estimated_quantile_mean
 # %%
 RSCM_all_regs=pd.DataFrame()
 for file in os.listdir(RSCM_path+"FR/"):
@@ -185,4 +187,98 @@ plt.scatter(estimated_quantile_mean,true_quantile_mean,s=15)
 estimated_quantile_mean
 # %%
 np.where(np.isnan(np.array(RSCM_crop_area[crop])))
+# %%
+"""QUANTILE QUANTILE PLOT OF ENSEMBLES VS TRUE CROP SHARES"""
+ensemble_france=rio.open("/home/baumert/fdiexchange/baumert/project1/Data/Results/Simulated_consistent_crop_shares/FR/FR2018simulated_cropshare_10reps_int.tif")
+ensemble_france_read=ensemble_france.read()
+# %%
+bands=pd.read_csv("/home/baumert/fdiexchange/baumert/project1/Data/Results/Simulated_consistent_crop_shares/FR/FR2018simulated_cropshare_10reps_bands.csv")
+
+# %%
+weight=ensemble_france_read[0]/10
+
+
+# %%
+selected_crops=["GRAS","SWHE","OFAR","LMAIZ","BARL","LRAPE","SUNF","OCER","DWHE","POTA","OATS","SOYA"]
+selected_crop_names=["Grass","Soft wheat","Forage plants","Maize","Barley","Rapeseed","Sunflower","Other cereals","Durum wheat","Potatoes","Oats","Soybeans"]
+n_quantiles=10000
+SMALL_SIZE = 12
+MEDIUM_SIZE = 14
+BIGGER_SIZE = 18
+
+plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+fig, ax = plt.subplots(nrows=4, ncols=3,figsize=(8,8))
+fig.tight_layout() 
+for c,crop in enumerate(selected_crops):
+
+    true_crop_shares_array=np.array(true_shares_df[true_shares_df["CAPRI_code"]==crop].crop_area_ha)
+    true_crop_shares_array=np.sort(true_crop_shares_array[:len(true_crop_shares_array)//n_quantiles*n_quantiles])
+    true_crop_shares_matrix=true_crop_shares_array.reshape((n_quantiles,len(true_crop_shares_array)//n_quantiles))
+    true_quantile_mean=true_crop_shares_matrix.mean(axis=1)
+
+    crop_bands=np.where(np.char.find(np.array(bands["name"]).astype(str),crop)>=0)[0]
+    valid_cells_relevant_bands=(ensemble_france_read[crop_bands].transpose(1,2,0)[np.where((weight>0)&(weight<100))])*weight[np.where((weight>0)&(weight<100))].reshape(-1,1)
+    estimated_crop_shares_array=valid_cells_relevant_bands.flatten()
+    estimated_crop_shares_array=np.sort(estimated_crop_shares_array[:len(estimated_crop_shares_array)//n_quantiles*n_quantiles])
+    estimated_crop_shares_matrix=estimated_crop_shares_array.reshape((n_quantiles,len(estimated_crop_shares_array)//n_quantiles))
+    estimated_quantile_mean=estimated_crop_shares_matrix.mean(axis=1)
+
+    ax[c//3,c%3].scatter(estimated_quantile_mean/100000,true_quantile_mean/100,s=15)
+    #limit=min(max(max(estimated_quantile_mean),max(true_quantile_mean))*1.1,100)
+    limit=1
+    ax[c//3,c%3].plot([0,limit],[0,limit],color="black",linewidth=1)
+    ax[c//3,c%3].set_title(selected_crop_names[c])
+#Path(output_path).mkdir(parents=True, exist_ok=True)
+#plt.savefig(output_path+"quantile_means_DGPCM_GT_entire_ensemble_12crops.png")
+#plt.close() 
+# %%
+
+
+# %%
+selected_crops=["GRAS","SWHE","OFAR","LMAIZ","BARL","LRAPE","SUNF","OCER","DWHE"]
+selected_crop_names=["Grass","Soft wheat","Forage plants","Maize","Barley","Rapeseed","Sunflower","Other cereals","Durum wheat"]
+n_quantiles=100
+SMALL_SIZE = 12
+MEDIUM_SIZE = 14
+BIGGER_SIZE = 18
+
+plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+fig, ax = plt.subplots(nrows=3, ncols=3,figsize=(8,8))
+fig.tight_layout() 
+for c,crop in enumerate(selected_crops):
+
+    true_crop_shares_array=np.array(true_shares_df[true_shares_df["CAPRI_code"]==crop].cropshare_true)
+    true_crop_shares_array=np.sort(true_crop_shares_array[:len(true_crop_shares_array)//n_quantiles*n_quantiles])
+    true_crop_shares_matrix=true_crop_shares_array.reshape((n_quantiles,len(true_crop_shares_array)//n_quantiles))
+    true_quantile_mean=true_crop_shares_matrix.mean(axis=1)
+
+    crop_bands=np.where(np.char.find(np.array(bands["name"]).astype(str),crop)>=0)[0]
+    valid_cells_relevant_bands=(ensemble_france_read[crop_bands].transpose(1,2,0)[np.where((weight>0)&(weight<100))])
+    estimated_crop_shares_array=valid_cells_relevant_bands.flatten()
+    estimated_crop_shares_array=np.sort(estimated_crop_shares_array[:len(estimated_crop_shares_array)//n_quantiles*n_quantiles])
+    estimated_crop_shares_matrix=estimated_crop_shares_array.reshape((n_quantiles,len(estimated_crop_shares_array)//n_quantiles))
+    estimated_quantile_mean=estimated_crop_shares_matrix.mean(axis=1)
+
+    ax[c//3,c%3].scatter(estimated_quantile_mean/1000,true_quantile_mean,s=20)
+    #limit=min(max(max(estimated_quantile_mean),max(true_quantile_mean))*1.1,100)
+    limit=1
+    ax[c//3,c%3].plot([0,limit],[0,limit],color="black",linewidth=1)
+    ax[c//3,c%3].set_title(selected_crop_names[c])
+Path(output_path).mkdir(parents=True, exist_ok=True)
+plt.savefig(output_path+"quantile_means_DGPCM_GT_entire_ensemble_unweighted_cropshares.png")
+plt.close() 
+# %%
+true_quantile_mean
 # %%

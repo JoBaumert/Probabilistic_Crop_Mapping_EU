@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt
 data_main_path=open(str(Path(Path(os.path.abspath(__file__)).parents[1])/"data_main_path.txt"))
 data_main_path=data_main_path.read()[:-1]
 results_path=data_main_path+"Results/Simulated_consistent_crop_shares/"
+poterior_proba_path=data_main_path+"Results/Posterior_crop_probability_estimates/"
 raw_data_path = data_main_path+"Raw_Data/"
 output_path=data_main_path+"Results/Validations_and_Visualizations/Expected_crop_shares/"
 albania_shapefile_path=raw_data_path+"NUTS/albania_shapefile.zip!/ALB_adm0.shp"
@@ -27,8 +28,9 @@ bosnia_shapefile_path=raw_data_path+"NUTS/bosnia_shapefile.zip!/BIH_adm0.shp"
 kosovo_shapefile_path=raw_data_path+"NUTS/kosovo_shapefile.zip!/XKO_adm0.shp"
 serbia_shapefile_path=raw_data_path+"NUTS/serbia_shapefile.zip!/SRB_adm0.shp"
 #%%
+
 EU_raster=rio.open(
-    results_path+"EU/expected_crop_share_entire_EU_2010.tif"
+    results_path+"EU/expected_crop_share_entire_EU_2015.tif"
 )
 transform=EU_raster.transform
 
@@ -145,7 +147,7 @@ for directory in os.listdir(grid_path):
 
 all_grids.drop_duplicates("CELLCODE",inplace=True)
 #%%
-#bands are the same for all countries and years
+#bands are the same for all countries and years, so any can be used
 bands=pd.read_csv(results_path+"/AT/AT2010simulated_cropshare_10reps_bands.csv")
 
 all_crops=[]
@@ -163,8 +165,8 @@ all_grids=all_grids[(all_grids["EOFORIGIN"]>EU_raster.bounds[0])&
 #%%
 EU_raster_read.shape
 #%%
-selected_crop="GRAS"
-year=2013
+selected_crop="LMAIZ"
+year=2010
 if year!=2010:
     EU_raster_read=rio.open(
     results_path+"EU/expected_crop_share_entire_EU_"+str(year)+".tif"
@@ -212,22 +214,30 @@ plt.close(fig)
 #%%
 show(EU_raster_read[np.where(all_crops==selected_crop)[0][0]+1])
 #%%
-show(EU_raster_read[0])
+
+#%%
+show(np.where(EU_raster_read[6]>100,1,0))
+
 #%%
 """LOAD MEAN HDI DATA"""
 
 HDI_data=rio.open(results_path+"HDIs/mean_HDI_width_all_crops_all_years.tif").read()
 #%%
-HDI_data.shape
+show(HDI_data)
 #%%
 HDI_grid=all_grids.copy()
 east=((np.array(all_grids.EOFORIGIN)-EU_raster.bounds[0])/1000).astype(int)
 north=(np.abs((np.array(all_grids.NOFORIGIN)-EU_raster.bounds[3])/1000)).astype(int)
-HDI_grid["HDI_width"]=HDI_data[0][north,east]
-
+HDI_grid["HDI_width"]=HDI_data[0][north,east]/1000
+#remove all observations that are zero (no agricultural land)
+HDI_grid=HDI_grid[HDI_grid["HDI_width"]>0]
+#%%
+plt.hist(HDI_grid.HDI_width,bins=50)
+#%%
+np.quantile(HDI_grid.HDI_width,0.95)
 #%%
 selected_cmap="YlOrRd"
-max_val=800
+max_val=0.18
 plt.figure(figsize=(12, 12))
 fig, ax = plt.subplots(1, 1, figsize=(12, 12))
 NUTS0.plot(ax=ax,facecolor="lightgrey")
@@ -252,9 +262,43 @@ north_lower_left=np.repeat(np.arange(EU_raster.bounds[3],EU_raster.bounds[1],ste
 cellcode_grid=np.char.add(east_lower_left.astype("U4"),north_lower_left.astype("U4"))
 
 #%%
-""""""
-NUTS0_regs
-#%%
-NUTS0.plot(facecolor="lightgrey")
-#%%
-NUTS0[NUTS0["CNTR_CODE"].isin(["DE","AT","CH"])].plot(ax=ax,facecolor="lightgrey")
+"""posterior proba uncertainty"""
+posterior_range=rio.open(poterior_proba_path+"Posterior_range/EU_posterior_range_all_crops_2020.tif").read()
+
+# %%
+posterior_range=posterior_range/1000
+# %%
+posterior_range_grid=all_grids.copy()
+east=((np.array(all_grids.EOFORIGIN)-EU_raster.bounds[0])/1000).astype(int)
+north=(np.abs((np.array(all_grids.NOFORIGIN)-EU_raster.bounds[3])/1000)).astype(int)
+posterior_range_grid["posterior_range"]=posterior_range[0][north,east]
+posterior_range_grid["cellweight"]=EU_raster_read[0][north,east]
+#remove all observations that are zero (no agricultural land)
+posterior_range_grid=posterior_range_grid[posterior_range_grid["cellweight"]>0]
+# %%
+selected_cmap="YlOrRd"
+max_val=0.05
+plt.figure(figsize=(12, 12))
+fig, ax = plt.subplots(1, 1, figsize=(12, 12))
+NUTS0.plot(ax=ax,facecolor="lightgrey")
+gpd.GeoDataFrame(posterior_range_grid).plot(ax=ax,column="posterior_range",
+            legend=True,
+            cmap=selected_cmap,  # YlGn "YlOrRd"
+            vmin=0,
+            vmax=max_val,)
+NUTS0.boundary.plot(ax=ax,edgecolor="darkgrey",linewidth=0.5)
+ax.set_xlim(EU_raster.bounds[0],EU_raster.bounds[2])
+ax.set_ylim(EU_raster.bounds[1],EU_raster.bounds[3])
+
+plt.axis("off")
+Path(output_path).mkdir(parents=True, exist_ok=True)
+plt.savefig(output_path+"posterior_width_mean_allcrops_2020.png")
+plt.close(fig)
+# %%
+np.quantile(posterior_range_grid.posterior_range,0.99)
+# %%
+"""test"""
+test=rio.open(results_path+"PL/PL2015simulated_cropshare_10reps_int.tif").read()
+# %%
+show(test[25])
+# %%

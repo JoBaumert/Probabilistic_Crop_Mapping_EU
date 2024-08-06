@@ -80,6 +80,7 @@ nuts_allyear_df=pd.read_csv(nuts_path)
 
 # ===============================================================================================================================================
 # %%
+
 """
 1) COMPILATION OF EUROSTAT CROP INFORMATION FOR YEARS 2010 - 2020
 for all NUTS regions that appear in a year in nuts_allyear_df, 
@@ -158,15 +159,17 @@ crop_conversion_eurostat, crop_conversion_DGPCM = np.array(
 area.rename(columns={"crops": "CROPS"}, inplace=True)
 main_area.rename(columns={"crops": "CROPS"}, inplace=True)
 #%%
-nuts_allyear_df
+nuts_allyear_df.NUTS_ID.value_counts()
 #%%
 #get relevant crop area information from Eurostat input files for each NUTS region in every year
 df_all_aggregates = pd.DataFrame()
 for year in selected_years:
     print(year)
+
     all_nuts = np.array(
         nuts_allyear_df["NUTS_ID"].iloc[np.where(nuts_allyear_df["year"] == year)]
     )
+    
     for nuts in all_nuts:
         main_area_selected = main_area.iloc[
             np.where((main_area["geo"] == nuts) & (main_area["TIME_PERIOD"] == year))[0]
@@ -195,15 +198,11 @@ for year in selected_years:
         df = df[["NUTS_ID", "year", "DGPCM_crop_code", "area"]]
         df_all_aggregates = pd.concat((df_all_aggregates, df))
 
-#%%
-data_2010_nuts3_raw
-#%%
-a=None
-if type(a)==pd.DataFrame:
-    print("yxa")
-#%%
-if data_2010_nuts3_raw:
-    print("fds")
+
+
+
+
+
 #%%
 """
 if 2010 is among the selected years and if the NUTS3 level info is available,
@@ -247,6 +246,9 @@ if (2010 in selected_years)&(type(data_2010_nuts3_raw)==pd.DataFrame):
 )
     """concat the two sources of information on crop production in the EU and keep only those countries that are part of the EU-28"""
     # before concatenation, remove those observations in "df_all_aggregates" for 2010 that already appear in the NUTS3 dataset
+    
+    data_2010_nuts3_melted=data_2010_nuts3_melted[data_2010_nuts3_melted["NUTS_ID"].isin(all_nuts)]
+    
     df_all_aggregates_2010 = df_all_aggregates[
         (df_all_aggregates["year"] == 2010)
         & (
@@ -349,6 +351,8 @@ df_UAA_selected_years["country"] = np.array(df_UAA_selected_years["NUTS_ID"]).as
 df_UAA_selected_years = df_UAA_selected_years[["country", "NUTS_ID", "year", "UAA"]].iloc[
     np.where(np.isin(df_UAA_selected_years["country"], country_codes_relevant).astype(int))[0]
 ]
+
+
 #%%
 # export data on UAA
 Path(intermediary_data_path).mkdir(parents=True, exist_ok=True)

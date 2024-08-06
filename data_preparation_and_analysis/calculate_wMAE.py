@@ -496,7 +496,7 @@ wMAE_1km=all_pearsonr_and_wMAE_df_comparison_1km[["NUTS_ID","crop","wMAE_DGPCM_t
 # %%
 NUTS_gpd=gpd.read_file(raw_data_path+"NUTS/NUTS_RG_01M_2016_3035.shp.zip!/NUTS_RG_01M_2016_3035.shp")
 #%%
-
+selected_crops=["GRAS","SWHE","OFAR","LMAIZ","BARL","LRAPE","SUNF","OCER","DWHE","POTA","OATS","SOYA","ROOF","RYEM","PARI"]
 DGPCM_bt_RSCM_df=pd.DataFrame()
 for crop in selected_crops:
     
@@ -526,6 +526,13 @@ gpd.GeoDataFrame(DGPCM_bt_RSCM_df_regs).plot(column="DGPCM<RSCM",cmap="Blues")
 
 
 """COMPARE SHARE OF CROPS IN THOSE REGIONS WHERE dgpcm IS BETTER VS THOSE WHERE RSCM IS BETTER"""
+def cropname_conversion_func(conversion_path):
+    cropname_conversion=pd.read_excel(conversion_path)
+    cropname_conversion=cropname_conversion[['LUCAS_code','DGPCM_code']]
+    cropname_conversion.drop_duplicates(inplace=True)
+    cropname_conversion_dict= { cropname_conversion.iloc[i,0] : cropname_conversion.iloc[i,1] for i in range(0, len(cropname_conversion) ) }
+    return cropname_conversion_dict
+
 cropdata=pd.read_csv("/home/baumert/fdiexchange/baumert/project1/Intermediary Data_copied_from_server/Eurostat/optimization_constraints/cropdata_20102020_final.csv")
 # %%
 cropdata_selection=cropdata[(cropdata["country"]==country)&(cropdata["year"]==year)]
@@ -539,7 +546,24 @@ crop_quantities_region["crop_share"]=crop_quantities_region["area_x"]/crop_quant
 DGPCM_bt_RSCM_df=pd.merge(DGPCM_bt_RSCM_df,crop_quantities_region[["NUTS_ID","crop","crop_share"]],
                           how="left",on=["NUTS_ID","crop"])
 # %%
-crop_quantities_region
+#import LUCAS data to calculate average of training data
+
+LUCAS_preprocessed=pd.read_csv(data_main_path+"/Intermediary_Data/Preprocessed_Inputs/LUCAS/LUCAS_preprocessed.csv")
+LUCAS_selected=LUCAS_preprocessed[LUCAS_preprocessed["nuts0"]=="FR"]
+
+cropname_conversion_dict=cropname_conversion_func(data_main_path+"delineation_and_parameters/DGPCM_crop_delineation.xlsx")
+LUCAS_selected=LUCAS_selected[LUCAS_selected['lc1'].isin(list(cropname_conversion_dict.keys()))]
+LUCAS_selected['DGPCM_code']=LUCAS_selected['lc1'].apply(lambda x: cropname_conversion_dict[x])
+# %%
+cropname_conversion_dict
+#%%
+cropname_conversion=pd.read_excel(data_main_path+"delineation_and_parameters/DGPCM_crop_delineation.xlsx")
+#%%
+cropname_conversion[cropname_conversion["DGPCM_RSCM_common"]=="OFAR"]
+
+#%%
+crop="GRAS"
+
 #%%
 n_of_NUTS2=len(DGPCM_bt_RSCM_df[DGPCM_bt_RSCM_df["crop_share"]>0]["NUTS_ID"].value_counts())
 share_regs_positive_cropshare=[]
@@ -549,8 +573,10 @@ mean_share_of_crop_where_RSCM_better=[]
 mean_deviation_from_national_mean_DGPCM_better=[]
 mean_deviation_from_national_mean_RSCM_better=[]
 national_crop_share_list=[]
+LUCAS_crop_share_list=[]
 for crop in selected_crops:
     national_crop_share=crop_quantities_region[(crop_quantities_region["NUTS_ID"]=="FR")&(crop_quantities_region["crop"]==crop)].crop_share.iloc[0]
+    LUCAS_crop_share=len(LUCAS_selected[LUCAS_selected["DGPCM_code"]==crop])/len(LUCAS_selected)
     selection=DGPCM_bt_RSCM_df[(DGPCM_bt_RSCM_df["crop"]==crop)&(DGPCM_bt_RSCM_df["crop_share"]>0)]
     selection["deviation_mean_cropshare"]=abs(selection.crop_share-national_crop_share)
     share_regs_positive_cropshare.append(len(selection)/(n_of_NUTS2))
@@ -566,8 +592,9 @@ for crop in selected_crops:
         mean_deviation_from_national_mean_DGPCM_better.append(np.nan)
         mean_deviation_from_national_mean_RSCM_better.append(selection[["DGPCM<RSCM","deviation_mean_cropshare"]].groupby("DGPCM<RSCM").mean().reset_index().iloc[0][1])
     national_crop_share_list.append(national_crop_share)
+    LUCAS_crop_share_list.append(LUCAS_crop_share)
 # %%
-pd.DataFrame({
+national_comparison_df=pd.DataFrame({
     "crop":selected_crops,
     "share_regs_positive_cropshare":share_regs_positive_cropshare,
     "share_regs_positive_cropshare_DGPCM_better":share_regs_positive_cropshare_DGPCM_better,
@@ -575,8 +602,15 @@ pd.DataFrame({
     "mean_share_of_crop_where_RSCM_better":mean_share_of_crop_where_RSCM_better,
     "mean_deviation_from_national_mean_DGPCM_better":mean_deviation_from_national_mean_DGPCM_better,
     "mean_deviation_from_national_mean_RSCM_better":mean_deviation_from_national_mean_RSCM_better,
-    "national_crop_share":national_crop_share_list
-}).to_csv(output_path+"regionalized_comparison_between_DGPCM_and_RSCM_allcrops.csv")
+    "national_crop_share":national_crop_share_list,
+    "LUCAS_crop_share":LUCAS_crop_share_list
+})
+
+#%%
+national_comparison_df
+
+#%%
+national_comparison_df.to_csv(output_path+"regionalized_comparison_between_DGPCM_and_RSCM_allcrops.csv")
 # %%
 DGPCM_bt_RSCM_df[["crop","crop_share"]].groupby("crop").mean().r
 # %%

@@ -57,6 +57,7 @@ for i in range(len(levl_info)):
 UAA = pd.read_csv(regional_aggregates_path+"coherent_UAA_"+str(selected_years.min())+str(selected_years.max())+".csv")
 cropdata=pd.read_csv(regional_aggregates_path+"cropdata_"+str(selected_years.min())+str(selected_years.max())+".csv")
 
+
 #%%
 #cropdata is only needed to get information on the lowest level at which crop information is available for a country in a year
 cropdata["NUTS_LEVL"]=np.vectorize(len)(np.array(cropdata["NUTS_ID"]))-2
@@ -72,13 +73,7 @@ NUTS_data = pd.read_csv(nuts_input_path)
 NUTS_data=NUTS_data[(NUTS_data["CNTR_CODE"].isin(country_codes_relevant))&(NUTS_data["year"].isin(selected_years))]
 
 #%%
-pd.read_csv(
-                    cellsize_input_path
-                    + "HR"
-                    + "/inferred_UAA/1kmgrid_"
-                    + "HR0"
-                    + ".csv"
-                )
+
 #%%
 
 
@@ -87,7 +82,7 @@ pd.read_csv(
 #%%
 if __name__ == "__main__":
 
-    for country in country_codes_relevant[:1]:
+    for country in country_codes_relevant:
         lowest_level_selected_country_allyears=lowest_level_country_year[
                 (lowest_level_country_year["country"] == country)
             ]["NUTS_LEVL"].max()
@@ -196,13 +191,13 @@ lowest_level_country_year
 # %%
 weight_df_complete
 # %%
-grid=gpd.read_file("/home/baumert/fdiexchange/baumert/project1/Data/Raw_Data/Grid/HR_1km.zip!/hr_1km.shp")
+grid=gpd.read_file("/home/baumert/fdiexchange/baumert/project1/Data/Raw_Data/Grid/PL_1km.zip!/pl_1km.shp")
 # %%
 weight_df_complete=pd.merge(weight_df_complete,grid[["CELLCODE","geometry"]],how="left",on="CELLCODE")
 # %%
 weight_df_complete=gpd.GeoDataFrame(weight_df_complete)
 # %%
-weight_df_complete[weight_df_complete["year"]==2012].plot(column="weight")
+weight_df_complete[weight_df_complete["year"]==2014].plot(column="weight")
 # %%
 weight_df_complete[weight_df_complete["year"]==2020]
 # %%

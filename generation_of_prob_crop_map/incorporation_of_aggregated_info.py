@@ -37,6 +37,12 @@ import modules.functions_for_prediction as ffp
 
 
 # %%
+#jax.config.update('jax_platform_name', 'cpu')
+
+
+#%%
+jnp.log(jnp.array([1,2,3]))
+#%%
 #DEFAULT SETTINGS IN THE OPTIMIZATION
 minimize_relative_deviation = True
 n_of_param_samples = 10
@@ -645,14 +651,19 @@ nuts_input = pd.read_csv(nuts_path)
 crop_levels=pd.read_csv(crop_level_path+str(country_year_list[1].min())+str(country_year_list[1].max())+".csv")
 #crop_levels=pd.read_csv("/home/baumert/research/Project-1/data/Intermediary Data/Eurostat/optimization_constraints/crop_levels_20102020_final.csv")
 
-#%%
-crop_levels
+
 #%%
 
+
+#%%
+relevant_years=[2014,2015]
 if __name__ == "__main__":
-    for c in range(len(country_year_list[0])):
+    for c in range(len(country_year_list[0]))[5:6]:
         country = country_year_list[0][c]
         year = country_year_list[1][c]
+        if year not in relevant_years:
+            continue
+            
         print(f"starting optimization for {country} in {year}...")
 
         
@@ -674,8 +685,8 @@ if __name__ == "__main__":
 
 
         # %%
-        os.environ["XLA_PYTHON_CLIENT_PREALLOCATE"] = "false"
-        os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+      #  os.environ["XLA_PYTHON_CLIENT_PREALLOCATE"] = "false"
+      #  os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
         # %%
         """ import parameters"""
@@ -1009,7 +1020,7 @@ if __name__ == "__main__":
         
         
         
-        #%%
+        
         penalty_adjusted = False
 
         penalty_cell, obj_function_factor = 10e2, 0.01
@@ -1019,7 +1030,7 @@ if __name__ == "__main__":
             1,
             1,
         )
-        # %%
+        
 
         while not penalty_adjusted:
             box_lower = jnp.zeros_like(p_init)
@@ -1077,7 +1088,7 @@ if __name__ == "__main__":
             else:
                 penalty_adjusted = True
 
-        # %%
+        
         p_final = p_conversion_new(p_result)
 
         optimization_hyperparameter_results_dict = {
@@ -1256,13 +1267,13 @@ if __name__ == "__main__":
             results_df["posterior_probability"] = p_final
             results_df["beta"] = np.repeat(beta, len(p_final))
             all_results_df = pd.concat((all_results_df, results_df))
-        # %%
+        
         optimization_hyperparameter_results_df = pd.DataFrame(
             optimization_hyperparameter_results_dict
         )
        
 
-        # %%
+        
         Path(output_path + country + "/").mkdir(parents=True, exist_ok=True)
         all_results_df.to_parquet(
             output_path + country + "/" + country + str(year) + "entire_country"

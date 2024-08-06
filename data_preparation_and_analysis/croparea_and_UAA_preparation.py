@@ -101,8 +101,7 @@ cropdata_raw = pd.merge(
     on=["country", "NUTS_ID", "year", "crop"],
 )
 cropdata_raw.fillna(0, inplace=True)
-#%%
-cropdata_raw[cropdata_raw["NUTS_ID"]=="AT112"]
+
 
 #%%
 cropdata_corrected_1 = cropdata_raw.copy()
@@ -153,8 +152,7 @@ cropdata_corrected_1 = cropdata_corrected_1.iloc[
         == 0
     )[0]
 ]
-#%%
-cropdata_corrected_1[cropdata_corrected_1["NUTS_LEVL"]==3]
+
 #%%
 """CORRECTION OF OBVIOUS DATA ERRORS"""
 """some data entries don't make sense at all (for example, no grass for UK in 2020)
@@ -301,6 +299,7 @@ UAA_corrected1 = pd.merge(
 )
 
 UAA_corrected1["NUTS_LEVL"] = np.vectorize(len)(UAA_corrected1["NUTS_ID"]) - 2
+
 
 #%%
 #replace Nan values by the mean of the respective UAA region in all years for which the value is not nan

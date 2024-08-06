@@ -13,7 +13,12 @@ import os, zipfile
 from shapely.geometry import Polygon
 from sklearn.linear_model import LinearRegression
 from pathlib import Path
-
+import rasterio as rio
+from rasterio import features
+from rasterio.plot import show
+from rasterio.transform import from_gcps
+from rasterio.control import GroundControlPoint as GCP
+from rasterio.windows import from_bounds
 
 """
 we assume that 90% (95%) of the observations lie withing the 90% (95%) CI, if the CI is correctly estimated, etc. 
@@ -63,10 +68,14 @@ cropname_conversion=cropname_conversion_file[["DGPCM_code","RSCM","DGPCM_RSCM_co
 nuts_input = pd.read_csv(nuts_path+".csv")
 
 # %%
-nuts_regions_relevant = nuts_input[
-    (nuts_input["CNTR_CODE"] == country) & (nuts_input["year"] == year)
-]
-
+try:
+    nuts_regions_relevant = nuts_input[
+        (nuts_input["CNTR_CODE"] == country) & (nuts_input["year"] == year)
+    ]
+except:
+    nuts_regions_relevant = nuts_input[
+        (nuts_input["CNTR_CODE"] == country)
+    ]
 nuts_regions_relevant = nuts_regions_relevant.iloc[
     np.where(
         np.isin(
@@ -79,6 +88,7 @@ nuts_regions_relevant = nuts_regions_relevant.iloc[
 
 
 selected_nuts2_regs = np.sort(nuts_regions_relevant[nuts_regions_relevant["LEVL_CODE"]==2]["NUTS_ID"])
+selected_nuts2_regs=np.unique(selected_nuts2_regs)
 selected_nuts1_regs=selected_nuts2_regs.astype("U3")
 
 #%%
@@ -232,16 +242,19 @@ posterior_probability_upper_boundary.rename(columns={"posterior_probability":"po
 posterior_probabilities_country=pd.merge(posterior_probabilities_country,posterior_probability_lower_boundary,how="left",on=["CELLCODE","crop"])
 posterior_probabilities_country=pd.merge(posterior_probabilities_country,posterior_probability_upper_boundary,how="left",on=["CELLCODE","crop"])
 #%%
-
+posterior_probabilities_country
 # %%
 """import CIs"""
 CI_all_regions=pd.DataFrame()
 for nuts2 in selected_nuts2_regs:
-    CI_region=pd.read_csv(output_path+country+"/"+nuts2+str(year)+"_"+str(c)+"%_HDI.csv")
-    CI_all_regions=pd.concat((CI_all_regions,CI_region))
+    try:
+        CI_region=pd.read_csv(output_path+country+"/"+nuts2+str(year)+"_"+str(c)+"%_HDI.csv")
+        CI_all_regions=pd.concat((CI_all_regions,CI_region))
+    except:
+        continue
 
-
-
+#%%
+a=CI_all_regions[CI_all_regions["crop"]=="SWHE"]
 
 #%%
 difference_true_share_expected_share=pd.merge(posterior_probabilities_country,CI_all_regions,
@@ -276,13 +289,14 @@ selected_crops={
     "SUNF":"Sunflowers",
     "VINY":"Vinyeards"
 }
+
 #%%
 """plot width of total and posterior interval vs error"""
 for crop in selected_crops.keys():
     quantiles=100
 
     data=difference_true_share_expected_share[difference_true_share_expected_share["crop"]==crop]
-    data.dropna(inplace=True)
+    data.drop("geometry",axis=1).dropna(inplace=True)
 
     data=data.iloc[:(len(data)//quantiles)*quantiles,:]
     data.sort_values(by="interval_width",inplace=True)
@@ -333,11 +347,13 @@ for crop in selected_crops.keys():
     plt.fill_between(np.arange(quantiles),upper_boundary_minus_expected_mean,lower_boundary_minus_expected_mean,zorder=3,alpha=0.2,color="red")
     plt.fill_between(np.arange(quantiles),upper_boundary_posterior_minus_expected_mean,lower_boundary_posterior_minus_expected_mean,zorder=3,alpha=0.6,color="black")
     plt.xlim(0,quantiles)
-    plt.legend()
+    #plt.legend()
     plt.title(selected_crops[crop])
     plt.ylabel(r"error in $ km^2 $")
     plt.xlabel("90%-HDI width quantile")
-    Path(output_CI_visualization_path).mkdir(parents=True, exist_ok=True)
-    plt.savefig(output_CI_visualization_path+country+str(year)+"_"+crop+".png")
-    plt.close()
+   # Path(output_CI_visualization_path).mkdir(parents=True, exist_ok=True)
+   # plt.savefig(output_CI_visualization_path+country+str(year)+"_"+crop+".png")
+   # plt.close()
+# %%
+data.columns
 # %%

@@ -23,7 +23,8 @@ postsampling_reps = 10
 Simulated_cropshares_path=(data_main_path+"Results/Simulated_consistent_crop_shares/")
 #%%
 
-for year in range(2013,2016):
+for year in range(2015,2016)[:1]:
+    
     #year=2020
     print(year)
 
@@ -41,19 +42,20 @@ for year in range(2013,2016):
     country_data_map_expected_shares=np.delete(country_data_map_expected_shares,1,axis=0)
 
     print("export rsaterfile expected shares EU...")
-    """
+
+  
     with rio.open(Simulated_cropshares_path+"EU/expected_crop_share_entire_EU_"+str(year)+".tif", 'w',
                 width=int(country_data_map_expected_shares.shape[2]),height=int(country_data_map_expected_shares.shape[1]),
                 transform=out_trans,count=country_data_map_expected_shares.shape[0],dtype=rio.int16,crs="EPSG:3035") as dst:
         dst.write(country_data_map_expected_shares.astype(rio.int16))
-    """
+
     del country_data_map_expected_shares
     gc.collect()
-
+#%%
     bands=pd.read_csv(Simulated_cropshares_path+country+"/"+country+str(year)+"simulated_cropshare_"+str(postsampling_reps)+"reps_bands.csv")
 
 
-
+#%%
     all_crops=[]
     for i in np.char.split(np.array(bands["name"].iloc[2:30]).astype(str)):
         #crop name starts after 15th character
