@@ -533,7 +533,7 @@ def cropname_conversion_func(conversion_path):
     cropname_conversion_dict= { cropname_conversion.iloc[i,0] : cropname_conversion.iloc[i,1] for i in range(0, len(cropname_conversion) ) }
     return cropname_conversion_dict
 
-cropdata=pd.read_csv("/home/baumert/fdiexchange/baumert/project1/Intermediary Data_copied_from_server/Eurostat/optimization_constraints/cropdata_20102020_final.csv")
+cropdata=pd.read_csv(intermediary_data_path+"/Regional_Aggregates/cropdata_20102020.csv")
 # %%
 cropdata_selection=cropdata[(cropdata["country"]==country)&(cropdata["year"]==year)]
 cropdata_selection=cropdata_selection[["NUTS_ID","crop","area"]]
@@ -555,14 +555,6 @@ cropname_conversion_dict=cropname_conversion_func(data_main_path+"delineation_an
 LUCAS_selected=LUCAS_selected[LUCAS_selected['lc1'].isin(list(cropname_conversion_dict.keys()))]
 LUCAS_selected['DGPCM_code']=LUCAS_selected['lc1'].apply(lambda x: cropname_conversion_dict[x])
 # %%
-cropname_conversion_dict
-#%%
-cropname_conversion=pd.read_excel(data_main_path+"delineation_and_parameters/DGPCM_crop_delineation.xlsx")
-#%%
-cropname_conversion[cropname_conversion["DGPCM_RSCM_common"]=="OFAR"]
-
-#%%
-crop="GRAS"
 
 #%%
 n_of_NUTS2=len(DGPCM_bt_RSCM_df[DGPCM_bt_RSCM_df["crop_share"]>0]["NUTS_ID"].value_counts())

@@ -39,7 +39,7 @@ parameter_path=data_main_path+"delineation_and_parameters/DGPCM_user_parameters.
 nuts_path=intermediary_data_path+"Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years"
 excluded_NUTS_regions_path = data_main_path+"delineation_and_parameters/excluded_NUTS_regions.xlsx"
 crop_delineation_path=data_main_path+"delineation_and_parameters/DGPCM_crop_delineation.xlsx"
-DGPCM_simulated_consistent_shares_path=data_main_path+"Results/Simulated_consistent_crop_shares/"
+DGPCM_simulated_consistent_shares_path=data_main_path+"Results/Simulated_consistent_crop_shares_v1/"
 IACS_path=intermediary_data_path+"Preprocessed_Inputs/IACS/true_shares/true_shares_"
 grid_path=raw_data_path+"Grid/"
 grid_conversion_path=intermediary_data_path+"Preprocessed_Inputs/Grid/Grid_conversion_1km_10km_"
@@ -91,7 +91,6 @@ selected_nuts2_regs = np.sort(nuts_regions_relevant[nuts_regions_relevant["LEVL_
 selected_nuts2_regs=np.unique(selected_nuts2_regs)
 selected_nuts1_regs=selected_nuts2_regs.astype("U3")
 
-#%%
 
 #%%
 c_interval_statistics_dict = {}
@@ -196,12 +195,12 @@ grid_1km_path_country = (
 
 zip=zipfile.ZipFile(grid_1km_path_country)
 for file in zip.namelist():
-    if file[-3:]=="shp":
+    if (file[-3:]=="shp")&(file[3:6]=="1km"):
         break
 
 
 grid_1km_country = gpd.read_file(grid_1km_path_country+"!/"+file)
-
+#%%
 posterior_probabilities_country = pd.read_parquet(
     posterior_probability_path
     + country
@@ -241,10 +240,21 @@ posterior_probability_upper_boundary.rename(columns={"posterior_probability":"po
 
 posterior_probabilities_country=pd.merge(posterior_probabilities_country,posterior_probability_lower_boundary,how="left",on=["CELLCODE","crop"])
 posterior_probabilities_country=pd.merge(posterior_probabilities_country,posterior_probability_upper_boundary,how="left",on=["CELLCODE","crop"])
-#%%
-posterior_probabilities_country
+
 # %%
 """import CIs"""
+selected_crops={
+    "GRAS":"Grass",
+    "SWHE":"Soft Wheat",
+    "LMAIZ": "Maize",
+    "BARL":"Barley",
+    "LRAPE":"Rapeseed",
+    "OFAR":"Other Forage Plants",
+    "SUNF":"Sunflowers",
+    "VINY":"Vinyeards",
+    "OCER":"Other Cereals"
+}
+#%%
 CI_all_regions=pd.DataFrame()
 for nuts2 in selected_nuts2_regs:
     try:
@@ -252,12 +262,38 @@ for nuts2 in selected_nuts2_regs:
         CI_all_regions=pd.concat((CI_all_regions,CI_region))
     except:
         continue
+#%%
+#%%
+grid_1km_country=pd.merge(CI_all_regions[["CELLCODE"]].drop_duplicates(),grid_1km_country,how="left",on="CELLCODE")
+#%%
+raster=rio.open(DGPCM_simulated_consistent_shares_path+"HDIs/SWHE_"+str(int(c*100))+"%HDIs_entire_EU_"+str(year)+".tif")
+bounds=raster.bounds
+crop_grid=grid_1km_country.copy()
+east=((np.array(crop_grid.EOFORIGIN)-bounds[0])/1000).astype(int)
+north=(np.abs((np.array(crop_grid.NOFORIGIN)-bounds[3])/1000)).astype(int)-1
+
 
 #%%
-a=CI_all_regions[CI_all_regions["crop"]=="SWHE"]
+""" alternative: import raster CIs, if available"""
+all_crops_CIs_raster=pd.DataFrame()
+for crop in list(selected_crops.keys()):
+    CI_raster=rio.open(DGPCM_simulated_consistent_shares_path+"HDIs/"+crop+"_"+str(int(c*100))+"%HDIs_entire_EU_"+str(year)+".tif")
+    CI_raster_read=CI_raster.read()
+    selected_crop_crid=crop_grid.copy()
+    selected_crop_crid["lower_boundary_C0.9"]=CI_raster_read[0][north,east]/1000
+    selected_crop_crid["upper_boundary_C0.9"]=CI_raster_read[1][north,east]/1000
+    selected_crop_crid["crop"]=np.repeat(crop,len(selected_crop_crid))#
+    all_crops_CIs_raster=pd.concat((all_crops_CIs_raster,selected_crop_crid))
+#%%
+all_crops_CIs_raster=pd.merge(all_crops_CIs_raster,CI_all_regions[["CELLCODE","crop","true_crop_share"]],how="left",on=["CELLCODE","crop"])
 
 #%%
-difference_true_share_expected_share=pd.merge(posterior_probabilities_country,CI_all_regions,
+""""""
+#%%
+#difference_true_share_expected_share=pd.merge(posterior_probabilities_country,CI_all_regions,
+#                                              how="left",on=["CELLCODE","crop"])
+
+difference_true_share_expected_share=pd.merge(posterior_probabilities_country,all_crops_CIs_raster,
                                               how="left",on=["CELLCODE","crop"])
 
 difference_true_share_expected_share["abs_difference_true_expected"]=np.abs(
@@ -276,27 +312,16 @@ difference_true_share_expected_share["relative_difference_true_expected"]=np.abs
 )/(np.array(difference_true_share_expected_share["true_crop_share"])+0.001)
 
 
-        
-
-#%%
-selected_crops={
-    "GRAS":"Grass",
-    "SWHE":"Soft Wheat",
-    "LMAIZ": "Maize",
-    "BARL":"Barley",
-    "LRAPE":"Rapeseed",
-    "OFAR":"Other Forage Plants",
-    "SUNF":"Sunflowers",
-    "VINY":"Vinyeards"
-}
-
 #%%
 """plot width of total and posterior interval vs error"""
 for crop in selected_crops.keys():
     quantiles=100
 
     data=difference_true_share_expected_share[difference_true_share_expected_share["crop"]==crop]
-    data.drop("geometry",axis=1).dropna(inplace=True)
+    try:
+        data.drop("geometry",axis=1).dropna(inplace=True)
+    except:
+        pass
 
     data=data.iloc[:(len(data)//quantiles)*quantiles,:]
     data.sort_values(by="interval_width",inplace=True)
@@ -316,7 +341,8 @@ for crop in selected_crops.keys():
     upper_boundary_posterior_minus_expected_mean=np.nanmean(upper_boundary_posterior_minus_expected_matrix,axis=1)
     lower_boundary_posterior_minus_expected_mean=np.nanmean(lower_boundary_posterior_minus_expected_matrix,axis=1)
 
-
+    CR_posterior_interval=np.where((data["posterior_probability_lower_boundary"]<=data["true_crop_share"])&(data["posterior_probability_upper_boundary"]>=data["true_crop_share"]),1,0).mean()
+    CR_sampled_interval=np.where((data["lower_boundary_C0.9"]<=data["true_crop_share"])&(data["upper_boundary_C0.9"]>=data["true_crop_share"]),1,0).mean()
 
     width_y_axis_cell=0.02
 
@@ -348,12 +374,12 @@ for crop in selected_crops.keys():
     plt.fill_between(np.arange(quantiles),upper_boundary_posterior_minus_expected_mean,lower_boundary_posterior_minus_expected_mean,zorder=3,alpha=0.6,color="black")
     plt.xlim(0,quantiles)
     #plt.legend()
-    plt.title(selected_crops[crop])
+    plt.title(selected_crops[crop]+" CR HDI:"+str(np.round((CR_sampled_interval),2))+" CR posterior: "+str(np.round((CR_posterior_interval),2)))
     plt.ylabel(r"error in $ km^2 $")
     plt.xlabel("90%-HDI width quantile")
-   # Path(output_CI_visualization_path).mkdir(parents=True, exist_ok=True)
-   # plt.savefig(output_CI_visualization_path+country+str(year)+"_"+crop+".png")
-   # plt.close()
+    Path(output_CI_visualization_path).mkdir(parents=True, exist_ok=True)
+    plt.savefig(output_CI_visualization_path+country+str(year)+"_"+crop+".png")
+    plt.close()
 # %%
-data.columns
+
 # %%

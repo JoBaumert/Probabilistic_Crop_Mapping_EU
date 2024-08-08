@@ -19,11 +19,11 @@ import arviz as az
 data_main_path=open(str(Path(Path(os.path.abspath(__file__)).parents[1])/"data_main_path.txt"))
 data_main_path=data_main_path.read()[:-1]
 postsampling_reps = 10 
-# %%
+
 
 #%%
 #Posterior_probability_path=(data_main_path+"Results/Posterior_crop_probability_estimates/")
-Posterior_probability_path="/home/baumert/fdiexchange/baumert/project1/Data/Results/Posterior_crop_probability_estimates/"
+Posterior_probability_path="/home/baumert/fdiexchange/baumert/posterior_probabilities/"
 parameter_path = (
     data_main_path+"delineation_and_parameters/DGPCM_user_parameters.xlsx"
 )
@@ -41,38 +41,46 @@ nuts_info = pd.read_excel(parameter_path, sheet_name="NUTS")
 all_years = pd.read_excel(parameter_path, sheet_name="selected_years")
 all_years=np.array(all_years["years"])
 #%%
-countries
+all_years
 
 
 #%%
-def generate_random_results(p_matrix,postsampling_reps,n_of_fields_array):
-    p_matrix_corrected = np.array(
-        [p_vector / (p_vector.sum() + 0.0001) for p_vector in p_matrix]
-    )
-    p_matrix_corrected = np.where(
-        p_matrix_corrected == 0, 0.000001, p_matrix_corrected
-    )
-    """for some cells the sums of all crop probabilities are marginally larger than 1 (like 1.0001). 
-    Normalize them to ensure that all probabilities within a cell add up to 1 (or marginally less), 
-    which is necessary for the random sampling
-    """
+def generate_random_results(proba,n_fields,postsampling_reps,target_shape,weights_matrix,beta=0):
+    proba_corrected=np.where(proba==0,0.0000001,proba)
+    proba_corrected=(proba_corrected*(1/(proba_corrected.sum(axis=0)+0.000001))).T
 
-    random_results = np.array(
+    random_results=np.array(
         [
-            np.random.multinomial(
-                n_of_fields_array[i], p_matrix_corrected[i], postsampling_reps
-            )
-            / n_of_fields_array[i]
-            for i in range(p_matrix_corrected.shape[0])
-        ]
-    )
-    del p_matrix_corrected
-    gc.collect()
-    return random_results
+            np.random.multinomial(n_fields[i],proba_corrected[i],100)
+            /n_fields[i]
+            for i in range(proba_corrected.shape[0])
+        ]).T
 
+    deviation=abs(1-random_results.sum(axis=2)/(proba_corrected.sum(axis=0).reshape(-1,1)))
+
+    order=np.argsort(deviation.sum(axis=0))
+
+    random_results_selected=random_results.transpose(1,0,2)[order][:postsampling_reps]
+
+    empty_matrix=np.zeros((target_shape[0]*target_shape[1],len(crops)*postsampling_reps)).astype(float)
+    random_results_selected=random_results_selected.T.reshape(-1,len(crops)*postsampling_reps)
+    empty_matrix[np.where(weights_matrix.flatten()>0)]=random_results_selected
+    empty_matrix=empty_matrix.T
+    empty_matrix=empty_matrix.reshape((28*postsampling_reps,target_shape[0],target_shape[1]))
+
+    crop_expectation_matrix=None
+    if beta==0:
+        crop_expectation_matrix=np.zeros((target_shape[0]*target_shape[1],len(crops))).astype(float)
+        crop_expectation_matrix[np.where(weights_matrix.flatten()>0)]=proba_corrected
+        crop_expectation_matrix=crop_expectation_matrix.T
+        crop_expectation_matrix=crop_expectation_matrix.reshape((len(crops),target_shape[0],target_shape[1]))
+
+    return crop_expectation_matrix,empty_matrix,deviation.T[order][:postsampling_reps]
+#%%
 
 if __name__ == "__main__":
     for country in country_codes_relevant:
+        
 
         n_of_fields = pd.read_csv(n_of_fields_path+country+"/n_of_fields/n_of_fields_allcountry.csv")
         grid_1km_path_country = (
@@ -92,9 +100,12 @@ if __name__ == "__main__":
 
         for year in all_years:
             print("---"+country+"--"+str(year)+"---")
+
+            
             if os.path.exists(Simulated_cropshares_path+country+"/"+country+str(year)+"simulated_cropshare_"+str(postsampling_reps)+"reps_int.tif"):
                 print("file already exists...")
                 continue
+            
             posterior_probas=pd.read_parquet(Posterior_probability_path+country+"/"
                                             +country+str(year)+"entire_country")
             print("successfully imported posterior probabilities...")
@@ -175,6 +186,11 @@ if __name__ == "__main__":
             band_list.append("n_of_fields")
             n_of_fields_array=resulting_matrix[1,np.where(resulting_matrix[0]>0)[0],np.where(resulting_matrix[0]>0)[1]]
 
+            n_fields=resulting_matrix[1].flatten()
+            weights_matrix=resulting_matrix[0]
+
+            deviation_matrix=np.ndarray((postsampling_reps*len(betas),len(crops))).astype(float)
+
             for beta in betas:
                 print("beta "+str(beta))
                 helper_matrix=np.ndarray((crops.shape[0],int(height),int(width)))
@@ -188,32 +204,38 @@ if __name__ == "__main__":
                     helper_matrix[c]=result_array.reshape(resulting_matrix[0].shape)
                     c+=1
                     band_list.append(f"expected_share_{crop}")
-                if beta==0:
-                    resulting_matrix[2:len(crops)+2]=helper_matrix
-        
-                #sample from multinomial distribution with the respective crop probabilities and number of fields
-                p_matrix=helper_matrix[:,np.where(resulting_matrix[0]>0)[0],np.where(resulting_matrix[0]>0)[1]].T
-                print("generate "+str(postsampling_reps)+" random samples...")
-                
-                random_results=generate_random_results(p_matrix,postsampling_reps=postsampling_reps,n_of_fields_array=n_of_fields_array)
-                
-                random_results=generate_random_results(p_matrix,postsampling_reps=postsampling_reps,n_of_fields_array=n_of_fields_array)
 
-                empty_array=np.zeros((int(width*height),postsampling_reps,len(crops)))
-                empty_array[np.where(resulting_matrix[0].flatten()>0)[0]]=random_results
-                
-                resulting_matrix[2+len(crops)+beta*crops.shape[0]*postsampling_reps:(beta+1)*crops.shape[0]*postsampling_reps+2+len(crops)]=empty_array.transpose(1,2,0).reshape((postsampling_reps*len(crops),int(height),int(width)))
-                del empty_array
-                del p_matrix
+                proba=helper_matrix
+                proba=proba.reshape(len(crops),-1)
+
+                proba=proba.T[np.where(weights_matrix.flatten()>0)].T
+                n_fields_relevant=n_fields[np.where(weights_matrix.flatten()>0)]
+
+                crop_expectation_matrix,sampled_matrix,deviation=generate_random_results(proba,n_fields_relevant,postsampling_reps,target_shape=weights_matrix.shape,weights_matrix=weights_matrix,beta=beta)
+
+                if beta==0:
+                    resulting_matrix[2:len(crops)+2]=crop_expectation_matrix
+
+                resulting_matrix[2+len(crops)+beta*len(crops)*postsampling_reps:(beta+1)*len(crops)*postsampling_reps+2+len(crops)]=sampled_matrix
+
+                deviation_matrix[beta*postsampling_reps:beta*postsampling_reps+postsampling_reps]=deviation
+
+            
+                del proba
+                del crop_expectation_matrix
                 del helper_matrix
+                del sampled_matrix
+                del deviation
+
                 gc.collect()
-   
+            
 
             factor=np.repeat(1000,resulting_matrix.shape[0])
             factor[0]=10
             factor[1]=1
-          
+
             refactored_data=factor.reshape(-1,1,1)*resulting_matrix
+            refactored_data=refactored_data.round()
 
             Path(Simulated_cropshares_path+country+"/").mkdir(parents=True, exist_ok=True)
             with rio.open(Simulated_cropshares_path+country+"/"+country+str(year)+"simulated_cropshare_"+str(postsampling_reps)+"reps_int.tif", 'w',
@@ -228,18 +250,24 @@ if __name__ == "__main__":
                 bands=list(np.char.add(
                         np.char.add(
                             np.char.add(
-                            np.tile(crops,postsampling_reps).astype(str),
+                            np.repeat(crops,postsampling_reps).astype(str),
                             np.repeat("_",len(crops)*postsampling_reps)),
                         np.repeat(str(beta),len(crops)*postsampling_reps)),
-                        np.repeat(np.arange(postsampling_reps),len(crops)).astype(str)))
+                        np.tile(np.arange(postsampling_reps),len(crops)).astype(str)))
                 for band in bands:
                     band_list.append(band)
+                    
 
-            
             band_df=pd.DataFrame({"band":np.arange(len(band_list)),"name":np.array(band_list)})
-            
+
             band_df.to_csv(
                 Simulated_cropshares_path+country+"/"+country+str(year)+"simulated_cropshare_"+str(postsampling_reps)+"reps_bands.csv"
             )
+
+            Path(Simulated_cropshares_path+"Deviations/").mkdir(parents=True, exist_ok=True)
+            pd.DataFrame(deviation_matrix,columns=crops).to_csv(
+                Simulated_cropshares_path+"Deviations/"+country+str(year)+"simulated_cropshare_"+str(postsampling_reps)+"reps_deviations.csv"
+            )
+
 #%%
-""""""
+# %%
