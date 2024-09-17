@@ -27,7 +27,7 @@ The input data used comes from multiple sources (see table below). To fully repl
 |lucas_harmo_uf.csv|https://data.jrc.ec.europa.eu/dataset/f85907ae-d123-471f-a44a-8cca993485a2#dataaccess||Data/Raw_Data/LUCAS|[1]|
 |LUCAS_TOPSOIL_v1.xlsx|https://esdac.jrc.ec.europa.eu/content/lucas-2009-topsoil-data||Data/Raw_Data/LUCAS|[2]|
 |**Precipitation Data**|
-|{2-digit-countrycode}\_precipitation_{StartyearEndyear}.csv|https://agri4cast.jrc.ec.europa.eu/DataPortal/RequestDataResource.aspx?idResource=7&o=d|select "sum of precipitation" and respective country, then the start date 01/01/2003 and the end date 31/12/2020. If the data is too large to download, first download the years 2001 until some later year and then download in another file all the years that remain. Download as a csv, unzip the downloaded file and save CSV at the indicated storage location|Data/Raw_Data/Precipitation/|[3]|
+|{2-digit-countrycode}\_precipitation_{StartyearEndyear}.csv|https://agri4cast.jrc.ec.europa.eu/DataPortal/RequestDataResource.aspx?idResource=7&o=d|select "sum of\ precipitation" \and respective \country, then \the start date 01/01/2003 and the end date 31/12/2020. If the data is too large to download, first download the years 2001 until some later year and then download in another file all the years that remain. Download as a csv, unzip the downloaded file and save CSV at the indicated storage location|Data/Raw_Data/Precipitation/|[3]|
 |**Temperature Data**|
 |{2-digit-countrycode}\_temperature_{StartyearEndyear}.csv|https://agri4cast.jrc.ec.europa.eu/DataPortal/RequestDataResource.aspx?idResource=7&o=d|select "mean air temperature" and then proceed exactly as for the precipitation data|Data/Raw_Data/Temperature|[3]|
 |**Soil Data**|
