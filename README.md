@@ -44,12 +44,12 @@ The input data used comes from multiple sources (see table below). To fully repl
 |{2-digit_countrycode}_1km (or 10km) (zip file)|[https://sdi.eea.europa.eu/data/d9d4684e-0a8d-496c-8be8-110f4b9465f6](https://www.eea.europa.eu/en/datahub/datahubitem-view/3c362237-daa4-45e2-8c16-aaadfb1a003b?activeAccordion=1069873%2C1159)|download 1km <br>(and 10km <br>reference grid <br>for those<br> countries for <br>which validation <br>is performed at <br>10km level),<br> i.e., one (two) <br>zip files per <br>country|Data/Raw_Data/Grid/|[6]|
 |grid25.zip|https://agri4cast.jrc.ec.europa.eu/DataPortal/Index.aspx?o=d|to download, <br>in the agri4cast <br>data portal click <br>on the button<br> "Resource Info"<br> belonging to <br>"Gridded Agro-Meteorological <br>Data in Europe".<br> Then, click on<br> "Download file" <br>in the window<br> that opens,<br> next to "Grid<br> Definition".|Data/Raw_Data/Grid/|[6]|
 |**NUTS regions boundaries**|
-|NUTS_RG_01M_{year}_3035.shp.zip|https://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/administrative-units-statistical-units/nuts|select the years 2006, 2010, 2013, 2016, scale 01M, file format SHP, geometry type Polygons (RG) and CRS EPSG:3035|Data/Raw_Data/NUTS/|[7]|
+|NUTS_RG_01M_{year}_3035.shp.zip|https://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/administrative-units-statistical-units/nuts|select the <br>years 2006,<br> 2010, 2013,<br> 2016, scale <br>01M, file <br>format SHP, <br>geometry type <br>Polygons (RG) <br>and CRS <br>EPSG:3035|Data/Raw_Data/NUTS/|[7]|
 |**Aggregated crop and UAA data**|
-|apro_cpshr_20102020_area.csv|https://ec.europa.eu/eurostat/databrowser/view/apro_cpshr/default/table?lang=en|see additional instructions below|Data/Raw_Data/Eurostat/|[8]|
-|apro_cpshr_20102020_main_area.csv|https://ec.europa.eu/eurostat/databrowser/view/apro_cpshr/default/table?lang=en|see additional instructions below|Data/Raw_Data/Eurostat/|[8]|
-|EUROSTAT_crops_total_NUTS3_2010_final.xlsx|data was provided by Eurostat on request, not publically available for download|||[8]|
-|UAA_all_regions_all_years.csv|https://ec.europa.eu/eurostat/databrowser/view/apro_cpshr/default/table?lang=en|see additional instructions below|Data/Raw_Data/Eurostat/|[8]|
+|apro_cpshr_20102020_area.csv|https://ec.europa.eu/eurostat/databrowser/view/apro_cpshr/default/table?lang=en|see additional<br> instructions below|Data/Raw_Data/Eurostat/|[8]|
+|apro_cpshr_20102020_main_area.csv|https://ec.europa.eu/eurostat/databrowser/view/apro_cpshr/default/table?lang=en|see additional <br>instructions below|Data/Raw_Data/Eurostat/|[8]|
+|EUROSTAT_crops_total_NUTS3_2010_final.xlsx|data was <br>provided by Eurostat<br> on request, <br>not publically <br>available for <br>download. <br>Only relevant<br> for year 2010|||[8]|
+|UAA_all_regions_all_years.csv|https://ec.europa.eu/eurostat/databrowser/view/apro_cpshr/default/table?lang=en|see additional <br>instructions below|Data/Raw_Data/Eurostat/|[8]|
 |**Data for UAA at cell level**|
 |clc{year}_v2020_20u1_raster100m (folder)|https://land.copernicus.eu/en/products/corine-land-cover|download for 2006, 2012, and 2018. Extract the (nested) downloaded files until you get a folder named clc{year}_v2020_20u1_raster100m (it might be that you have to change name of the last folder a bit so that it is such as defined in the first column) |Data/Raw_Data/CORINE/|[9]|
 |**Validation and output comparison data**|
