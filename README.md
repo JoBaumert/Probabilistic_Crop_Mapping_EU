@@ -48,10 +48,10 @@ The input data used comes from multiple sources (see table below). To fully repl
 |**Aggregated crop and UAA data**|
 |apro_cpshr_20102020_area.csv|https://ec.europa.eu/eurostat/databrowser/view/apro_cpshr/default/table?lang=en|see additional<br> instructions below|Data/Raw_Data/Eurostat/|[8]|
 |apro_cpshr_20102020_main_area.csv|https://ec.europa.eu/eurostat/databrowser/view/apro_cpshr/default/table?lang=en|see additional <br>instructions below|Data/Raw_Data/Eurostat/|[8]|
-|EUROSTAT_crops_total_NUTS3_2010_final.xlsx|data was <br>provided by Eurostat<br> on request, <br>not publically <br>available for <br>download. <br>Only relevant<br> for year 2010|||[8]|
+|EUROSTAT_crops_total_NUTS3_2010_final.xlsx||data was <br>provided by Eurostat<br> on request, <br>not publically <br>available for <br>download. <br>Only relevant<br> for year 2010|[8]|
 |UAA_all_regions_all_years.csv|https://ec.europa.eu/eurostat/databrowser/view/apro_cpshr/default/table?lang=en|see additional <br>instructions below|Data/Raw_Data/Eurostat/|[8]|
 |**Data for UAA at cell level**|
-|clc{year}_v2020_20u1_raster100m (folder)|https://land.copernicus.eu/en/products/corine-land-cover|download for 2006, 2012, and 2018. Extract the (nested) downloaded files until you get a folder named clc{year}_v2020_20u1_raster100m (it might be that you have to change name of the last folder a bit so that it is such as defined in the first column) |Data/Raw_Data/CORINE/|[9]|
+|clc{year}_v2020_20u1_raster100m (folder)|https://land.copernicus.eu/en/products/corine-land-cover|download for <br>2006, 2012, <br>and 2018.<br> Extract the <br>(nested) downloaded <br>files until you<br> get a folder<br> named clc{year}_v2020_<br>20u1_raster100m <br>(it might be<br> that you have to <br>change name of <br>the last <br>folder a bit<br> so that it<br> is such as<br> defined in the<br> first column) |Data/Raw_Data/CORINE/|[9]|
 |**Validation and output comparison data**|
 |{country}_{year}.zip|https://syncandshare.lrz.de/getlink/fiAD95cTrXbnKMrdZYrFFcN8/|Data/Raw_Data/IACS/||[10]|
 |EUCROPMAP_2018.tif|https://data.jrc.ec.europa.eu/dataset/15f86c84-eae1-4723-8e00-c1b35c8f56b9|Data/Raw_Data/RSCM/|[11]|
