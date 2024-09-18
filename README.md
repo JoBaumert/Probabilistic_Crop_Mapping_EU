@@ -27,31 +27,31 @@ The input data used comes from multiple sources (see table below). To fully repl
 |lucas_harmo_uf.csv|https://data.jrc.ec.europa.eu/dataset/f85907ae-d123-471f-a44a-8cca993485a2#dataaccess||Data/Raw_Data/LUCAS|[1]|
 |LUCAS_TOPSOIL_v1.xlsx|https://esdac.jrc.ec.europa.eu/content/lucas-2009-topsoil-data||Data/Raw_Data/LUCAS|[2]|
 |**Precipitation Data**|
-|{2-digit-countrycode}\_precipitation_{StartyearEndyear}.csv|https://agri4cast.jrc.ec.europa.eu/DataPortal/RequestDataResource.aspx?idResource=7&o=d|select "sum of precipitation" and respective country, then the start date 01/01/2003 and the end date 31/12/2020. If the data is too large to download, first download the years 2001 until some later year and then download in another file all the years that remain. Download as a csv, unzip the downloaded file and save CSV at the indicated storage location|Data/Raw_Data/Precipitation/|[3]|
+|{2-digit-countrycode}\_precipitation_{StartyearEndyear}.csv|https://agri4cast.jrc.ec.europa.eu/DataPortal/RequestDataResource.aspx?idResource=7&o=d|select "sum of precipitation"<br> and respective<br> country, then<br> the start date<br> 01/01/2003<br> and the end<br> date 31/12/2020.<br> If the data<br> is too large <br>to download,<br> first download <br>the years 2001 <br>until some later<br> year and then<br> download in <br>another<br> file all the<br> years that remain.<br> Download as a<br> csv, unzip the<br> downloaded file <br>and save CSV <br>at the indicated<br> storage location|Data/Raw_Data/Precipitation/|[3]|
 |**Temperature Data**|
-|{2-digit-countrycode}\_temperature_{StartyearEndyear}.csv|https://agri4cast.jrc.ec.europa.eu/DataPortal/RequestDataResource.aspx?idResource=7&o=d|select "mean air temperature" and then proceed exactly as for the precipitation data|Data/Raw_Data/Temperature|[3]|
+|{2-digit-countrycode}\_temperature_{StartyearEndyear}.csv|https://agri4cast.jrc.ec.europa.eu/DataPortal/RequestDataResource.aspx?idResource=7&o=d|select <br>"mean air<br> temperature" and<br> then proceed<br> exactly as<br> for the <br>precipitation <br>data|Data/Raw_Data/Temperature|[3]|
 |**Soil Data**|
-|Sand_Extra (zip file)|https://esdac.jrc.ec.europa.eu/content/topsoil-physical-properties-europe-based-lucas-topsoil-data|the description of the data claims it's only for the EU-25. However, where you can download the data there is the option to download it extrapolated for the EU-28. For all soil variables, download the extrapolated |Data/Raw_Data/Soil/|[4]|
+|Sand_Extra (zip file)|https://esdac.jrc.ec.europa.eu/content/topsoil-physical-properties-europe-based-lucas-topsoil-data|the description <br>of the data<br> claims it's only <br>for the EU-25. <br>However, where you <br>can download the <br>data there is <br>the option to <br>download it<br> extrapolated for <br>the EU-28. <br>For all soil <br>variables, download <br>the extrapolated |Data/Raw_Data/Soil/|[4]|
 |Silt_Extra (zip file)| " |"|"|"|
 |Clay_Extra (zip file)| " |"|"|"|
 |CoarseFragments_Extra (zip file)| " |"|"|"|
 |BulkDensity_Extra (zip file)| " |"|"|"|
 |AWC_Extra (zip file)| " |"|"|"|
 |**Terrain Data**|
-|eudem_dem_3035_europe.tif|[https://land.copernicus.eu/imagery-in-situ/eu-dem/eu-dem-v1-0-and-derived-products/eu-dem-v1.0?tab=metadata](https://sdi.eea.europa.eu/catalogue/eea/api/records/66fa7dca-8772-4a5d-9d56-2caba4ecd36a)|apparently no longer maintained - any other elevation map will do|Raw_Data/DEM/|[5]|
-|eudem_slop_3035_europe.tif|https://land.copernicus.eu/imagery-in-situ/eu-dem/eu-dem-v1-0-and-derived-products/slope?tab=download|apparently no longer maintained - any other slope map will do|Data/Raw_Data/DEM/|[5]|
+|eudem_dem_3035_europe.tif|[https://land.copernicus.eu/imagery-in-situ/eu-dem/eu-dem-v1-0-and-derived-products/eu-dem-v1.0?tab=metadata](https://sdi.eea.europa.eu/catalogue/eea/api/records/66fa7dca-8772-4a5d-9d56-2caba4ecd36a)|apparently no <br>longer maintained -<br> any other<br> elevation map<br> will do|Raw_Data/DEM/|[5]|
+|eudem_slop_3035_europe.tif|https://land.copernicus.eu/imagery-in-situ/eu-dem/eu-dem-v1-0-and-derived-products/slope?tab=download|apparently no longer<br> maintained - any<br> other slope<br> map will do|Data/Raw_Data/DEM/|[5]|
 |**Reference Grid**|
-|{2-digit_countrycode}_1km (or 10km) (zip file)|[https://sdi.eea.europa.eu/data/d9d4684e-0a8d-496c-8be8-110f4b9465f6](https://www.eea.europa.eu/en/datahub/datahubitem-view/3c362237-daa4-45e2-8c16-aaadfb1a003b?activeAccordion=1069873%2C1159)|download 1km (and 10km reference grid for those countries for which validation is performed at 10km level), i.e., one (two) zip files per country|Data/Raw_Data/Grid/|[6]|
-|grid25.zip|https://agri4cast.jrc.ec.europa.eu/DataPortal/Index.aspx?o=d|to download, in the agri4cast data portal click on the button "Resource Info" belonging to "Gridded Agro-Meteorological Data in Europe". Then, click on "Download file" in the window that opens, next to "Grid Definition".|Data/Raw_Data/Grid/|[6]|
+|{2-digit_countrycode}_1km (or 10km) (zip file)|[https://sdi.eea.europa.eu/data/d9d4684e-0a8d-496c-8be8-110f4b9465f6](https://www.eea.europa.eu/en/datahub/datahubitem-view/3c362237-daa4-45e2-8c16-aaadfb1a003b?activeAccordion=1069873%2C1159)|download 1km <br>(and 10km <br>reference grid <br>for those<br> countries for <br>which validation <br>is performed at <br>10km level),<br> i.e., one (two) <br>zip files per <br>country|Data/Raw_Data/Grid/|[6]|
+|grid25.zip|https://agri4cast.jrc.ec.europa.eu/DataPortal/Index.aspx?o=d|to download, <br>in the agri4cast <br>data portal click <br>on the button<br> "Resource Info"<br> belonging to <br>"Gridded Agro-Meteorological <br>Data in Europe".<br> Then, click on<br> "Download file" <br>in the window<br> that opens,<br> next to "Grid<br> Definition".|Data/Raw_Data/Grid/|[6]|
 |**NUTS regions boundaries**|
-|NUTS_RG_01M_{year}_3035.shp.zip|https://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/administrative-units-statistical-units/nuts|select the years 2006, 2010, 2013, 2016, scale 01M, file format SHP, geometry type Polygons (RG) and CRS EPSG:3035|Data/Raw_Data/NUTS/|[7]|
+|NUTS_RG_01M_{year}_3035.shp.zip|https://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/administrative-units-statistical-units/nuts|select the <br>years 2006,<br> 2010, 2013,<br> 2016, scale <br>01M, file <br>format SHP, <br>geometry type <br>Polygons (RG) <br>and CRS <br>EPSG:3035|Data/Raw_Data/NUTS/|[7]|
 |**Aggregated crop and UAA data**|
-|apro_cpshr_20102020_area.csv|https://ec.europa.eu/eurostat/databrowser/view/apro_cpshr/default/table?lang=en|see additional instructions below|Data/Raw_Data/Eurostat/|[8]|
-|apro_cpshr_20102020_main_area.csv|https://ec.europa.eu/eurostat/databrowser/view/apro_cpshr/default/table?lang=en|see additional instructions below|Data/Raw_Data/Eurostat/|[8]|
-|EUROSTAT_crops_total_NUTS3_2010_final.xlsx|data was provided by Eurostat on request, not publically available for download|||[8]|
-|UAA_all_regions_all_years.csv|https://ec.europa.eu/eurostat/databrowser/view/apro_cpshr/default/table?lang=en|see additional instructions below|Data/Raw_Data/Eurostat/|[8]|
+|apro_cpshr_20102020_area.csv|https://ec.europa.eu/eurostat/databrowser/view/apro_cpshr/default/table?lang=en|see additional<br> instructions below|Data/Raw_Data/Eurostat/|[8]|
+|apro_cpshr_20102020_main_area.csv|https://ec.europa.eu/eurostat/databrowser/view/apro_cpshr/default/table?lang=en|see additional <br>instructions below|Data/Raw_Data/Eurostat/|[8]|
+|EUROSTAT_crops_total_NUTS3_2010_final.xlsx||data was <br>provided by Eurostat<br> on request, <br>not publically <br>available for <br>download. <br>Only relevant<br> for year 2010|[8]|
+|UAA_all_regions_all_years.csv|https://ec.europa.eu/eurostat/databrowser/view/apro_cpshr/default/table?lang=en|see additional <br>instructions below|Data/Raw_Data/Eurostat/|[8]|
 |**Data for UAA at cell level**|
-|clc{year}_v2020_20u1_raster100m (folder)|https://land.copernicus.eu/en/products/corine-land-cover|download for 2006, 2012, and 2018. Extract the (nested) downloaded files until you get a folder named clc{year}_v2020_20u1_raster100m (it might be that you have to change name of the last folder a bit so that it is such as defined in the first column) |Data/Raw_Data/CORINE/|[9]|
+|clc{year}_v2020_20u1_raster100m (folder)|https://land.copernicus.eu/en/products/corine-land-cover|download for <br>2006, 2012, <br>and 2018.<br> Extract the <br>(nested) downloaded <br>files until you<br> get a folder<br> named clc{year}_v2020_<br>20u1_raster100m <br>(it might be<br> that you have to <br>change name of <br>the last <br>folder a bit<br> so that it<br> is such as<br> defined in the<br> first column) |Data/Raw_Data/CORINE/|[9]|
 |**Validation and output comparison data**|
 |{country}_{year}.zip|https://syncandshare.lrz.de/getlink/fiAD95cTrXbnKMrdZYrFFcN8/|Data/Raw_Data/IACS/||[10]|
 |EUCROPMAP_2018.tif|https://data.jrc.ec.europa.eu/dataset/15f86c84-eae1-4723-8e00-c1b35c8f56b9|Data/Raw_Data/RSCM/|[11]|
