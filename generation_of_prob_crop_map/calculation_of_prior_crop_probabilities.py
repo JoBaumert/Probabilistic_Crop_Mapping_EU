@@ -1,6 +1,5 @@
 # %%
 import argparse
-import jax.numpy as jnp
 import pandas as pd
 from pathlib import Path
 import numpy as np

@@ -12,7 +12,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import rasterio as rio
 from rasterio.plot import show
-from rasterstats import zonal_stats, point_query
 from rasterio.windows import from_bounds
 import os
 import richdem as rd
@@ -74,7 +73,9 @@ nuts_path=intermediary_data_path+"Preprocessed_Inputs/NUTS/NUTS_all_regions_all_
 grid_25km_path = raw_data_path+"Grid/grid25.zip"
 #explanatory vars:
 elev_path = raw_data_path+"DEM/eudem_dem_3035_europe.tif"
+
 slope_path = "zip+file:///"+raw_data_path+"DEM/eudem_slop_3035_europe.zip!/eudem_slop_3035_europe/eudem_slop_3035_europe.tif"
+
 sand_path = "zip+file:///"+raw_data_path+"Soil/Sand_Extra.zip!/Sand1.tif" 
 clay_path = "zip+file:///"+raw_data_path+"Soil/Clay_Extra.zip!/Clay.tif"
 silt_path = "zip+file:///"+raw_data_path+"Soil/Silt_Extra.zip!/Silt1.tif"
@@ -108,7 +109,14 @@ MERGING
 
 if __name__ == "__main__":
 
+    print("get explanatory variables for locations of LUCAS (LUCAS feature merges)...")
     for country in country_codes_relevant:
+
+        #when reproducing the maps without the original slope and elevation data this if clause will be activated
+        if not os.path.isfile(elev_path):
+
+            elev_path_relevant=raw_data_path+"DEM/eudem_dem_3035_"+country+".tif"
+            slope_path_relevant=raw_data_path+"DEM/eudem_slope_3035_"+country+".tif"
         
         # load files
         NUTS_dict = ffd.get_NUTS_regions(NUTS_gdf, country)
@@ -197,10 +205,14 @@ if __name__ == "__main__":
             window = [left, bottom, right, top]
 
             slope_in_DN = ffd.get_elevation_LUCAS(
-                slope_path, lon3035, lat3035, window=window
+                slope_path_relevant, lon3035, lat3035, window=window
             )
 
-            slope_in_degree = np.arccos(slope_in_DN / 250) * 180 / np.pi
+            if not os.path.isfile(elev_path):
+                slope_in_degree=slope_in_DN
+
+            else:
+                slope_in_degree = np.arccos(slope_in_DN / 250) * 180 / np.pi
 
             df_slope = LUCAS_selected[["year", "id", "point_id"]]
             df_slope["slope_in_degree"] = slope_in_degree
@@ -226,7 +238,7 @@ if __name__ == "__main__":
             window = [left, bottom, right, top]
 
             elevation = ffd.get_elevation_LUCAS(
-                elev_path, lon3035, lat3035, window=window
+                elev_path_relevant, lon3035, lat3035, window=window
             )
 
             df_elevation = LUCAS_selected[["year", "id", "point_id"]]
@@ -522,4 +534,5 @@ if __name__ == "__main__":
             df_latitude4326.to_csv(out_path + "/" + country + "/latitude4326.csv")
             print(f"{country}: latitude data exported")
 
+# %%
 # %%

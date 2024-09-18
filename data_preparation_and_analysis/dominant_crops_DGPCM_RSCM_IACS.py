@@ -8,8 +8,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import geopandas as gpd
-import pyarrow as pa
-import pyarrow.parquet as pq
 from shapely.geometry import Polygon
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score

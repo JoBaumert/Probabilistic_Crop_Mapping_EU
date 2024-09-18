@@ -20,7 +20,7 @@ from pathlib import Path
 import os
 
 sys.path.append(
-    "/home/baumert/research/Project-1/Project-1-Code/data preparation/modules/"
+    str(Path(Path(os.path.abspath(__file__)).parents[1]))+"/data_preparation_and_analysis/modules/"
 )
 import functions_for_data_preparation as ffd
 
@@ -48,7 +48,7 @@ data_2010_nuts3_path = (
 UAA_path = raw_data_path + "Eurostat/UAA_all_regions_all_years.csv"
 
 # output files
-
+preprocessed_eurostat_data_path=intermediary_data_path+"Eurostat/"
 cropdata_output_path = (
     intermediary_data_path + "Eurostat/Eurostat_cropdata_compiled_"
 )
@@ -164,7 +164,7 @@ nuts_allyear_df.NUTS_ID.value_counts()
 #get relevant crop area information from Eurostat input files for each NUTS region in every year
 df_all_aggregates = pd.DataFrame()
 for year in selected_years:
-    print(year)
+    print("preprocessing crop area data for "+str(year))
 
     all_nuts = np.array(
         nuts_allyear_df["NUTS_ID"].iloc[np.where(nuts_allyear_df["year"] == year)]
@@ -283,7 +283,7 @@ df_cropdata_selected_years = df_cropdata_selected_years[
 
 #%%
 # export the compiled Eurostat cropdata
-Path(intermediary_data_path).mkdir(parents=True, exist_ok=True)
+Path(preprocessed_eurostat_data_path).mkdir(parents=True, exist_ok=True)
 df_cropdata_selected_years.to_csv(
     cropdata_output_path+str(selected_years[0])+str(selected_years[-1])+"_DGPCMcodes.csv",
     index=False,
@@ -304,7 +304,7 @@ UAA = pd.read_csv(UAA_path)
 # listed only at a higher level of aggregation
 all_UAA = {"NUTS_ID": [], "year": [], "UAA": []}
 for year in selected_years:
-    print(year)
+    print("preprocessing UAA for "+str(year))
     all_nuts = np.array(
         nuts_allyear_df["NUTS_ID"].iloc[np.where(nuts_allyear_df["year"] == year)]
     )
@@ -355,7 +355,7 @@ df_UAA_selected_years = df_UAA_selected_years[["country", "NUTS_ID", "year", "UA
 
 #%%
 # export data on UAA
-Path(intermediary_data_path).mkdir(parents=True, exist_ok=True)
+Path(preprocessed_eurostat_data_path).mkdir(parents=True, exist_ok=True)
 df_UAA_selected_years.to_csv(UAA_output_path+str(selected_years[0])+str(selected_years[-1])+".csv", index=False)
 
 #%%

@@ -47,7 +47,7 @@ selected_years=np.array(pd.read_excel(parameter_path, sheet_name="selected_years
 countries = pd.read_excel(parameter_path, sheet_name="selected_countries")
 country_codes_relevant = np.array(countries["country_code"])
 
-country_codes_relevant=["AT","FR"]
+
 year_country_crop_list=[np.tile(selected_years,len(country_codes_relevant)*len(selected_crops)),
         np.repeat(country_codes_relevant,len(selected_years)*len(selected_crops)),
      np.tile(np.repeat(selected_crops,len(selected_years)),len(country_codes_relevant))]
@@ -77,6 +77,7 @@ all_NUTS_boundaries=gpd.read_file(nuts_path+".shp")
 
 #%%
 if __name__ == "__main__":
+    print("generate visualization of crop map for selected crops, country and year")
     for c in range(len(year_crop_list[0])):
         year = year_crop_list[0][c]
         selected_crop = year_crop_list[1][c]
@@ -184,7 +185,7 @@ if __name__ == "__main__":
 
             zip=zipfile.ZipFile(grid_1km_path_country)
             for file in zip.namelist():
-                if file[-3:]=="shp":
+                if (file[-3:]=="shp")&(file[3:6]=="1km"):
                     break
 
 
@@ -216,6 +217,7 @@ if __name__ == "__main__":
             all_countries_selected_crop_share_df = pd.concat(
                 (all_countries_selected_crop_share_df, posterior_probabilities_country)
             )
+
 
         #%%
         all_countries_selected_crop_share_gdf=gpd.GeoDataFrame(all_countries_selected_crop_share_df)
@@ -263,4 +265,17 @@ if __name__ == "__main__":
         plt.close(fig)
         #%%
         output_path
+# %%
+country="AT"
+year=2020
+test=pd.read_parquet(
+                posterior_probability_path
+                + country
+                + "/"
+                + country
+                + str(year)
+                + "entire_country"
+            )
+# %%
+test
 # %%

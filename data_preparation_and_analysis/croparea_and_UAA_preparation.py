@@ -653,8 +653,7 @@ crop_consistency_df["2level_information_share"]=(crop_consistency_df["2level_val
 crop_consistency_df["1level_information_share"]=(crop_consistency_df["1level_value"]-crop_consistency_df["2level_value"])/crop_consistency_df["0level_value"]
 crop_consistency_df["0level_information_share"]=(crop_consistency_df["0level_value"]-crop_consistency_df["1level_value"])/crop_consistency_df["0level_value"]
 
-#%%
-crop_consistency_df
+
 
 #%%
 crop_consistency_df.to_csv(output_path+"crop_levels_selected_countries_"+str(selected_years.min())+str(selected_years.max())+".csv")

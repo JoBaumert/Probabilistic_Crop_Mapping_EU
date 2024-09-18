@@ -1,0 +1,23 @@
+
+#!/bin/bash
+echo run LUCAS_preprocessing.py
+python data_preparation_and_analysis/LUCAS_preprocessing.py 
+echo run climate_data_preprocessing.py
+python data_preparation_and_analysis/climate_data_preprocessing.py
+echo run NUTS_preprocessing.py
+python data_preparation_and_analysis/NUTS_preprocessing.py
+echo run Eurostat_preprocessing.py
+python data_preparation_and_analysis/Eurostat_preprocessing.py
+echo run croparea_and_UAA_preparation.py
+python data_preparation_and_analysis/croparea_and_UAA_preparation.py
+echo run grid_preparation.py
+python data_preparation_and_analysis/grid_preparation.py
+echo run linking_LUCAS_and_explanatory_vars.py
+python data_preparation_and_analysis/linking_LUCAS_and_explanatory_vars.py
+echo run linking_gridcells_and_explanatory_vars.py
+python data_preparation_and_analysis/linking_gridcells_and_explanatory_vars.py
+echo run generate_optimization_constraints_cellweights.py
+python data_preparation_and_analysis/generate_optimization_constraints_cellweights.py
+echo run LUCAS_field_size_calculation.py
+python data_preparation_and_analysis/LUCAS_field_size_calculation.py
+

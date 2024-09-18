@@ -53,6 +53,7 @@ if __name__ == "__main__":
         pass
     # import data
     #%%
+    print("calculate field size...")
     print("assumed minimum number of fields per cell: "+ str(min_n_of_fields))
     #%%
     # load data on NUTS regions in a year

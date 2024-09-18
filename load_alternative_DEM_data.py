@@ -8,7 +8,8 @@ import ee
 import geemap
 
 # %%
-country="AT"
+#specify country
+country="NL"
 
 data_main_path=open(str(Path(Path(os.path.abspath(__file__)).parents[1])/"data_main_path.txt"))
 data_main_path=data_main_path.read()[:-1]
@@ -37,9 +38,9 @@ def get_slope():
 if __name__ == "__main__":
 
     geemap.ee_export_image_to_drive(
-                        get_elevation(), #here we call the function indicated by taskname
+                        get_elevation(), 
                     #  folder= specify target folder here, otherwise will save to home,
-                        description="eudem_dem_3035_europe",    
+                        description="eudem_dem_3035_"+country,    
                         scale=25, 
                         maxPixels=(2000*40)**2, #set to a large value, in this case will allow dowload for countries with size 2000x2000km
                         region=ee.Geometry.Rectangle(bounds,
@@ -47,9 +48,9 @@ if __name__ == "__main__":
                     )
  
     geemap.ee_export_image_to_drive(
-                        get_slope(), #here we call the function indicated by taskname
+                        get_slope(), 
                     #  folder= specify target folder here, otherwise will save to home,
-                        description="eudem_slope_3035_europe_"+country,    
+                        description="eudem_slope_3035_"+country,    
                         scale=25, 
                         maxPixels=(2000*40)**2, #set to a large value, in this case will allow dowload for countries with size 2000x2000km
                         region=ee.Geometry.Rectangle(bounds,

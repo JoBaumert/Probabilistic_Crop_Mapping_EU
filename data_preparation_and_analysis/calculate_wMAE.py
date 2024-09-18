@@ -1,6 +1,5 @@
 # %%
 from statistics import median_high
-import arviz as az
 import pandas as pd
 import numpy as np
 from bdb import effective

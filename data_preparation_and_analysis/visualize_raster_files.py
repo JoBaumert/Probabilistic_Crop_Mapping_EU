@@ -16,6 +16,9 @@ import gc
 import matplotlib.pyplot as plt
 
 #%%
+"""
+this script allows to visualize the raster files for the entire EU at once
+"""
 
 data_main_path=open(str(Path(Path(os.path.abspath(__file__)).parents[1])/"data_main_path.txt"))
 data_main_path=data_main_path.read()[:-1]
@@ -297,12 +300,4 @@ plt.close(fig)
 # %%
 np.quantile(posterior_range_grid.posterior_range,0.99)
 # %%
-"""test"""
-test=rio.open("/home/baumert/fdiexchange/baumert/project1/Data/Raw_Data/DEM/eudem_dem_3035_europe.tif")
-# %%
-list(test.transform)
-# %%
-list(test.bounds)
-# %%
-test.read().shape
-# %%
+

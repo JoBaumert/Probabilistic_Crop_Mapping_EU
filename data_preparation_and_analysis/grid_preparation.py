@@ -11,7 +11,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import rasterio as rio
 from rasterio.plot import show
-from rasterstats import zonal_stats, point_query
 from rasterio.windows import from_bounds
 import os
 import richdem as rd
@@ -106,8 +105,8 @@ nuts_allyear_gdf
 #%%
 if __name__ == "__main__":
 
-    for country in country_codes_relevant[:1]:
-        country="HR"
+    for country in country_codes_relevant:
+
 
         print(
             f"grid preparation starting for {country}"

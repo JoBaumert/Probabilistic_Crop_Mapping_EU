@@ -31,9 +31,9 @@ from sklearn.metrics import r2_score
 import sys
 
 sys.path.append(
-    str(Path(Path(os.path.abspath(__file__)).parents[0]))+"/modules/"
+    str(Path(Path(os.path.abspath(__file__)).parents[1]))+"/generation_of_prob_crop_map/modules/"
 )
-import modules.functions_for_prediction as ffp
+import functions_for_prediction as ffp
 
 
 # %%

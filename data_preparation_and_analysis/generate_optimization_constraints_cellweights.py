@@ -72,16 +72,10 @@ NUTS_data = pd.read_csv(nuts_input_path)
 # %%
 NUTS_data=NUTS_data[(NUTS_data["CNTR_CODE"].isin(country_codes_relevant))&(NUTS_data["year"].isin(selected_years))]
 
-#%%
-
-#%%
-
-
-#%%
 
 #%%
 if __name__ == "__main__":
-
+    print("scale cell weights to match UAA at regional level to ensure feasibility of optimization problem...")
     for country in country_codes_relevant:
         lowest_level_selected_country_allyears=lowest_level_country_year[
                 (lowest_level_country_year["country"] == country)
@@ -131,12 +125,14 @@ if __name__ == "__main__":
                 + str(cellsize_country_df[f"nuts{country_levls[country]}"].iloc[i])
                 for i in range(len(cellsize_country_df))
             ]
-
+    
             weight_df = cellsize_country_df.copy()
             weight_df["inferred_UAA_in_ha"] = weight_df["inferred_UAA"] / 10000
 
+            relevant_column_name= list(weight_df.columns)[np.where(np.char.find(list(weight_df.columns),"nuts")==0)[0][0]]
+
             weight_df["lowest_relevant_NUTS_level"] = np.array(
-                weight_df[f"nuts{lowest_level_selected_country_allyears}"]
+                weight_df[relevant_column_name]
             ).astype(f"U{lowest_level_selected_country_year+2}")
 
             weight_array = np.ndarray(len(weight_df))
@@ -160,9 +156,8 @@ if __name__ == "__main__":
             weight_df["year"] = np.repeat(year, len(weight_df))
             weight_df_complete = pd.concat((weight_df_complete, weight_df))
             weight_df_complete["NUTS1"] = np.array(
-                weight_df_complete[f"nuts{lowest_level_selected_country_allyears}"]
+                weight_df_complete[relevant_column_name]
             ).astype("U3")
-
 
         # export data for country
         Path(cell_weight_path + country ).mkdir(
@@ -172,45 +167,4 @@ if __name__ == "__main__":
             cell_weight_path + country + "/cell_weights_"+str(selected_years.min())+str(selected_years.max())+".csv"
         )
         print("data for " + country + " exported")
-# %%
-relevant_cells_df
-# %%
-relevant_cells_df = pd.read_csv(
-    cellsize_input_path
-    + country
-    + "/inferred_UAA/1kmgrid_"
-    + nuts1
-    + ".csv"
-)
-# %%
-cellsize_country_df
-# %%
-country_levls
-# %%
-lowest_level_country_year
-# %%
-weight_df_complete
-# %%
-grid=gpd.read_file("/home/baumert/fdiexchange/baumert/project1/Data/Raw_Data/Grid/PL_1km.zip!/pl_1km.shp")
-# %%
-weight_df_complete=pd.merge(weight_df_complete,grid[["CELLCODE","geometry"]],how="left",on="CELLCODE")
-# %%
-weight_df_complete=gpd.GeoDataFrame(weight_df_complete)
-# %%
-weight_df_complete[weight_df_complete["year"]==2014].plot(column="weight")
-# %%
-weight_df_complete[weight_df_complete["year"]==2020]
-# %%
-nuts1="HR0"
-relevant_cells_df = pd.read_csv(
-                    cellsize_input_path
-                    + country
-                    + "/inferred_UAA/1kmgrid_"
-                    + nuts1
-                    + ".csv"
-                )
-# %%
-relevant_cells_df
-# %%
-reg
 # %%
