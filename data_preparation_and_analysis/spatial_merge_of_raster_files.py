@@ -23,14 +23,14 @@ postsampling_reps = 10
 Simulated_cropshares_path=(data_main_path+"Results/Simulated_consistent_crop_shares/")
 #%%
 
-for year in range(2015,2016)[:1]:
+for year in range(2020,2021):
     
     #year=2020
     print(year)
 
     country_data=[]
     for i,country in enumerate(np.sort(os.listdir(Simulated_cropshares_path))):
-        if (country=="HDIs")|(country=="EU"):
+        if (country=="HDIs")|(country=="EU")|(country=="Deviations"):
             continue
         country_data.append(rio.open(Simulated_cropshares_path+country+"/"+country+str(year)+"simulated_cropshare_"+str(postsampling_reps)+"reps_int.tif"))
         
@@ -43,15 +43,16 @@ for year in range(2015,2016)[:1]:
 
     print("export rsaterfile expected shares EU...")
 
-  
+    Path(Simulated_cropshares_path+"EU").mkdir(parents=True, exist_ok=True)
     with rio.open(Simulated_cropshares_path+"EU/expected_crop_share_entire_EU_"+str(year)+".tif", 'w',
                 width=int(country_data_map_expected_shares.shape[2]),height=int(country_data_map_expected_shares.shape[1]),
                 transform=out_trans,count=country_data_map_expected_shares.shape[0],dtype=rio.int16,crs="EPSG:3035") as dst:
         dst.write(country_data_map_expected_shares.astype(rio.int16))
 
-    del country_data_map_expected_shares
+    del country_data_map,country_data_map_expected_shares, country_data
     gc.collect()
 #%%
+"""
     bands=pd.read_csv(Simulated_cropshares_path+country+"/"+country+str(year)+"simulated_cropshare_"+str(postsampling_reps)+"reps_bands.csv")
 
 
@@ -79,7 +80,7 @@ for year in range(2015,2016)[:1]:
     del country_data_map
     gc.collect()
 #%%
-"""merge all HDI files to one average HDI-width file"""
+#merge all HDI files to one average HDI-width file
 #should take 4- minutes
 all_HDIs_list=[]
 for file in os.listdir(Simulated_cropshares_path+"HDIs/"):
@@ -104,3 +105,4 @@ with rio.open(Simulated_cropshares_path+"HDIs/mean_HDI_width_all_crops_all_years
             transform=transform,count=1,dtype=rio.int16,crs="EPSG:3035") as dst:
     dst.write(np.expand_dims(mean_HDI_width,0).astype(rio.int16))
 # %%
+"""

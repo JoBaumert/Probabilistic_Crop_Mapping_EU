@@ -29,6 +29,7 @@ netcdf4 = "*"
 arviz = "*"
 argparse = "*"
 geocube = "*"
+gcloud = "*"
 
 [dev-packages]
 

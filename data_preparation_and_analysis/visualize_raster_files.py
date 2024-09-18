@@ -298,7 +298,11 @@ plt.close(fig)
 np.quantile(posterior_range_grid.posterior_range,0.99)
 # %%
 """test"""
-test=rio.open(results_path+"PL/PL2015simulated_cropshare_10reps_int.tif").read()
+test=rio.open("/home/baumert/fdiexchange/baumert/project1/Data/Raw_Data/DEM/eudem_dem_3035_europe.tif")
 # %%
-show(test[25])
+list(test.transform)
+# %%
+list(test.bounds)
+# %%
+test.read().shape
 # %%

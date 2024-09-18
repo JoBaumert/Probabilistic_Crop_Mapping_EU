@@ -23,7 +23,7 @@ postsampling_reps = 10
 
 #%%
 #Posterior_probability_path=(data_main_path+"Results/Posterior_crop_probability_estimates/")
-Posterior_probability_path="/home/baumert/fdiexchange/baumert/posterior_probabilities/"
+Posterior_probability_path=data_main_path+"Results/Posterior_crop_probability_estimates/"
 parameter_path = (
     data_main_path+"delineation_and_parameters/DGPCM_user_parameters.xlsx"
 )

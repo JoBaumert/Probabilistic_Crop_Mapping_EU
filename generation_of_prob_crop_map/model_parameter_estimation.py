@@ -3,7 +3,6 @@
 """NO LOCAL WEIGHTS APPLIED"""
 from audioop import mul
 from cgi import test
-import pymc as pm
 import numpy as np
 import matplotlib.pyplot as plt
 #import seaborn as sns
@@ -168,8 +167,7 @@ for country in country_codes_relevant:
     cropname_conversion_dict=fufore.cropname_conversion_func(cropname_conversion_path)
     selected_feature_df=selected_feature_df[selected_feature_df['lc1'].isin(list(cropname_conversion_dict.keys()))]
     selected_feature_df['DGPCM_code']=selected_feature_df['lc1'].apply(lambda x: cropname_conversion_dict[x])
-    #%%
-    selected_features_final
+    
     #%%
     #LUCAS_selected[LUCAS_selected['lu1']=='U112']
 

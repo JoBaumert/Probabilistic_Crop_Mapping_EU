@@ -16,7 +16,7 @@ from scipy.optimize import minimize
 from scipy.stats import multivariate_normal
 
 import modules.functions_for_prediction as fufop
-
+#%%
 
 # %%
 LUCAS_observation_inclusion_threshold=20
@@ -153,14 +153,21 @@ if __name__ == "__main__":
         #%%
         excluded_nuts_regions
         #%%
-        relevant_nuts_regs = np.sort(
-            nuts_input[
-                (nuts_input["CNTR_CODE"] == country)
-                & (nuts_input["year"] == year)
-                & (nuts_input["LEVL_CODE"] == nuts_level)
-            ]["NUTS_ID"].values
-        )
-
+        try:
+            relevant_nuts_regs = np.sort(
+                nuts_input[
+                    (nuts_input["CNTR_CODE"] == country)
+                    & (nuts_input["year"] == year)
+                    & (nuts_input["LEVL_CODE"] == nuts_level)
+                ]["NUTS_ID"].values
+            )
+        except:
+            relevant_nuts_regs = np.sort(
+                nuts_input[
+                    (nuts_input["CNTR_CODE"] == country)
+                    & (nuts_input["LEVL_CODE"] == nuts_level)
+                ]["NUTS_ID"].values
+            )
 
         # %%
         relevant_nuts_regs = relevant_nuts_regs[

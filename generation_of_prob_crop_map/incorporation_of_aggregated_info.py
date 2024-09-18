@@ -39,9 +39,6 @@ import modules.functions_for_prediction as ffp
 # %%
 #jax.config.update('jax_platform_name', 'cpu')
 
-
-#%%
-jnp.log(jnp.array([1,2,3]))
 #%%
 #DEFAULT SETTINGS IN THE OPTIMIZATION
 minimize_relative_deviation = True
@@ -650,19 +647,15 @@ nuts_input = pd.read_csv(nuts_path)
 
 crop_levels=pd.read_csv(crop_level_path+str(country_year_list[1].min())+str(country_year_list[1].max())+".csv")
 #crop_levels=pd.read_csv("/home/baumert/research/Project-1/data/Intermediary Data/Eurostat/optimization_constraints/crop_levels_20102020_final.csv")
-
-
 #%%
 
 
-#%%
-relevant_years=[2014,2015]
+
 if __name__ == "__main__":
-    for c in range(len(country_year_list[0]))[5:6]:
+    for c in range(len(country_year_list[0])):
         country = country_year_list[0][c]
         year = country_year_list[1][c]
-        if year not in relevant_years:
-            continue
+
             
         print(f"starting optimization for {country} in {year}...")
 
@@ -730,10 +723,16 @@ if __name__ == "__main__":
         UAA_relevant["NUTS_LEVL"] = np.vectorize(len)(UAA_relevant["NUTS_ID"]) - 2
         cropdata_relevant["NUTS_LEVL"] = np.vectorize(len)(cropdata_relevant["NUTS_ID"]) - 2
 
-        nuts_regions_relevant = nuts_input[
-            (nuts_input["CNTR_CODE"] == country) & (nuts_input["year"] == year)
-        ]
+        try:
+            nuts_regions_relevant = nuts_input[
+                (nuts_input["CNTR_CODE"] == country) & (nuts_input["year"] == year)
+            ]
+        except:
+            nuts_regions_relevant = nuts_input[
+                (nuts_input["CNTR_CODE"] == country)
+            ]
 
+       
         nuts_regions_relevant = nuts_regions_relevant.iloc[
             np.where(
                 np.isin(
@@ -795,7 +794,7 @@ if __name__ == "__main__":
         relevant_crop_array = np.array(relevant_crop_array)
         relevant_level_array = np.array(relevant_level_array)
         relevant_info_share_array=np.array(relevant_info_share_array)
-        
+
         
         #%%
         C = len(all_crops)
@@ -828,7 +827,8 @@ if __name__ == "__main__":
         weight_array_long_newC = np.repeat(weight_array, newC)
         weight_array_long_C = np.repeat(weight_array, C)
 
-        # %%
+
+        #%%
 
         aggregated_crop_conversion_matrix = np.zeros((C, newC))
         for c, crop in enumerate(all_crops):
@@ -1017,10 +1017,11 @@ if __name__ == "__main__":
         ) = set_up_optimization_problem(beta, all_crops)
 
         
+        #%%
+        I
         
         
-        
-        
+        #%%
         penalty_adjusted = False
 
         penalty_cell, obj_function_factor = 10e2, 0.01
