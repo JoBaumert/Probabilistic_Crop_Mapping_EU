@@ -6,8 +6,10 @@ First, create a directory in which you would like to store all the code. Then, c
 ```
 git clone https://github.com/JoBaumert/Probabilistic_Crop_Mapping_EU.git
 ```
-
-Make sure the file structure is preserved. <br>
+In any case it is crucial that the file structure is preserved. <br>
+Second, install all dependencies listed in the requirements.txt file. We recommend to work in a virtual environment. For example, if you work in VSCode, you could proceed as follows: <br>
+1) create a virtual environment (venv) like described here: https://code.visualstudio.com/docs/python/environments
+2) install the dependencies listed in Probabilistic_Crop_Mapping_EU/requirements.txt
 
 Second, create a folder named "Data" where the input and output data will be stored. The user can choose where to locate this directory on the local machine. However, when choosing the location of this directory consider that some input and output files are very large. All of the input data must be downloaded from their original sources, prior to running the code (see below). To ensure that the python scripts find all data, you must specify the path to the main data directory with a text file that is stored in the same directory as the code. For this you have (at least) two options: 
 1. manually create a text file with the name "data_main_path.txt" that contains the path *to* the data folder (i.e., not the data folder itself).
