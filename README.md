@@ -119,16 +119,14 @@ You can either run the python scripts individually and sequentially in the order
     1.3. ensure that the selected country and the selected year is specified DGPCM_user_parameters (for example AT and 2020).
    
 2. run the data preprocesing jobfile from the command line (make sure you are in the "Probabilistic_Crop_Mapping_EU" directory):
-
-´´´
+```
 bash job_preprocessing.sh
-´´´
-
+```
 3. run the estimation and simulation jobfile:
-
-´´´
+```
 bash job_estimation_and_simulation.sh
-´´´
+```
+
 estimate model parameters, generate prior crop probabilities, incorporate regional aggregate information and sample from posterior probability
    
 
