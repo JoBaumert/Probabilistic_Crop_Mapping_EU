@@ -114,9 +114,13 @@ if __name__ == "__main__":
 
         #when reproducing the maps without the original slope and elevation data this if clause will be activated
         if not os.path.isfile(elev_path):
-
             elev_path_relevant=raw_data_path+"DEM/eudem_dem_3035_"+country+".tif"
             slope_path_relevant=raw_data_path+"DEM/eudem_slope_3035_"+country+".tif"
+
+        else:
+            elev_path_relevant=elev_path
+            slope_path_relevant=slope_path
+
         
         # load files
         NUTS_dict = ffd.get_NUTS_regions(NUTS_gdf, country)

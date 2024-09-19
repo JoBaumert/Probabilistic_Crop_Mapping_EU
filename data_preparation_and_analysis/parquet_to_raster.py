@@ -197,7 +197,7 @@ if __name__ == "__main__":
             deviation_matrix=np.ndarray((postsampling_reps*len(betas),len(crops))).astype(float)
 
             for beta in betas:
-                print("beta "+str(beta))
+                print("random sampling of crop shares for probability sample "+str(beta))
                 helper_matrix=np.ndarray((crops.shape[0],int(height),int(width)))
                 c=0
                 for crop in crops:
@@ -242,6 +242,7 @@ if __name__ == "__main__":
             refactored_data=factor.reshape(-1,1,1)*resulting_matrix
             refactored_data=refactored_data.round()
 
+            print("save raster files...")
             Path(Simulated_cropshares_path+country+"/").mkdir(parents=True, exist_ok=True)
             with rio.open(Simulated_cropshares_path+country+"/"+country+str(year)+"simulated_cropshare_"+str(postsampling_reps)+"reps_int.tif", 'w',
                         width=int(width),height=int(height),transform=transform,count=refactored_data.shape[0],dtype=rio.int16,crs="EPSG:3035") as dst:

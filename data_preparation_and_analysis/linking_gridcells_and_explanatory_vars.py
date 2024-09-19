@@ -132,6 +132,10 @@ if __name__ == "__main__":
         if not os.path.isfile(elev_path):
             elev_path_relevant=raw_data_path+"DEM/eudem_dem_3035_"+country+".tif"
             slope_path_relevant=raw_data_path+"DEM/eudem_slope_3035_"+country+".tif"
+
+        else:
+            elev_path_relevant=elev_path
+            slope_path_relevant=slope_path
     
         print(country)
 

@@ -1,5 +1,8 @@
-
 #!/bin/bash
+
+#whenever an error occurs, stop script immediately and don't run other jobs
+set -e
+
 echo run LUCAS_preprocessing.py
 python data_preparation_and_analysis/LUCAS_preprocessing.py 
 echo run climate_data_preprocessing.py

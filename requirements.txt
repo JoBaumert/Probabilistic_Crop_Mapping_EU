@@ -56,9 +56,11 @@ ipyleaflet==0.19.2
 ipython==8.12.3
 ipytree==0.2.2
 ipywidgets==8.1.5
-jax==0.4.13
-jaxlib==0.4.13
-jaxopt==0.8.3
+#the following jax related libraries should better be installed individually
+#depending on whether you use a GPU or not:
+#jax==0.4.13
+#jaxlib==0.4.13
+#jaxopt==0.8.3
 jedi==0.19.1
 Jinja2==3.1.4
 joblib==1.4.2

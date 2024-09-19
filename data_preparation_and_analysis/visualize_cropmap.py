@@ -261,21 +261,10 @@ if __name__ == "__main__":
         plt.title(f"Share of {selected_crop} in {year}")
         plt.axis("off")
         Path(output_path).mkdir(parents=True, exist_ok=True)
-        plt.savefig(output_path+"share_of_"+selected_crop+"_"+str(year)+".png")
+        plt.savefig(output_path+"share_of_"+selected_crop+"_"+country+"_"+str(year)+".png")
         plt.close(fig)
         #%%
         output_path
 # %%
-country="AT"
-year=2020
-test=pd.read_parquet(
-                posterior_probability_path
-                + country
-                + "/"
-                + country
-                + str(year)
-                + "entire_country"
-            )
-# %%
-test
+
 # %%

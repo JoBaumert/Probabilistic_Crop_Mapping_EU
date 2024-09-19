@@ -6,13 +6,14 @@ from pathlib import Path
 import os
 import ee
 import geemap
+import numpy as np
 
 # %%
 #specify country
-country="NL"
+country="HR"
 
-data_main_path=open(str(Path(Path(os.path.abspath(__file__)).parents[1])/"data_main_path.txt"))
-data_main_path=data_main_path.read()[:-1]
+data_main_path=open(str(Path(Path(os.path.abspath(__file__)).parents[0])/"data_main_path.txt"))
+data_main_path=data_main_path.read()[:-1]#
 
 ee.Authenticate()
 ee.Initialize()
@@ -21,8 +22,8 @@ nuts_shapes=gpd.read_file(data_main_path+"Raw_Data/NUTS/NUTS_RG_01M_2016_3035.sh
 # %%
 
 bounds=list(nuts_shapes[(nuts_shapes["CNTR_CODE"]==country)&(nuts_shapes["LEVL_CODE"]==0)].bounds.iloc[0])
-#add 3km buffer on each side to avoid any errors that occur due to rounding issues in the geometry of the country
-bounds=list(bounds+np.array([-3000,-3000,3000,3000]))
+#add 30km buffer on each side to avoid any errors to avoid issues when accessing data at the border of a country
+bounds=list(bounds+np.array([-30000,-30000,30000,30000]))
 #%%
 
 def get_elevation():
