@@ -116,7 +116,7 @@ You can either run the python scripts individually and sequentially in the order
    
     1.2. ensure that all dependencies have been installed correctly.
    
-    1.3. ensure that the selected country and the selected year is specified DGPCM_user_parameters (for example AT and 2020).
+    1.3. ensure that the selected country and the selected year is specified in DGPCM_user_parameters.xlsx (for this example AT and 2020).
    
 2. run the data preprocesing jobfile from the command line (make sure you are in the "Probabilistic_Crop_Mapping_EU" directory):
 ```
@@ -129,6 +129,36 @@ bash job_estimation_and_simulation.sh
 
 this bash script initiates the python scripts to estimate model parameters using LUCAS data (equation 6 of journal paper), to calculate prior crop probabilities for the entire country (equation 1 using estimated parameters), to incorporate aggregated crop information (equations 12-16 in the main paper and A.1-A.4 in the appendix), and to sample randomly from the posterior probabilities to generate crop share estimates (equation 2 and section 2.2.2). Additionally, a visualization is automatically generated showing the expected crop shares of Grass, Soft Wheat and Maize in the respective country. 
    
+The following summary describes the order in which files are automatically run (using job files) or must be executed when running the code file after file.
+
+## Order of running python files
+---preprocessing files, executed via job_preprocessing.sh---
+1. LUCAS_preprocessing.py
+2. climate_data_preprocessing.py
+3. NUTS_preprocessing.py
+4. Eurostat_preprocessing.py
+5. croparea_and_UAA_preparation.py
+6. grid_preparation.py
+7. linking_LUCAS_and_explanatory_vars.py
+8. linking_gridcells_and_explanatory_vars.py
+9. generate_optimization_constraints_cellweights.py
+10. LUCAS_field_size_calculation.py <br>
+
+---estimation and simulation files, executed via job_estimation_and_simulation.sh---  <br>
+
+11. model_parameter_estimation.py <br>
+12. calculation_of_prior_crop_probabilities.py <br>
+13. incorporation_of_aggregated_info.py <br>
+14. parquet_to_raster.py (samples crop shares and saves them as raster)
+15. visualize_cropmap.py
+
+---validation and visualization of results--- <br>
+17. IACS_to_DGPCM_grid.py
+18. RSCM_to_DGPCM_grid.py
+19. dominant_crops_DGPCM_RSCM_IACS.py
+20. grid_transformation_1km_10km.py
+21. calculate_wMAE.py
+22. calculation_and_visualization_of_HDI.py
 
 
 The following table indicates which python files require which input data and which output files are created by them. The table should give the user a better understanding of how the files are related.
@@ -241,41 +271,3 @@ The following table indicates which python files require which input data and wh
 
 
 
-## Recommended order of running python files
----preprocessing files---
-1. LUCAS_preprocessing.py
-2. climate_data_preprocessing.py
-3. NUTS_preprocessing.py
-4. Eurostat_preprocessing.py
-5. croparea_and_UAA_preparation.py
-6. grid_preparation.py
-7. linking_LUCAS_and_explanatory_vars.py
-8. linking_gridcells_and_explanatory_vars.py
-9. generate_optimization_constraints_cellweights.py
-10. LUCAS_field_size_calculation.py <br>
-
----parameter estimation---  <br>
-
-11. model_parameter_estimation.py <br>
-    
----prior crop probability prediction for entire country--- <br>
-
-12. calculation_of_prior_crop_probabilities.py <br>
-
----incorporation of regional/national aggregates---  <br>
-
-13. incorporation_of_aggregated_info.py <br>
-
----simulation of crop shares--- <br>
-
-14. simulation_of_crop_shares.py
-    
----validation and visualization of results--- <br>
-
-15. visualize_cropmap.py
-16. IACS_to_DGPCM_grid.py
-17. RSCM_to_DGPCM_grid.py
-18. dominant_crops_DGPCM_RSCM_IACS.py
-19. grid_transformation_1km_10km.py
-20. calculate_wMAE.py
-21. calculation_and_visualization_of_HDI.py
