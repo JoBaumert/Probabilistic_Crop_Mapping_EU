@@ -127,8 +127,9 @@ bash job_preprocessing.sh
 bash job_estimation_and_simulation.sh
 ```
 
-estimate model parameters, generate prior crop probabilities, incorporate regional aggregate information and sample from posterior probability
+this bash script initiates the python scripts to estimate model parameters using LUCAS data (equation 6 of journal paper), to calculate prior crop probabilities for the entire country (equation 1 using estimated parameters), to incorporate aggregated crop information (equations 12-16 in the main paper and A.1-A.4 in the appendix), and to sample randomly from the posterior probabilities to generate crop share estimates (equation 2 and section 2.2.2). Additionally, a visualization is automatically generated showing the expected crop shares of Grass, Soft Wheat and Maize in the respective country. 
    
+
 
 The following table indicates which python files require which input data and which output files are created by them. The table should give the user a better understanding of how the files are related.
 ### Python files <br>
