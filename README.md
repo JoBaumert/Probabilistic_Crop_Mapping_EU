@@ -113,9 +113,7 @@ You can either run the python scripts individually and sequentially in the order
 1. Ensure proper setup
    
     1.1. ensure that all the input data has been downloaded and saved at the location specified above with the correct         file name.
-   
     1.2. ensure that all dependencies have been installed correctly
-   
     1.3. ensure that AT is specified as the selected country and 2020 is specified as the selected year in       DGPCM_user_parameters
 3. run
    
