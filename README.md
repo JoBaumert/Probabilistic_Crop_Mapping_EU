@@ -1,19 +1,43 @@
-# Probabilistic_Crop_Mapping_EU
+# Probabilistic Crop Mapping EU
 The code is seperated into two directories according to it's purpose: 1) The directory "data_preparation_and_analysis" contains multiple files that must be run first to preprocess the raw data in such a way that it can be used for the generation of the probabilistic crop maps. The analysis, validation and visualization of the modelling results is also performed with files in this directory. The other directory, "generation_of_prob_crop_map" contains the code for the generation of the maps, including parameter estimation. The folder "delineation_and_parameters" contains some rather small excel files that describe how crop types are matched between different data sources (e.g., LUCAS and Eurostat) and predefine some hyperparameters. The following is a guideline for the reproduction of the maps.
 
-## Step 1: Preparation of Directories
-First, copy the files provided in this repository to your local machine (e.g., by cloning the repository). Make sure the file structure is preserved. <br>
-
-Second, create a folder named "Data" where the input and output data will be stored. The user can choose where to locate this directory on the local machine. However, when choosing the location of this directory consider that some input and output files are very large. All of the input data must be downloaded from their original sources, prior to running the code (see below). To ensure that the python scripts find all data, you must specify the path to the main data directory with a text file that is stored in the same directory as the code. For this you have (at least) two options: 
-1. manually create a text file with the name "data_main_path.txt" that contains the path *to* the data folder (i.e., not the data folder itself).
-2. use the command line to generate the text file with the respective content:
+## Step 1: Preparation of Directories and Installation of Dependencies
+First, create a directory in which you would like to store all the code. Then, copy the files provided in this repository to this directory e.g., by cloning the repository as follows (works on Linux):
 ```
-echo '/path/to/data/folder/' >data_main_path.txt
+git clone https://github.com/JoBaumert/Probabilistic_Crop_Mapping_EU.git
+```
+In any case it is crucial that the file structure is preserved. <br>
+Second, install all dependencies listed in the requirements.txt file. We recommend to work in a virtual environment. For example, if you work in VSCode, you could proceed as follows: <br>
+1) create a virtual environment (venv) like described here: https://code.visualstudio.com/docs/python/environments
+2) install the dependencies listed in Probabilistic_Crop_Mapping_EU/requirements.txt (VSCode finds the requirements.txt file automatically, otherwise install via pip install requirements.txt, all within the virtual environment).
+
+**important:** you will have to install jax (+jaxlib) and jaxopt individually according to a procedure that depends on whether you have a GPU or not. See here for a general description of the installation: https://jax.readthedocs.io/en/latest/installation.html. For us (using an NVIDIA GPU and CUDA version 11.4) the following worked to install jax (using this procedure jaxlib is installed automatically) and connect it to the GPU:
+```
+pip install -U jax[cuda11_cudnn86] -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
+```
+Then, you can install jaxopt:
+```
+pip install jaxopt==0.8.3
+```
+If you are not using a GPU then the following should still work:
+```
+pip install jax==0.4.13 jaxlib==0.4.13 jaxopt==0.8.3
+```
+
+Third, create a folder named "Data" where the input and output data will be stored. The user can choose where to locate this directory on the local machine. However, when choosing the location of this directory consider that some input and output files are quite large so make sure you have at least 30GB storage capacity (>500GB needed when working with the entire EU). All of the input data must be downloaded from their original sources, prior to running the code (see below). To ensure that the python scripts find all data, you must specify the path to the main data directory with a text file that is stored in the same directory as the code (i.e., in Probabilistic_Crop_Mapping_EU). For this you have (at least) two options: 
+
+1. manually create a text file with the name "data_main_path.txt" that contains the path to the data folder.
+2. use the command line to generate the text file with the respective content:
+   
+```
+echo '/path/to/data/folder/Data/' >data_main_path.txt
 ```
 In either case, make sure that "data_main_path.txt" is stored in the same folder as the code's main directory.  <br>
 
-Third, create a directory named "Raw_Data" within the directory named "Data". This is where all the raw data that you download will be stored. The results and intermediary output files will also be stored within folders in the "Data" directory, but those folders are generated automatically when running the scripts.
+Fourth, create a directory named "Raw_Data" within the directory named "Data". This is where all the raw data that you download will be stored. The results and intermediary output files will also be stored within folders in the "Data" directory, but those folders are generated automatically when running the scripts.
 
+Fifth, move the directory Probabilistic_Crop_Mapping_EU/delineation_and_parameters/ into your Data directory. 
+Sixth, set the country for which you want to generate the maps in delineation_and_parameters/DGPCM_user_parameters.xlsx in the tab "selected countries" and the year of interest in the tab "selected years". In principle, you can specify multiple countries and years but then you may have to run the individual python scripts seperately.
 
 
 ## Step 2: Download of input data
@@ -38,8 +62,8 @@ The input data used comes from multiple sources (see table below). To fully repl
 |BulkDensity_Extra (zip file)| " |"|"|"|
 |AWC_Extra (zip file)| " |"|"|"|
 |**Terrain Data**|
-|eudem_dem_3035_europe.tif|[https://land.copernicus.eu/imagery-in-situ/eu-dem/eu-dem-v1-0-and-derived-products/eu-dem-v1.0?tab=metadata](https://sdi.eea.europa.eu/catalogue/eea/api/records/66fa7dca-8772-4a5d-9d56-2caba4ecd36a)|apparently no <br>longer maintained -<br> any other<br> elevation map<br> will do|Raw_Data/DEM/|[5]|
-|eudem_slop_3035_europe.tif|https://land.copernicus.eu/imagery-in-situ/eu-dem/eu-dem-v1-0-and-derived-products/slope?tab=download|apparently no longer<br> maintained - any<br> other slope<br> map will do|Data/Raw_Data/DEM/|[5]|
+|eudem_dem_3035_europe.tif|[https://land.copernicus.eu/imagery-in-situ/eu-dem/eu-dem-v1-0-and-derived-products/eu-dem-v1.0?tab=metadata](https://sdi.eea.europa.eu/catalogue/eea/api/records/66fa7dca-8772-4a5d-9d56-2caba4ecd36a)|see below for <br> instructions how <br> to get alternative <br> elevation map|Raw_Data/DEM/|[5]|
+|eudem_slop_3035_europe.tif|https://land.copernicus.eu/imagery-in-situ/eu-dem/eu-dem-v1-0-and-derived-products/slope?tab=download|apparently no <br>longer maintained -<br>, see below for <br> instructions how <br> to get alternative <br> slope map|Data/Raw_Data/DEM/|[5]|
 |**Reference Grid**|
 |{2-digit_countrycode}_1km (or 10km) (zip file)|[https://sdi.eea.europa.eu/data/d9d4684e-0a8d-496c-8be8-110f4b9465f6](https://www.eea.europa.eu/en/datahub/datahubitem-view/3c362237-daa4-45e2-8c16-aaadfb1a003b?activeAccordion=1069873%2C1159)|download 1km <br>(and 10km <br>reference grid <br>for those<br> countries for <br>which validation <br>is performed at <br>10km level),<br> i.e., one (two) <br>zip files per <br>country|Data/Raw_Data/Grid/|[6]|
 |grid25.zip|https://agri4cast.jrc.ec.europa.eu/DataPortal/Index.aspx?o=d|to download, <br>in the agri4cast <br>data portal click <br>on the button<br> "Resource Info"<br> belonging to <br>"Gridded Agro-Meteorological <br>Data in Europe".<br> Then, click on<br> "Download file" <br>in the window<br> that opens,<br> next to "Grid<br> Definition".|Data/Raw_Data/Grid/|[6]|
@@ -62,7 +86,7 @@ The input data used comes from multiple sources (see table below). To fully repl
 [2] Tóth, G., Jones, A., Montanarella, L. (eds.) 2013. LUCAS Topsoil Survey. Methodology, data and results. JRC Technical Reports. Luxembourg. Publications Office of the European Union, EUR26102 – Scientific and Technical Research series <br>
 [3] EC-JRC-AGRI4CAST. 2022. “Gridded Agro-Meteorological Data in Europe. European Commission Joint Research Centre. Institute for Environment and Sustainability. Monitor-ing Agricultural Resources (MARS) Unit.” Accessed December 09, 2022 
 [4] Ballabio, C., P. Panagos, and L. Monatanarella. 2016. “Mapping topsoil physical properties at European scale using the LUCAS database.” Geoderma 261:110–23. doi:10.1016/j.geoderma.2015.07.006. <br>
-[5] EU Copernicus <br>
+[5] Data funded under GMES preparatory action 2009 on Reference Data Access by the European Commission, DG Enterprise and Industry, provided by EEA <br>
 [6] based on the recommendation at the 1st European Workshop on Reference Grids in 2003 and later INSPIRE geographical grid systems <br>
 [7] eurostat/ GISCO <br>
 [8] eurostat
@@ -80,8 +104,64 @@ The input data used comes from multiple sources (see table below). To fully repl
 3. klick on "Download", then make sure "compress text files.." is not checked, then download by klicking on "SDMX-CSV 1.0"
 ![grafik](https://github.com/JoBaumert/Project-1-Code/assets/59195892/47eee8ca-5ff1-4134-b522-13f4954aad95)
 
+### instructions for the download of alternative slope and elevation data
+the slope and the elevation datasets used in the paper apparently are no longer maintained and available for download. We have therefore generated a script ("load_alternative_DEM_data.py") that allows to download an alternative digital elevation map (DEM) from google earth engine in the spatial resolution and crs required. In order for this script to work you need a google account to be able to use google earth engine and google drive (the output files will be saved in your google drive). Before running the python script you need to specify the country for which you would like to get the DEM data. Don't change the name of the output files, i.e., if your country of interest is Netherlands then the slope file should be called "eudem_slope_3035_NL.tif". The output will be saved to your google drive, from where you have to download it and save it in the directory "Data/Raw_Data/DEM". In case of questions regarding the DEM input data don't hesitate to contact us. 
+
 ## Step 3: Running the Python code
-The following table indicates which python files require which input data and which output files are created by them. The table should give the user a better understanding of how the files are related. The order in which they are run is specified below.
+You can either run the python scripts individually and sequentially in the order described below, or you can use the command line to run the job files that start the python scripts automatically in the right order. Assume you would like to run the procedure for Austria in 2020, then you can proceed as follows:
+
+1. Ensure proper setup
+   
+    1.1. ensure that all the input data has been downloaded and saved at the location specified above with the correct         file name.
+   
+    1.2. ensure that all dependencies have been installed correctly.
+   
+    1.3. ensure that the selected country and the selected year is specified in DGPCM_user_parameters.xlsx (for this example AT and 2020).
+   
+2. run the data preprocesing jobfile from the command line (make sure you are in the "Probabilistic_Crop_Mapping_EU" directory):
+```
+bash job_preprocessing.sh
+```
+3. run the estimation and simulation jobfile:
+```
+bash job_estimation_and_simulation.sh
+```
+
+this bash script initiates the python scripts to estimate model parameters using LUCAS data (equation 6 of journal paper), to calculate prior crop probabilities for the entire country (equation 1 using estimated parameters), to incorporate aggregated crop information (equations 12-16 in the main paper and A.1-A.4 in the appendix), and to sample randomly from the posterior probabilities to generate crop share estimates (equation 2 and section 2.2.2). Additionally, a visualization is automatically generated showing the expected crop shares of Grass, Soft Wheat and Maize in the respective country. 
+   
+The following summary describes the order in which files are automatically run (using job files) or must be executed when running the code file after file.
+
+### Order of running python files
+---preprocessing files, executed via job_preprocessing.sh---
+1. LUCAS_preprocessing.py
+2. climate_data_preprocessing.py
+3. NUTS_preprocessing.py
+4. Eurostat_preprocessing.py
+5. croparea_and_UAA_preparation.py
+6. grid_preparation.py
+7. linking_LUCAS_and_explanatory_vars.py
+8. linking_gridcells_and_explanatory_vars.py
+9. generate_optimization_constraints_cellweights.py
+10. LUCAS_field_size_calculation.py <br>
+
+---estimation and simulation files, executed via job_estimation_and_simulation.sh---  <br>
+
+11. model_parameter_estimation.py <br>
+12. calculation_of_prior_crop_probabilities.py <br>
+13. incorporation_of_aggregated_info.py <br>
+14. parquet_to_raster.py (samples crop shares and saves them as raster)
+15. visualize_cropmap.py
+
+---validation and visualization of results--- <br>
+17. IACS_to_DGPCM_grid.py
+18. RSCM_to_DGPCM_grid.py
+19. dominant_crops_DGPCM_RSCM_IACS.py
+20. grid_transformation_1km_10km.py
+21. calculate_wMAE.py
+22. calculation_and_visualization_of_HDI.py
+
+
+The following table indicates which python files require which input data and which output files are created by them. The table should give the user a better understanding of how the files are related.
 ### Python files <br>
 
 |python file | input files | output files|
@@ -191,41 +271,3 @@ The following table indicates which python files require which input data and wh
 
 
 
-## Recommended order of running python files
----preprocessing files---
-1. LUCAS_preprocessing.py
-2. climate_data_preprocessing.py
-3. NUTS_preprocessing.py
-4. Eurostat_preprocessing.py
-5. croparea_and_UAA_preparation.py
-6. grid_preparation.py
-7. linking_LUCAS_and_explanatory_vars.py
-8. linking_gridcells_and_explanatory_vars.py
-9. generate_optimization_constraints_cellweights.py
-10. LUCAS_field_size_calculation.py <br>
-
----parameter estimation---  <br>
-
-11. model_parameter_estimation.py <br>
-    
----prior crop probability prediction for entire country--- <br>
-
-12. calculation_of_prior_crop_probabilities.py <br>
-
----incorporation of regional/national aggregates---  <br>
-
-13. incorporation_of_aggregated_info.py <br>
-
----simulation of crop shares--- <br>
-
-14. simulation_of_crop_shares.py
-    
----validation and visualization of results--- <br>
-
-15. visualize_cropmap.py
-16. IACS_to_DGPCM_grid.py
-17. RSCM_to_DGPCM_grid.py
-18. dominant_crops_DGPCM_RSCM_IACS.py
-19. grid_transformation_1km_10km.py
-20. calculate_wMAE.py
-21. calculation_and_visualization_of_HDI.py
