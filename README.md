@@ -103,10 +103,13 @@ The input data used comes from multiple sources (see table below). To fully repl
 ![grafik](https://github.com/JoBaumert/Project-1-Code/assets/59195892/47eee8ca-5ff1-4134-b522-13f4954aad95)
 
 ### instructions for the download of alternative slope and elevation data
-the slope and the elevation datasets used in the paper apparently are no longer maintained and available for download. We have therefore generated a script ("load_alternative_DEM_data.py") that allows to download an alternative digital elevation map (DEM) from google earth engine in the spatial resolution and crs required. In order for this script to work you need a google account to be able to use google earth engine and google drive (the output files will be saved in your google drive). Before running the python script you need to specify the country for which you would like to get the DEM data. The output will be saved to your google drive. In case of questions regarding the DEM input data don't hesitate to contact us. 
+the slope and the elevation datasets used in the paper apparently are no longer maintained and available for download. We have therefore generated a script ("load_alternative_DEM_data.py") that allows to download an alternative digital elevation map (DEM) from google earth engine in the spatial resolution and crs required. In order for this script to work you need a google account to be able to use google earth engine and google drive (the output files will be saved in your google drive). Before running the python script you need to specify the country for which you would like to get the DEM data. Don't change the name of the output files, i.e., if your country of interest is Netherlands then the slope file should be called "eudem_slope_3035_NL.tif". The output will be saved to your google drive, from where you have to download it and save it in the directory "Data/Raw_Data/DEM". In case of questions regarding the DEM input data don't hesitate to contact us. 
 
 ## Step 3: Running the Python code
-The following table indicates which python files require which input data and which output files are created by them. The table should give the user a better understanding of how the files are related. The order in which they are run is specified below.
+You can either run the python scripts individually and sequentially in the order described below, or you can use the command line to run the job files that start the python scripts automatically in the right order. Assume you would like to run the procedure for Austria in 2020, then you can proceed as follows:
+1) ensure that 
+
+The following table indicates which python files require which input data and which output files are created by them. The table should give the user a better understanding of how the files are related.
 ### Python files <br>
 
 |python file | input files | output files|
