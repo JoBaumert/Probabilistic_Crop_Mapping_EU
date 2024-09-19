@@ -1,8 +1,13 @@
 # Probabilistic_Crop_Mapping_EU
 The code is seperated into two directories according to it's purpose: 1) The directory "data_preparation_and_analysis" contains multiple files that must be run first to preprocess the raw data in such a way that it can be used for the generation of the probabilistic crop maps. The analysis, validation and visualization of the modelling results is also performed with files in this directory. The other directory, "generation_of_prob_crop_map" contains the code for the generation of the maps, including parameter estimation. The folder "delineation_and_parameters" contains some rather small excel files that describe how crop types are matched between different data sources (e.g., LUCAS and Eurostat) and predefine some hyperparameters. The following is a guideline for the reproduction of the maps.
 
-## Step 1: Preparation of Directories
-First, copy the files provided in this repository to your local machine (e.g., by cloning the repository). Make sure the file structure is preserved. <br>
+## Step 1: Preparation of Directories and Installation of Dependencies
+First, create a directory in which you would like to store all the code. Then, copy the files provided in this repository to this directory e.g., by cloning the repository as follows (works on Linux):
+```
+git clone https://github.com/JoBaumert/Probabilistic_Crop_Mapping_EU.git
+```
+
+Make sure the file structure is preserved. <br>
 
 Second, create a folder named "Data" where the input and output data will be stored. The user can choose where to locate this directory on the local machine. However, when choosing the location of this directory consider that some input and output files are very large. All of the input data must be downloaded from their original sources, prior to running the code (see below). To ensure that the python scripts find all data, you must specify the path to the main data directory with a text file that is stored in the same directory as the code. For this you have (at least) two options: 
 1. manually create a text file with the name "data_main_path.txt" that contains the path *to* the data folder (i.e., not the data folder itself).
