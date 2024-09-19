@@ -107,11 +107,11 @@ the slope and the elevation datasets used in the paper apparently are no longer 
 
 ## Step 3: Running the Python code
 You can either run the python scripts individually and sequentially in the order described below, or you can use the command line to run the job files that start the python scripts automatically in the right order. Assume you would like to run the procedure for Austria in 2020, then you can proceed as follows:
-1)
-    1.1) ensure that all the input data has been downloaded and saved at the location specified above with the correct         file name.
-    1.2) ensure that all dependencies have been installed correctly
-    1.3) ensure that AT is specified as the selected country and 2020 is specified as the selected year in       DGPCM_user_parameters
-2) run
+1
+    1.1 ensure that all the input data has been downloaded and saved at the location specified above with the correct         file name.
+    1.2 ensure that all dependencies have been installed correctly
+    1.3 ensure that AT is specified as the selected country and 2020 is specified as the selected year in       DGPCM_user_parameters
+2 run
 
 The following table indicates which python files require which input data and which output files are created by them. The table should give the user a better understanding of how the files are related.
 ### Python files <br>
