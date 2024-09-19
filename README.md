@@ -113,9 +113,18 @@ You can either run the python scripts individually and sequentially in the order
 1. Ensure proper setup
    
     1.1. ensure that all the input data has been downloaded and saved at the location specified above with the correct         file name.
+   
     1.2. ensure that all dependencies have been installed correctly
+   
     1.3. ensure that AT is specified as the selected country and 2020 is specified as the selected year in       DGPCM_user_parameters
-3. run
+   
+2. run the data preprocesing jobfile from the command line (make sure you are in the "Probabilistic_Crop_Mapping_EU" directory):
+
+   ´´´
+   bash job_preprocessing.sh
+   ´´´
+
+3. 
    
 
 The following table indicates which python files require which input data and which output files are created by them. The table should give the user a better understanding of how the files are related.
