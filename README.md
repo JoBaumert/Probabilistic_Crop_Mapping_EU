@@ -1,4 +1,4 @@
-# Probabilistic_Crop_Mapping_EU
+# Probabilistic Crop Mapping EU
 The code is seperated into two directories according to it's purpose: 1) The directory "data_preparation_and_analysis" contains multiple files that must be run first to preprocess the raw data in such a way that it can be used for the generation of the probabilistic crop maps. The analysis, validation and visualization of the modelling results is also performed with files in this directory. The other directory, "generation_of_prob_crop_map" contains the code for the generation of the maps, including parameter estimation. The folder "delineation_and_parameters" contains some rather small excel files that describe how crop types are matched between different data sources (e.g., LUCAS and Eurostat) and predefine some hyperparameters. The following is a guideline for the reproduction of the maps.
 
 ## Step 1: Preparation of Directories and Installation of Dependencies
