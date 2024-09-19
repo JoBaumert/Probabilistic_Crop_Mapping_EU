@@ -9,7 +9,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import rasterio as rio
 from rasterio.plot import show
-from rasterstats import zonal_stats, point_query
 from rasterio.windows import from_bounds
 import os
 import richdem as rd

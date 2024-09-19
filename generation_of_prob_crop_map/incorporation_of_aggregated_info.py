@@ -29,12 +29,14 @@ from scipy.optimize import LinearConstraint
 from scipy.optimize import NonlinearConstraint
 from sklearn.metrics import r2_score
 import sys
+import warnings
+
 
 sys.path.append(
-    str(Path(Path(os.path.abspath(__file__)).parents[0]))+"/modules/"
+    str(Path(Path(os.path.abspath(__file__)).parents[1]))+"/generation_of_prob_crop_map/modules/"
 )
-import modules.functions_for_prediction as ffp
-
+import functions_for_prediction as ffp
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 # %%
 #jax.config.update('jax_platform_name', 'cpu')
@@ -1018,7 +1020,7 @@ if __name__ == "__main__":
 
         
         #%%
-        I
+        
         
         
         #%%
@@ -1045,9 +1047,11 @@ if __name__ == "__main__":
 
             p_result = result.params
 
+            print("deviations of posterior crop probabilities:")
             max_dev_list, max_cell_dev, r2 = evaluate_quality_alternative(
                 p_result, nuts_level_country_year
             )
+            print("deviations of prior crop probabilities:")
             (
                 max_dev_list_init,
                 max_cell_dev_init,

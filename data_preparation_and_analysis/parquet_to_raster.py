@@ -14,7 +14,7 @@ import zipfile
 import xarray
 import gc
 import matplotlib.pyplot as plt
-import arviz as az
+
 # %%
 data_main_path=open(str(Path(Path(os.path.abspath(__file__)).parents[1])/"data_main_path.txt"))
 data_main_path=data_main_path.read()[:-1]
@@ -40,8 +40,7 @@ country_codes_relevant = np.array(countries["country_code"])
 nuts_info = pd.read_excel(parameter_path, sheet_name="NUTS")
 all_years = pd.read_excel(parameter_path, sheet_name="selected_years")
 all_years=np.array(all_years["years"])
-#%%
-all_years
+
 
 
 #%%
@@ -76,13 +75,19 @@ def generate_random_results(proba,n_fields,postsampling_reps,target_shape,weight
         crop_expectation_matrix=crop_expectation_matrix.reshape((len(crops),target_shape[0],target_shape[1]))
 
     return crop_expectation_matrix,empty_matrix,deviation.T[order][:postsampling_reps]
-#%%
 
+
+
+#%%
 if __name__ == "__main__":
     for country in country_codes_relevant:
         
+        n_of_fields_files=os.listdir(n_of_fields_path+country+"/n_of_fields/")
+        if len(n_of_fields_files)!=1:
+            raise Exception(f"Error: {n_of_fields_path}{country}/n_of_fields/ must only contain one single file for the field sizes in a country")
 
-        n_of_fields = pd.read_csv(n_of_fields_path+country+"/n_of_fields/n_of_fields_allcountry.csv")
+        n_of_fields = pd.read_csv(n_of_fields_path+country+"/n_of_fields/"+n_of_fields_files[0])
+
         grid_1km_path_country = (
         # "zip+file://"
             grid_1km_path
@@ -192,7 +197,7 @@ if __name__ == "__main__":
             deviation_matrix=np.ndarray((postsampling_reps*len(betas),len(crops))).astype(float)
 
             for beta in betas:
-                print("beta "+str(beta))
+                print("random sampling of crop shares for probability sample "+str(beta))
                 helper_matrix=np.ndarray((crops.shape[0],int(height),int(width)))
                 c=0
                 for crop in crops:
@@ -237,6 +242,7 @@ if __name__ == "__main__":
             refactored_data=factor.reshape(-1,1,1)*resulting_matrix
             refactored_data=refactored_data.round()
 
+            print("save raster files...")
             Path(Simulated_cropshares_path+country+"/").mkdir(parents=True, exist_ok=True)
             with rio.open(Simulated_cropshares_path+country+"/"+country+str(year)+"simulated_cropshare_"+str(postsampling_reps)+"reps_int.tif", 'w',
                         width=int(width),height=int(height),transform=transform,count=refactored_data.shape[0],dtype=rio.int16,crs="EPSG:3035") as dst:

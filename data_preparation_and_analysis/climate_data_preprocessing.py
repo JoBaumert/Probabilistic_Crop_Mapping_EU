@@ -19,7 +19,7 @@ precipitation_files=listdir(precipitation_path)
 temperature_files=listdir(temperature_path)
 #%%
 if __name__ == "__main__":
-    print("import data...")
+    print("import and preprocess climate data...")
     precipitation_all_dfs=[]
     for file in precipitation_files:
         df_country=pd.read_csv(precipitation_path+file, sep=";")
@@ -39,11 +39,11 @@ if __name__ == "__main__":
     temperature_all_dfs=temperature_all_dfs[["COUNTRY","GRID_NO","DAY","TEMPERATURE_AVG"]]
     precipitation_all_dfs=precipitation_all_dfs[["COUNTRY","GRID_NO","DAY","PRECIPITATION"]]
     
-    print("export data...")
+    print("export preprocessed climate data...")
     Path(output_path).mkdir(parents=True, exist_ok=True)
     precipitation_all_dfs.to_parquet(output_path+"all_precipitation_data.parquet")
     temperature_all_dfs.to_parquet(output_path+"all_temperature_data.parquet")
-    print("task successfully completed")
+    print("successfully exported climate data...")
 #%%
 """
 #"HOW TO ADD DATA LATER

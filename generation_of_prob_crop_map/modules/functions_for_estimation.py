@@ -2,22 +2,17 @@
 
 from audioop import mul
 from cgi import test
-import pymc as pm
 import numpy as np
 import matplotlib.pyplot as plt
 #import seaborn as sns
 import pandas as pd
-import bambi as bmb
 import math
-import arviz as az
 from pyparsing import col, re 
 from scipy.stats import norm
 import os
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
-import poisson_binomial
 import xarray
-import aesara.tensor as at
 from sklearn.model_selection import cross_val_score, cross_validate
 from sklearn import metrics
 from joblib import dump,load

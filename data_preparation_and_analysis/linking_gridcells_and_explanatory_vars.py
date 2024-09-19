@@ -15,7 +15,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import rasterio as rio
 from rasterio.plot import show
-from rasterstats import zonal_stats, point_query
 from rasterio.windows import from_bounds
 import os, zipfile
 import richdem as rd
@@ -61,7 +60,7 @@ out_path = zonal_stats_path
 
 # assign user specific parameters and values
 
-"""
+
 find_elevation = True
 find_slope_and_aspect = True
 find_temperature = True
@@ -91,7 +90,7 @@ find_bulk_density = False
 find_latitude4326 = False
 find_corine_class=True
 calculate_UAA=True
-
+"""
 corine_years = [2006, 2012, 2018]  # all years for which corine data is available
 climate_mean_nofyears = 3
 
@@ -125,76 +124,87 @@ climate_mean_lastyear = selected_years.max()-1
 
 
 #%%
-for country in country_codes_relevant:
-  
-    print(country)
+if __name__ == "__main__":
 
+    print("get feature values for each grid cell...")
+    for country in country_codes_relevant:
+        #when reproducing the maps without the original slope and elevation data this if clause will be activated
+        if not os.path.isfile(elev_path):
+            elev_path_relevant=raw_data_path+"DEM/eudem_dem_3035_"+country+".tif"
+            slope_path_relevant=raw_data_path+"DEM/eudem_slope_3035_"+country+".tif"
 
-    NUTS_dict = ffd.get_NUTS_regions(NUTS_gdf, country)
-
-    NUTS1_regs = NUTS_dict["NUTS1"]
-    NUTS2_regs = NUTS_dict["NUTS2"]
-    NUTS3_regs = NUTS_dict["NUTS3"]
-
-
-    # assign file paths relevant for the specific country only
+        else:
+            elev_path_relevant=elev_path
+            slope_path_relevant=slope_path
     
-    grid_1km_regionshape_path = zonal_stats_path + country + "/cell_size/"
+        print(country)
 
 
-    # load files
-    # NUTS = gpd.read_file(nuts_path)
-    grid_1km_path_country = (
-       # "zip+file://"
-         grid_1km_path
-        + country
-        +"_1km.zip"     
+        NUTS_dict = ffd.get_NUTS_regions(NUTS_gdf, country)
+
+        NUTS1_regs = NUTS_dict["NUTS1"]
+        NUTS2_regs = NUTS_dict["NUTS2"]
+        NUTS3_regs = NUTS_dict["NUTS3"]
+
+
+        # assign file paths relevant for the specific country only
+        
+        grid_1km_regionshape_path = zonal_stats_path + country + "/cell_size/"
+
+
+        # load files
+        # NUTS = gpd.read_file(nuts_path)
+        grid_1km_path_country = (
+        # "zip+file://"
+            grid_1km_path
+            + country
+            +"_1km.zip"     
+            )
+
+        zip=zipfile.ZipFile(grid_1km_path_country)
+        for file in zip.namelist():
+            if (file[-3:]=="shp")&(file[3:7]=="1km"):
+                break
+
+
+        grid_1km_country = gpd.read_file(grid_1km_path_country+"!/"+file)
+        grid_25km = gpd.read_file(grid_25km_path)
+
+        NUTS_country = NUTS_gdf[NUTS_gdf["CNTR_CODE"] == country]
+
+        
+        # keep only those cells that are on land (not a country's sea territory)
+        grid_25km_country = grid_25km.overlay(
+            NUTS_country[NUTS_country["NUTS_ID"].isin(NUTS1_regs)], how="intersection"
         )
+        grid_25km_country = grid_25km_country.merge(grid_25km, how="left", on="FID_1")
+        grid_25km_country.drop(columns="geometry_x", inplace=True)
+        grid_25km_country.rename(columns={"geometry_y": "geometry"}, inplace=True)
+        grid_25km_country = gpd.GeoDataFrame(grid_25km_country)
+        grid_25km_country.rename(columns={"Grid_Code_x": "GRID_NO"}, inplace=True)
 
-    zip=zipfile.ZipFile(grid_1km_path_country)
-    for file in zip.namelist():
-        if (file[-3:]=="shp")&(file[3:7]=="1km"):
-            break
+        # some regions (e.g., French overseas) are excluded
+        excluded_NUTS_regions = pd.read_excel(excluded_NUTS_regions_path)
+        excluded_NUTS_regions = np.array(excluded_NUTS_regions["excluded NUTS1 regions"])
 
+        # if climate data is used, load it for the entire country:
+        if (find_temperature) or (find_veg_period):
+            temperature_data = pd.read_parquet(temp_path)
+            temperature_data_relevant = temperature_data[
+                temperature_data["COUNTRY"] == country
+            ]
 
-    grid_1km_country = gpd.read_file(grid_1km_path_country+"!/"+file)
-    grid_25km = gpd.read_file(grid_25km_path)
-
-    NUTS_country = NUTS_gdf[NUTS_gdf["CNTR_CODE"] == country]
-
-    
-    # keep only those cells that are on land (not a country's sea territory)
-    grid_25km_country = grid_25km.overlay(
-        NUTS_country[NUTS_country["NUTS_ID"].isin(NUTS1_regs)], how="intersection"
-    )
-    grid_25km_country = grid_25km_country.merge(grid_25km, how="left", on="FID_1")
-    grid_25km_country.drop(columns="geometry_x", inplace=True)
-    grid_25km_country.rename(columns={"geometry_y": "geometry"}, inplace=True)
-    grid_25km_country = gpd.GeoDataFrame(grid_25km_country)
-    grid_25km_country.rename(columns={"Grid_Code_x": "GRID_NO"}, inplace=True)
-
-    # some regions (e.g., French overseas) are excluded
-    excluded_NUTS_regions = pd.read_excel(excluded_NUTS_regions_path)
-    excluded_NUTS_regions = np.array(excluded_NUTS_regions["excluded NUTS1 regions"])
-
-    # if climate data is used, load it for the entire country:
-    if (find_temperature) or (find_veg_period):
-        temperature_data = pd.read_parquet(temp_path)
-        temperature_data_relevant = temperature_data[
-            temperature_data["COUNTRY"] == country
-        ]
-
-    if find_precipitation:
-        precipitation_data = pd.read_parquet(precipit_path)
-        precipitation_data_relevant = precipitation_data[
-            precipitation_data["COUNTRY"] == country
-        ]
+        if find_precipitation:
+            precipitation_data = pd.read_parquet(precipit_path)
+            precipitation_data_relevant = precipitation_data[
+                precipitation_data["COUNTRY"] == country
+            ]
 
 
 
-    #%%
-    """merge data"""
-    if __name__ == "__main__":
+        #%%
+        """merge data"""
+        
 
         for NUTS1 in NUTS1_regs:
             if not NUTS1 in excluded_NUTS_regions:
@@ -234,13 +244,18 @@ for country in country_codes_relevant:
                     )
                     window = [left, bottom, right, top]
                     slope_in_DN = ffd.get_elevation(
-                        slope_path, grid_1km_selected, window=window
+                        slope_path_relevant, grid_1km_selected, window=window
                     )
+                    if not os.path.isfile(elev_path):
+                        slope_in_degree=slope_in_DN
+
+                    else:
+                        slope_in_degree=np.arccos(slope_in_DN / 250) * 180 / np.pi
                     slope_grid = pd.DataFrame(
                         {
                             "CELLCODE": grid_1km_selected["CELLCODE"].values,
                             # calculation of slope in degrees: see here: https://land.copernicus.eu/user-corner/technical-library/slope-conversion-table
-                            "slope_degree": np.arccos(slope_in_DN / 250) * 180 / np.pi,
+                            "slope_degree": slope_in_degree,
                         }
                     )
                     slope_grid_1km_selected = pd.merge(
@@ -280,7 +295,7 @@ for country in country_codes_relevant:
                         {
                             "CELLCODE": grid_1km_selected["CELLCODE"].values,
                             "elevation": ffd.get_elevation(
-                                elev_path, grid_1km_selected, window=window
+                                elev_path_relevant, grid_1km_selected, window=window
                             ),
                         }
                     )
@@ -766,7 +781,7 @@ for country in country_codes_relevant:
                             how="left",
                             on="CELLCODE",
                         )
-       
+        
 
 
                         """AGRICULTURAL SHARE"""
@@ -934,12 +949,4 @@ for country in country_codes_relevant:
                         f"file '{out_path}/{country}/inferred_UAA/1kmgrid_{NUTS1}.csv' was created successfully"
                     )
 
-# %%
-agshare_grid_1km_selected
-# %%
-corine_class_grid_df
-# %%
-CORINE_CLASS
-# %%
-grid_1km_selected
 # %%
