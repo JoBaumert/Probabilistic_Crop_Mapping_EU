@@ -25,8 +25,10 @@ pip install jax==0.4.13 jaxlib==0.4.13 jaxopt==0.8.3
 ```
 
 Third, create a folder named "Data" where the input and output data will be stored. The user can choose where to locate this directory on the local machine. However, when choosing the location of this directory consider that some input and output files are quite large so make sure you have at least 30GB storage capacity (>500GB needed when working with the entire EU). All of the input data must be downloaded from their original sources, prior to running the code (see below). To ensure that the python scripts find all data, you must specify the path to the main data directory with a text file that is stored in the same directory as the code (i.e., in Probabilistic_Crop_Mapping_EU). For this you have (at least) two options: 
+
 1. manually create a text file with the name "data_main_path.txt" that contains the path to the data folder.
 2. use the command line to generate the text file with the respective content:
+   
 ```
 echo '/path/to/data/folder/Data/' >data_main_path.txt
 ```
@@ -107,6 +109,7 @@ the slope and the elevation datasets used in the paper apparently are no longer 
 
 ## Step 3: Running the Python code
 You can either run the python scripts individually and sequentially in the order described below, or you can use the command line to run the job files that start the python scripts automatically in the right order. Assume you would like to run the procedure for Austria in 2020, then you can proceed as follows:
+
 1
     1.1 ensure that all the input data has been downloaded and saved at the location specified above with the correct         file name.
     1.2 ensure that all dependencies have been installed correctly
