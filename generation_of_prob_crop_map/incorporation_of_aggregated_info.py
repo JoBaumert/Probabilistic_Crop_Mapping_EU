@@ -30,7 +30,7 @@ from scipy.optimize import NonlinearConstraint
 from sklearn.metrics import r2_score
 import sys
 import warnings
-
+import gc
 
 sys.path.append(
     str(Path(Path(os.path.abspath(__file__)).parents[1]))+"/generation_of_prob_crop_map/modules/"
@@ -39,6 +39,7 @@ import functions_for_prediction as ffp
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 # %%
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2"
 #jax.config.update('jax_platform_name', 'cpu')
 
 #%%
@@ -1154,6 +1155,16 @@ if __name__ == "__main__":
         results_df.rename(columns={"probability": "prior_probability"}, inplace=True)
         results_df["posterior_probability"] = p_final
         results_df["beta"] = np.repeat(beta, len(p_final))
+        
+        #Path(output_path + country + "/").mkdir(parents=True, exist_ok=True)
+        #results_df.to_parquet(
+        #output_path + country + "/" + country + str(year) + "entire_country_"+str(beta)
+        #)
+        #del results_df
+        #del p_final
+        #del p_result
+        #gc.collect()
+
         all_results_df = results_df.copy()
 
         min_penalty_nuts0_rel = penalty_nuts0_rel
@@ -1272,12 +1283,21 @@ if __name__ == "__main__":
             results_df["posterior_probability"] = p_final
             results_df["beta"] = np.repeat(beta, len(p_final))
             all_results_df = pd.concat((all_results_df, results_df))
+           # Path(output_path + country + "/").mkdir(parents=True, exist_ok=True)
+            #results_df.to_parquet(
+            #output_path + country + "/" + country + str(year) + "entire_country_"+str(beta)
+            #)
         
+            #del results_df
+            #del p_final
+            #del p_result
+            #gc.collect()
+
+
         optimization_hyperparameter_results_df = pd.DataFrame(
             optimization_hyperparameter_results_dict
         )
        
-
         
         Path(output_path + country + "/").mkdir(parents=True, exist_ok=True)
         all_results_df.to_parquet(

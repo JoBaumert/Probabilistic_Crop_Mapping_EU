@@ -163,7 +163,7 @@ if __name__ == "__main__":
 
         zip=zipfile.ZipFile(grid_1km_path_country)
         for file in zip.namelist():
-            if (file[-3:]=="shp")&(file[3:7]=="1km"):
+            if (file[-3:]=="shp")&(file[3:6]=="1km"):
                 break
 
 
@@ -386,6 +386,8 @@ if __name__ == "__main__":
                                 how="left",
                                 on="GRID_NO",
                             )
+
+                            
                             tempsum_grid_1km_selected = pd.merge(
                                 tempsum_grid_1km_selected,
                                 grid_1km_selected,
@@ -930,23 +932,25 @@ if __name__ == "__main__":
                                 df["year"] = np.repeat(year, len(df))
                                 inferred_UAA_df = pd.concat((inferred_UAA_df, df))
 
-                    inferred_UAA_df["inferred_UAA"] = (
-                        inferred_UAA_df["agshare"] * inferred_UAA_df["area"]
-                    )
+                    if len(selected_cellsize_df)>0:
 
-                    Path(out_path + "/" + country + "/inferred_UAA").mkdir(
-                        parents=True, exist_ok=True
-                    )
-                    inferred_UAA_df.to_csv(
-                        out_path
-                        + "/"
-                        + country
-                        + "/inferred_UAA/1kmgrid_"
-                        + NUTS1
-                        + ".csv"
-                    )
-                    print(
-                        f"file '{out_path}/{country}/inferred_UAA/1kmgrid_{NUTS1}.csv' was created successfully"
-                    )
+                        inferred_UAA_df["inferred_UAA"] = (
+                            inferred_UAA_df["agshare"] * inferred_UAA_df["area"]
+                        )
+
+                        Path(out_path + "/" + country + "/inferred_UAA").mkdir(
+                            parents=True, exist_ok=True
+                        )
+                        inferred_UAA_df.to_csv(
+                            out_path
+                            + "/"
+                            + country
+                            + "/inferred_UAA/1kmgrid_"
+                            + NUTS1
+                            + ".csv"
+                        )
+                        print(
+                            f"file '{out_path}/{country}/inferred_UAA/1kmgrid_{NUTS1}.csv' was created successfully"
+                        )
 
 # %%

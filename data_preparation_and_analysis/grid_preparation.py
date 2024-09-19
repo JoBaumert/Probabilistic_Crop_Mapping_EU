@@ -76,9 +76,7 @@ for y, year in enumerate(all_years):
 
 #%%
 nuts_allyear_gdf = gpd.GeoDataFrame(nuts_allyear_df)
-#%%
-nuts_allyear_gdf[(nuts_allyear_gdf["CNTR_CODE"] == "HR")
-                    & (nuts_allyear_gdf["year"] == 2010)]
+
 #%%
 # countries = {"UK": "United_Kingdom"}
 # level1, level2, level3 = False, False, True
@@ -99,14 +97,13 @@ if "3" in args.level:
     level3 = True
 
 """
-#%%
-nuts_allyear_gdf
+
 
 #%%
 if __name__ == "__main__":
 
     for country in country_codes_relevant:
-
+        country="FR"
 
         print(
             f"grid preparation starting for {country}"
@@ -121,7 +118,7 @@ if __name__ == "__main__":
         )
         zip=zipfile.ZipFile(grid_1km_path_country)
         for file in zip.namelist():
-            if (file[-3:]=="shp")&(file[3:7]=="1km"):
+            if (file[-3:]=="shp")&(file[3:6]=="1km"):
                 break
 
         grid_1km_country = gpd.read_file(grid_1km_path_country+"!/"+file)
@@ -173,6 +170,8 @@ if __name__ == "__main__":
         print("loop starts")
         for level in range(highest_NUTS_level):
             for nuts in nuts_regs[level]:
+                if nuts[:3] in excluded_NUTS_regions:
+                    continue
                 print(nuts)
                 if (
                     not os.path.isfile(
@@ -181,7 +180,7 @@ if __name__ == "__main__":
                     and not nuts
                     in excluded_NUTS_regions  # some overseas NUTS1 regions and their corresponding subregions are excluded
                 ):
-                    if level > 1:
+                    if (level > 1):
                         # if nuts2 or nuts3 regions are considered, load grid for nuts1 region to accelerate overlaying
                         grid_1km_relevant_df = pd.read_csv(
                             out_path_country
@@ -241,3 +240,5 @@ if __name__ == "__main__":
                     print("created csv file for region " + nuts)
 
     # %%
+ 
+# %%

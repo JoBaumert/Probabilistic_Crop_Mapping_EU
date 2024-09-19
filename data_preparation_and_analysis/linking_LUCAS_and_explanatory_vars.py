@@ -100,7 +100,7 @@ NUTS_gdf = gpd.read_file(nuts_path)
 excluded_NUTS_file = pd.read_excel(excluded_NUTS_regions_path)
 excluded_NUTS_country = np.array(excluded_NUTS_file["country"].value_counts().keys())
 excluded_NUTS_regions = np.array(excluded_NUTS_file["excluded NUTS1 regions"])
-
+#%%
 
 #%%
 """
@@ -133,7 +133,7 @@ if __name__ == "__main__":
         # for some countries (e.g., Spain and France) some NUTS regions are not in Europe --> exclude them
         if country in excluded_NUTS_country:
             NUTS_country = NUTS_country[
-                (~NUTS_country["FID"].isin(excluded_NUTS_regions))
+                (~NUTS_country["NUTS_ID"].isin(excluded_NUTS_regions))
                 & (NUTS_country["LEVL_CODE"] == 1)
             ]
 
