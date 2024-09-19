@@ -103,7 +103,7 @@ The input data used comes from multiple sources (see table below). To fully repl
 ![grafik](https://github.com/JoBaumert/Project-1-Code/assets/59195892/47eee8ca-5ff1-4134-b522-13f4954aad95)
 
 ### instructions for the download of alternative slope and elevation data
-the slope and the elevation datasets used in the paper apparently are no longer maintained and available for download from the 
+the slope and the elevation datasets used in the paper apparently are no longer maintained and available for download. We have therefore generated a script ("load_alternative_DEM_data.py") that allows to download an alternative digital elevation map (DEM) from google earth engine in the spatial resolution and crs required. In order for this script to work you need a google account to be able to use google earth engine and google drive (the output files will be saved in your google drive). Before running the python script you need to specify the country for which you would like to get the DEM data. The output will be saved to your google drive. In case of questions regarding the DEM input data don't hesitate to contact us. 
 
 ## Step 3: Running the Python code
 The following table indicates which python files require which input data and which output files are created by them. The table should give the user a better understanding of how the files are related. The order in which they are run is specified below.
