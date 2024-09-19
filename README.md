@@ -9,7 +9,20 @@ git clone https://github.com/JoBaumert/Probabilistic_Crop_Mapping_EU.git
 In any case it is crucial that the file structure is preserved. <br>
 Second, install all dependencies listed in the requirements.txt file. We recommend to work in a virtual environment. For example, if you work in VSCode, you could proceed as follows: <br>
 1) create a virtual environment (venv) like described here: https://code.visualstudio.com/docs/python/environments
-2) install the dependencies listed in Probabilistic_Crop_Mapping_EU/requirements.txt
+2) install the dependencies listed in Probabilistic_Crop_Mapping_EU/requirements.txt (VSCode finds the requirements.txt file automatically, otherwise install via pip install requirements.txt, all within the virtual environment).
+
+**important:** you will have to install jax (+jaxlib) and jaxopt individually according to a procedure that depends on whether you have a GPU or not. See here for a general description of the installation: https://jax.readthedocs.io/en/latest/installation.html. For us (using an NVIDIA GPU and CUDA version 11.4) the following worked to install jax (using this procedure jaxlib is installed automatically) and connect it to the GPU:
+```
+pip install -U jax[cuda11_cudnn86] -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
+```
+Then, you can install jaxopt:
+```
+pip install jaxopt==0.8.3
+```
+If you are not using a GPU then the following should still work:
+```
+pip install jax==0.4.13 jaxlib==0.4.13 jaxopt==0.8.3
+```
 
 Second, create a folder named "Data" where the input and output data will be stored. The user can choose where to locate this directory on the local machine. However, when choosing the location of this directory consider that some input and output files are very large. All of the input data must be downloaded from their original sources, prior to running the code (see below). To ensure that the python scripts find all data, you must specify the path to the main data directory with a text file that is stored in the same directory as the code. For this you have (at least) two options: 
 1. manually create a text file with the name "data_main_path.txt" that contains the path *to* the data folder (i.e., not the data folder itself).
