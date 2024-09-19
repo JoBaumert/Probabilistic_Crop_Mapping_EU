@@ -131,7 +131,7 @@ this bash script initiates the python scripts to estimate model parameters using
    
 The following summary describes the order in which files are automatically run (using job files) or must be executed when running the code file after file.
 
-## Order of running python files
+### Order of running python files
 ---preprocessing files, executed via job_preprocessing.sh---
 1. LUCAS_preprocessing.py
 2. climate_data_preprocessing.py
