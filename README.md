@@ -34,8 +34,8 @@ In either case, make sure that "data_main_path.txt" is stored in the same folder
 
 Fourth, create a directory named "Raw_Data" within the directory named "Data". This is where all the raw data that you download will be stored. The results and intermediary output files will also be stored within folders in the "Data" directory, but those folders are generated automatically when running the scripts.
 
-Fifth
-
+Fifth, move the directory Probabilistic_Crop_Mapping_EU/delineation_and_parameters/ into your Data directory. 
+Sixth, set the country for which you want to generate the maps in delineation_and_parameters/DGPCM_user_parameters.xlsx in the tab "selected countries" and the year of interest in the tab "selected years". In principle, you can specify multiple countries and years but then you may have to run the individual python scripts seperately.
 
 
 ## Step 2: Download of input data
@@ -60,8 +60,8 @@ The input data used comes from multiple sources (see table below). To fully repl
 |BulkDensity_Extra (zip file)| " |"|"|"|
 |AWC_Extra (zip file)| " |"|"|"|
 |**Terrain Data**|
-|eudem_dem_3035_europe.tif|[https://land.copernicus.eu/imagery-in-situ/eu-dem/eu-dem-v1-0-and-derived-products/eu-dem-v1.0?tab=metadata](https://sdi.eea.europa.eu/catalogue/eea/api/records/66fa7dca-8772-4a5d-9d56-2caba4ecd36a)|apparently no <br>longer maintained -<br> any other<br> elevation map<br> will do|Raw_Data/DEM/|[5]|
-|eudem_slop_3035_europe.tif|https://land.copernicus.eu/imagery-in-situ/eu-dem/eu-dem-v1-0-and-derived-products/slope?tab=download|apparently no longer<br> maintained - any<br> other slope<br> map will do|Data/Raw_Data/DEM/|[5]|
+|eudem_dem_3035_europe.tif|[https://land.copernicus.eu/imagery-in-situ/eu-dem/eu-dem-v1-0-and-derived-products/eu-dem-v1.0?tab=metadata](https://sdi.eea.europa.eu/catalogue/eea/api/records/66fa7dca-8772-4a5d-9d56-2caba4ecd36a)|see below for <br> instructions how <br> to get alternative <br> elevation map|Raw_Data/DEM/|[5]|
+|eudem_slop_3035_europe.tif|https://land.copernicus.eu/imagery-in-situ/eu-dem/eu-dem-v1-0-and-derived-products/slope?tab=download|apparently no <br>longer maintained -<br>, see below for <br> instructions how <br> to get alternative <br> slope map|Data/Raw_Data/DEM/|[5]|
 |**Reference Grid**|
 |{2-digit_countrycode}_1km (or 10km) (zip file)|[https://sdi.eea.europa.eu/data/d9d4684e-0a8d-496c-8be8-110f4b9465f6](https://www.eea.europa.eu/en/datahub/datahubitem-view/3c362237-daa4-45e2-8c16-aaadfb1a003b?activeAccordion=1069873%2C1159)|download 1km <br>(and 10km <br>reference grid <br>for those<br> countries for <br>which validation <br>is performed at <br>10km level),<br> i.e., one (two) <br>zip files per <br>country|Data/Raw_Data/Grid/|[6]|
 |grid25.zip|https://agri4cast.jrc.ec.europa.eu/DataPortal/Index.aspx?o=d|to download, <br>in the agri4cast <br>data portal click <br>on the button<br> "Resource Info"<br> belonging to <br>"Gridded Agro-Meteorological <br>Data in Europe".<br> Then, click on<br> "Download file" <br>in the window<br> that opens,<br> next to "Grid<br> Definition".|Data/Raw_Data/Grid/|[6]|
@@ -84,7 +84,7 @@ The input data used comes from multiple sources (see table below). To fully repl
 [2] Tóth, G., Jones, A., Montanarella, L. (eds.) 2013. LUCAS Topsoil Survey. Methodology, data and results. JRC Technical Reports. Luxembourg. Publications Office of the European Union, EUR26102 – Scientific and Technical Research series <br>
 [3] EC-JRC-AGRI4CAST. 2022. “Gridded Agro-Meteorological Data in Europe. European Commission Joint Research Centre. Institute for Environment and Sustainability. Monitor-ing Agricultural Resources (MARS) Unit.” Accessed December 09, 2022 
 [4] Ballabio, C., P. Panagos, and L. Monatanarella. 2016. “Mapping topsoil physical properties at European scale using the LUCAS database.” Geoderma 261:110–23. doi:10.1016/j.geoderma.2015.07.006. <br>
-[5] EU Copernicus <br>
+[5] Data funded under GMES preparatory action 2009 on Reference Data Access by the European Commission, DG Enterprise and Industry, provided by EEA <br>
 [6] based on the recommendation at the 1st European Workshop on Reference Grids in 2003 and later INSPIRE geographical grid systems <br>
 [7] eurostat/ GISCO <br>
 [8] eurostat
@@ -101,6 +101,9 @@ The input data used comes from multiple sources (see table below). To fully repl
 
 3. klick on "Download", then make sure "compress text files.." is not checked, then download by klicking on "SDMX-CSV 1.0"
 ![grafik](https://github.com/JoBaumert/Project-1-Code/assets/59195892/47eee8ca-5ff1-4134-b522-13f4954aad95)
+
+### instructions for the download of alternative slope and elevation data
+the slope and the elevation datasets used in the paper apparently are no longer maintained and available for download from the 
 
 ## Step 3: Running the Python code
 The following table indicates which python files require which input data and which output files are created by them. The table should give the user a better understanding of how the files are related. The order in which they are run is specified below.
