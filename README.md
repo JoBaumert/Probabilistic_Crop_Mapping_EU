@@ -24,15 +24,17 @@ If you are not using a GPU then the following should still work:
 pip install jax==0.4.13 jaxlib==0.4.13 jaxopt==0.8.3
 ```
 
-Second, create a folder named "Data" where the input and output data will be stored. The user can choose where to locate this directory on the local machine. However, when choosing the location of this directory consider that some input and output files are very large. All of the input data must be downloaded from their original sources, prior to running the code (see below). To ensure that the python scripts find all data, you must specify the path to the main data directory with a text file that is stored in the same directory as the code. For this you have (at least) two options: 
-1. manually create a text file with the name "data_main_path.txt" that contains the path *to* the data folder (i.e., not the data folder itself).
+Third, create a folder named "Data" where the input and output data will be stored. The user can choose where to locate this directory on the local machine. However, when choosing the location of this directory consider that some input and output files are quite large so make sure you have at least 30GB storage capacity (>500GB needed when working with the entire EU). All of the input data must be downloaded from their original sources, prior to running the code (see below). To ensure that the python scripts find all data, you must specify the path to the main data directory with a text file that is stored in the same directory as the code (i.e., in Probabilistic_Crop_Mapping_EU). For this you have (at least) two options: 
+1. manually create a text file with the name "data_main_path.txt" that contains the path to the data folder.
 2. use the command line to generate the text file with the respective content:
 ```
-echo '/path/to/data/folder/' >data_main_path.txt
+echo '/path/to/data/folder/Data/' >data_main_path.txt
 ```
 In either case, make sure that "data_main_path.txt" is stored in the same folder as the code's main directory.  <br>
 
-Third, create a directory named "Raw_Data" within the directory named "Data". This is where all the raw data that you download will be stored. The results and intermediary output files will also be stored within folders in the "Data" directory, but those folders are generated automatically when running the scripts.
+Fourth, create a directory named "Raw_Data" within the directory named "Data". This is where all the raw data that you download will be stored. The results and intermediary output files will also be stored within folders in the "Data" directory, but those folders are generated automatically when running the scripts.
+
+Fifth
 
 
 
