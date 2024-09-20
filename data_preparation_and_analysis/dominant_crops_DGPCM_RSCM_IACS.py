@@ -20,6 +20,10 @@ data_main_path=open(str(Path(Path(os.path.abspath(__file__)).parents[1])/"data_m
 data_main_path=data_main_path.read()[:-1]
 beta = 0
 
+"""
+this script was used to generate figure 5 of the paper
+"""
+
 year=2018 # the only year considered by RSCM and for which IACS data is provided
 country="FR" #default, as France is the only country for which IACS data in 2018 is available
 
@@ -29,7 +33,7 @@ parameter_path=data_main_path+"delineation_and_parameters/DGPCM_user_parameters.
 nuts_path=intermediary_data_path+"Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years"
 excluded_NUTS_regions_path = data_main_path+"delineation_and_parameters/excluded_NUTS_regions.xlsx"
 crop_delineation_path=data_main_path+"delineation_and_parameters/DGPCM_crop_delineation.xlsx"
-IACS_path=intermediary_data_path+"Preprocessed_Inputs/IACS/true_shares/true_shares_"
+IACS_path=intermediary_data_path+"Preprocessed_Inputs/IACS/"
 RSCM_path=intermediary_data_path+"Preprocessed_Inputs/RSCM/"
 grid_path=raw_data_path+"Grid/"
 posterior_probability_path=data_main_path+"Results/Posterior_crop_probability_estimates/"
@@ -116,7 +120,7 @@ grid_1km_path_country = (
 
 zip=zipfile.ZipFile(grid_1km_path_country)
 for file in zip.namelist():
-    if file[-3:]=="shp":
+    if (file[-3:]=="shp")&(file[3:6]=="1km"):
         break
 
 
@@ -156,7 +160,7 @@ all_true_shares=pd.DataFrame()
 for nuts2 in selected_nuts2_regs:
     print(f"concatenating region {nuts2}")
     true_shares = pd.read_csv(IACS_path+nuts2+"_"+str(year)+".csv")
-    true_shares.rename(columns={"CAPRI_code":"crop"},inplace=True)
+    true_shares.rename(columns={"DGPCM_code":"crop"},inplace=True)
     true_shares=true_shares[["CELLCODE","crop","cropshare_true"]]
     all_true_shares=pd.concat((all_true_shares,true_shares))
 
@@ -186,13 +190,13 @@ all_rscm_data["crop"]=crops_in_DGPCM_code
 
 all_rscm_data.rename(columns={"value":"rscm_estimated_cropshare"},inplace=True)
 all_rscm_data=all_rscm_data[["CELLCODE","crop","rscm_estimated_cropshare"]].sort_values(by=["CELLCODE","crop"])
-#%%
+
 
 #%%
 """merge DGPCM predictions and true shares"""
 estimated_and_true_shares_gdf=pd.merge(posterior_probabilities_country_gdf,all_true_shares,how="left",on=["CELLCODE","crop"])
 estimated_and_true_shares_gdf.dropna(inplace=True)
-#%%
+
 
 #%%
 estimated_crop_shares_gdf=estimated_and_true_shares_gdf[["CELLCODE","crop","posterior_probability"]]
@@ -210,7 +214,6 @@ true_crop_shares_gdf=pd.merge(true_crop_shares_gdf,grid_1km_country[["CELLCODE",
 all_rscm_data_gdf=gpd.GeoDataFrame(all_rscm_data_gdf)
 estimated_crop_shares_gdf=gpd.GeoDataFrame(estimated_crop_shares_gdf)
 true_crop_shares_gdf=gpd.GeoDataFrame(true_crop_shares_gdf)
-#%%
 
 #%%
 """
@@ -285,7 +288,8 @@ s1cm_dominant_crop_array = np.array(
 s1cm_dominant_crop_id_array = np.array(
     s1cm_dominant_crops.drop_duplicates(["crop"])["dominant_crop_id"]
 )
-
+#%%
+estimated_dominant_crops
 
 #%%
 """for interpretation of the output figures, use the color codes 
@@ -346,7 +350,7 @@ for c,crop in enumerate(s1cm_dominant_crop_array):
 custom_cmap_s1cm_dominant_crops = custom_cmap_s1cm_dominant_crops / 256
 custom_cmap_s1cm_dominant_crops = np.insert(custom_cmap_s1cm_dominant_crops, 3, np.ones(len(custom_cmap_s1cm_dominant_crops)), axis=1)
 custom_cmap_s1cm_dominant_crops = ListedColormap(custom_cmap_s1cm_dominant_crops)
-# %%
+
 
 # %%
 
@@ -364,9 +368,11 @@ relevant_boundaries_country.plot(ax=ax, facecolor="None", edgecolor="black", lin
 
 plt.title(f"Estimated dominant crops ({year})")
 plt.axis("off")
+#plt.show()
 Path(output_path).mkdir(parents=True, exist_ok=True)
 plt.savefig(output_path+"_DGPCM_dominant_crops_"+country+"_"+str(year)+".png")
 plt.close(fig)
+
 #%%
 plt.figure(figsize=(12, 12))
 fig, ax = plt.subplots(1, 1, figsize=(12, 12))
@@ -382,6 +388,7 @@ relevant_boundaries_country.plot(ax=ax, facecolor="None", edgecolor="black", lin
 
 plt.title(f"True dominant crops ({year})")
 plt.axis("off")
+#plt.show()
 Path(output_path).mkdir(parents=True, exist_ok=True)
 plt.savefig(output_path+"_IACS_dominant_crops_"+country+"_"+str(year)+".png")
 plt.close(fig)
@@ -403,10 +410,10 @@ relevant_boundaries_country.plot(ax=ax, facecolor="None", edgecolor="black", lin
 
 plt.title(f"RSCM dominant crops ({year})")
 plt.axis("off")
-
-Path(output_path).mkdir(parents=True, exist_ok=True)
-plt.savefig(output_path+"_RSCM_dominant_crops_"+country+"_"+str(year)+".png")
-plt.close(fig)
+plt.show()
+#Path(output_path).mkdir(parents=True, exist_ok=True)
+#plt.savefig(output_path+"_RSCM_dominant_crops_"+country+"_"+str(year)+".png")
+#plt.close(fig)
 #%%
 
 # %%
