@@ -170,9 +170,9 @@ The following summary describes the order in which files are automatically run (
 17. IACS_to_DGPCM_grid.py <br>
 18. RSCM_to_DGPCM_grid.py <br>
 19. grid_transformation_1km_10km.py <br>
-20. dominant_crops_DGPCM_RSCM_IACS.py
-21. calculate_wMAE.py
-22. visualization_of_HDI.py
+20. dominant_crops_DGPCM_RSCM_IACS.py <br>
+21. calculate_wMAE.py <br>
+22. visualization_of_HDI.py <br>
 
 
 The following table indicates which python files require which input data and which output files are created by them. The table should give the user a better understanding of how the files are related.
