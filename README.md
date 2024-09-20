@@ -232,8 +232,8 @@ The following table indicates which python files require which input data and wh
 ||Intermediary_Data/Regional_Aggregates/<br>cropdata_{FirstyearLastyear}.csv||
 ||Intermediary_Data/Regional_Aggregates/<br>crop_levels_selected_countries_{FirstyearLastyear}.csv||
 ||Intermediary_Data/Regional_Aggregates/Cell_Weights/<br>{country}/cell_weights_{FirstyearLastyear}.csv||
-|simulation_of_crop_shares.py|Intermediary_Data/Preprocessed_Inputs/NUTS/<br>NUTS_all_regions_all_years.csv|Results/Simulated_consistent_crop_shares/{country}/{year}/{country}{year}_{nuts1}.parquet|
-||Intermediary_Data/Regional_Aggregates/<br>coherent_UAA_{FirstyearLastyear}.csv|Results/Simulated_consistent_crop_shares/{country}/{year}/{country}{year}_deviation_from_aggregated.csv|
+|parquet_to_raster.py|Intermediary_Data/Preprocessed_Inputs/NUTS/<br>NUTS_all_regions_all_years.csv|Results/Simulated_consistent_crop_shares/{country}/{country}{year}simulated_cropshare_10reps_int.tif|
+||Intermediary_Data/Regional_Aggregates/<br>coherent_UAA_{FirstyearLastyear}.csv|Results/Simulated_consistent_crop_shares/{country}/{country}{year}simulated_cropshare_10reps_bands.csv|
 ||Intermediary_Data/Regional_Aggregates/<br>cropdata_{FirstyearLastyear}.csv||
 ||Intermediary_Data/Regional_Aggregates/<br>crop_levels_selected_countries_{FirstyearLastyear}.csv||
 ||Results/Posterior_crop_probability_estimates/<br>{country}/{country}{year}entire_country.parquet||
