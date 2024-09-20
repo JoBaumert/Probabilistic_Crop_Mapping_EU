@@ -127,8 +127,21 @@ bash job_preprocessing.sh
 bash job_estimation_and_simulation.sh
 ```
 
-this bash script initiates the python scripts to estimate model parameters using LUCAS data (equation 6 of journal paper), to calculate prior crop probabilities for the entire country (equation 1 using estimated parameters), to incorporate aggregated crop information (equations 12-16 in the main paper and A.1-A.4 in the appendix), and to sample randomly from the posterior probabilities to generate crop share estimates (equation 2 and section 2.2.2). Additionally, a visualization is automatically generated showing the expected crop shares of Grass, Soft Wheat and Maize in the respective country. 
-   
+this bash script initiates the python scripts to estimate model parameters using LUCAS data 
+(equation 6 of journal  paper), to calculate prior crop probabilities for the entire country
+(equation 1 using estimated parameters), to incorporate aggregated crop information (equations 
+12-16 in the main paper and A.1-A.4 in the appendix), and to sample randomly from the 
+posterior probabilities to generate crop share estimates (equation 2 and section 2.2.2).
+Additionally, a visualization is automatically generated showing the expected crop 
+shares of Grass, Soft Wheat and Maize in the respective country. 
+
+4. after the posterior crop probabilites and crop shares have been simulated for at least one country and year, the results can be visualized and validated as described in the paper in the section "Results". As quantitative result validation is performed for France, most of the result scripts only work for France and require IACS data as well as the remote sensing-based crop map EUCROPMAP (see input data listed above). The respective python scripts are listed in the table below and are all saved in the directory "data_preparation_and_analysis". You can run them in the command line as follows, assuming that you are in the "data_preparation_and_analysis" directory:
+
+```
+Probabilistic_Crop_Mapping_EU/data_preparation_and_analysis$ python scriptname.py
+```
+we recommend running the files in the order listed below as some require the outputs of others as inputs.
+
 The following summary describes the order in which files are automatically run (using job files) or must be executed when running the code file after file.
 
 ### Order of running python files
@@ -153,12 +166,13 @@ The following summary describes the order in which files are automatically run (
 15. visualize_cropmap.py
 
 ---validation and visualization of results--- <br>
-17. IACS_to_DGPCM_grid.py
-18. RSCM_to_DGPCM_grid.py
-19. dominant_crops_DGPCM_RSCM_IACS.py
-20. grid_transformation_1km_10km.py
-21. calculate_wMAE.py
-22. calculation_and_visualization_of_HDI.py
+16. spatial_merge_of_raster_files_and_HDI_calculation.py <br>
+17. IACS_to_DGPCM_grid.py <br>
+18. RSCM_to_DGPCM_grid.py <br>
+19. grid_transformation_1km_10km.py <br>
+20. dominant_crops_DGPCM_RSCM_IACS.py <br>
+21. calculate_wMAE.py <br>
+22. visualization_of_HDI.py <br>
 
 
 The following table indicates which python files require which input data and which output files are created by them. The table should give the user a better understanding of how the files are related.
