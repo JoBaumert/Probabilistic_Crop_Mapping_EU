@@ -42,7 +42,8 @@ if args.ccode is not None:
     
 
 # %%
-data_gpd = gpd.read_file(IACS_data_path+country)
+print("import IACS data...")
+data_gpd = gpd.read_file(IACS_data_path+country+"/"+country+"_"+str(year)+"_EC21.shp")
 
 # %%
 HCAT_conversion = pd.read_excel(crop_delineation_path, sheet_name="HCAT_DGPCM")
@@ -60,8 +61,10 @@ data_gpd = pd.merge(
 #%%
 nuts_years=pd.read_excel(parameter_path,sheet_name="NUTS")
 relevant_nuts_year=nuts_years[nuts_years["crop_map_year"]==year]["nuts_year"].iloc[0]
+
 #%%
 """attribute each field to (at least) one km2 cell"""
+print("attribute fields to grid cells...")
 
 NUTS = gpd.read_file(nuts_path)
 # load all 1km grid-cells that belong to selected country
@@ -74,7 +77,7 @@ grid_1km_path_country = (
 
 zip=zipfile.ZipFile(grid_1km_path_country)
 for file in zip.namelist():
-    if file[-3:]=="shp":
+    if (file[-3:]=="shp")&(file[3:6]=="1km"):
         break
 
 
@@ -105,7 +108,7 @@ relevant_NUTS2_regs = np.array(
 )
 
 
-#%%
+print("attribute to region and calculate crop share...")
 for region in relevant_NUTS2_regs:
     cells = pd.read_csv(cellsize_path + country+"/cell_size/1kmgrid_"+region + "_all_years.csv")
 
@@ -117,7 +120,7 @@ for region in relevant_NUTS2_regs:
     cellcodes_df = selected_cells.overlay(data_gdf_epsg3035, how="intersection")
 
     cellcodes_df["area_in_cell"] = cellcodes_df.area
-    #%%
+
     """calculate cropshare for each cell"""
     crops_in_cells = cellcodes_df.groupby(["CELLCODE", "DGPCM_code"])["area_in_cell"].sum().reset_index()
 
@@ -164,12 +167,5 @@ for region in relevant_NUTS2_regs:
     Path(output_path).mkdir(parents=True, exist_ok=True)
     crops_in_cells.to_csv(output_path +region + "_" + str(year) + ".csv")
 # %%
-"""
-plt.figure()
-fig, ax = plt.subplots(1, 1, figsize=(12, 12))
-crops_in_cells[crops_in_cells["DGPCM_code"] == "LMAIZ"].plot(
-    ax=ax, column="cropshare_true", legend=True, cmap="YlOrRd", vmin=0, vmax=1
-)
-NUTS[NUTS["NUTS_ID"] == "FRF1"].plot(ax=ax, facecolor="None")
-"""
+
 # %%

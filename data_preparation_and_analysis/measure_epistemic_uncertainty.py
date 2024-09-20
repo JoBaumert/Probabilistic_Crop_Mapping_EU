@@ -113,15 +113,5 @@ with rio.open(output_path+"EU_posterior_range_all_crops_"+str(year)+".tif", 'w',
             width=int(new_raster.shape[1]),height=int(new_raster.shape[0]),transform=transform,count=1,dtype=rio.int16,crs="EPSG:3035") as dst:
     dst.write(np.expand_dims(new_raster_int,0).astype(rio.int16))
 # %%
-test=rio.open(output_path+"EU_posterior_range_all_crops_.tif")
-# %%
-show(test.read())
-# %%
-test_read=test.read()
-# %%
-plt.hist(test_read.flatten(),bins=50)
-# %%
-show(test_read/1000,cmap="YlOrRd",vmin=0,vmax=0.03)
-# %%
-test_read.flatten
+
 # %%

@@ -27,7 +27,7 @@ grid_path=raw_data_path+"Grid/"
 output_path=data_main_path+"Intermediary_Data/Preprocessed_Inputs/Grid//Grid_conversion_1km_10km_"
 
 #%%
-
+print("map 1km and 10km grids...")
 for country in countries:
 
     grid_1km_path_country = (
@@ -37,18 +37,19 @@ for country in countries:
     )
     zip=zipfile.ZipFile(grid_1km_path_country)
     for file in zip.namelist():
-        if file[-3:]=="shp":
+        if (file[-3:]=="shp")&(file[3:6]=="1km"):
             break
     grid_1km = gpd.read_file(grid_1km_path_country+"!/"+file)
 
+    #make sure 10km shapefile is in the 1km zip file (should be the default case when downloading the grid data from EEA)
     grid_10km_path_country = (
         grid_path
     + country
-    +"_10km.zip"     
+    +"_1km.zip"     
     )   
     zip=zipfile.ZipFile(grid_10km_path_country)
     for file in zip.namelist():
-        if file[-3:]=="shp":
+        if (file[-3:]=="shp")&(file[3:7]=="10km"):
             break
     grid_10km=gpd.read_file(grid_10km_path_country+"!/"+file)
     
@@ -68,6 +69,7 @@ grid_10km_array=np.array([cell for cellsample in grid_10km_list for cell in cell
 #%%
 grid_conversion_df=pd.DataFrame({'grid_1km':grid_1km_array,'grid_10km':grid_10km_array})
 #%%
+print("export mapped data...")
 Path(output_path).mkdir(parents=True, exist_ok=True)
 grid_conversion_df.to_csv(output_path+country+".csv")
 

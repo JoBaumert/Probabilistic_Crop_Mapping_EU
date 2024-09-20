@@ -1,4 +1,5 @@
 affine==2.4.0
+arviz==0.15.1
 asttokens==2.4.1
 attrs==24.2.0
 backcall==0.2.0
@@ -46,6 +47,8 @@ google-cloud-storage==2.18.2
 google-crc32c==1.5.0
 google-resumable-media==2.7.2
 googleapis-common-protos==1.65.0
+h5netcdf==1.1.0
+h5py==3.11.0
 httplib2==0.22.0
 idna==3.10
 importlib_metadata==8.5.0
@@ -56,11 +59,9 @@ ipyleaflet==0.19.2
 ipython==8.12.3
 ipytree==0.2.2
 ipywidgets==8.1.5
-#the following jax related libraries should better be installed individually
-#depending on whether you use a GPU or not:
-#jax==0.4.13
-#jaxlib==0.4.13
-#jaxopt==0.8.3
+jax==0.4.13
+jaxlib==0.4.13+cuda11.cudnn86
+jaxopt==0.8.3
 jedi==0.19.1
 Jinja2==3.1.4
 joblib==1.4.2
@@ -145,6 +146,7 @@ whitebox==2.3.5
 whiteboxgui==2.3.0
 widgetsnbextension==4.0.13
 xarray==2023.1.0
+xarray-einstats==0.5.1
 xlrd==2.0.1
 xyzservices==2024.9.0
 zipp==3.20.2

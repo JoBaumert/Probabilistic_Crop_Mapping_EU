@@ -25,10 +25,10 @@ data_main_path=open(str(Path(Path(os.path.abspath(__file__)).parents[1])/"data_m
 data_main_path=data_main_path.read()[:-1]
 beta = 0
 
-country = "FR"
-year = 2018
+"""
+this is the script to generate figure 4 and table 2 of the paper
 
-
+"""
 
 year=2018 # the only year considered by RSCM and for which IACS data is provided
 country="FR" #default, as France is the only country for which IACS data in 2018 is available
@@ -39,7 +39,7 @@ parameter_path=data_main_path+"delineation_and_parameters/DGPCM_user_parameters.
 nuts_path=intermediary_data_path+"Preprocessed_Inputs/NUTS/NUTS_all_regions_all_years"
 excluded_NUTS_regions_path = data_main_path+"delineation_and_parameters/excluded_NUTS_regions.xlsx"
 crop_delineation_path=data_main_path+"delineation_and_parameters/DGPCM_crop_delineation.xlsx"
-IACS_path=intermediary_data_path+"Preprocessed_Inputs/IACS/true_shares/true_shares_"
+IACS_path=intermediary_data_path+"Preprocessed_Inputs/IACS/"
 RSCM_path=intermediary_data_path+"Preprocessed_Inputs/RSCM/"
 grid_path=raw_data_path+"Grid/"
 grid_conversion_path=intermediary_data_path+"Preprocessed_Inputs/Grid/Grid_conversion_1km_10km_"
@@ -49,7 +49,6 @@ output_path=data_main_path+"Results/Validations_and_Visualizations/Comparison_me
 
 
 #%%
-
 
 """ import parameters"""
 nuts_years=pd.read_excel(parameter_path,sheet_name="NUTS")
@@ -122,10 +121,13 @@ for nuts2 in selected_nuts2_regs:
     posterior_probabilities_region=posterior_probabilities_region[["CELLCODE","crop","posterior_probability"]].groupby(["CELLCODE","crop"]).mean().reset_index()
     if "CAPRI_code" in true_shares.columns:
         true_shares.rename(columns={"CAPRI_code":"crop"},inplace=True)
-    elif "DGPCm_code" in true_shares.columns: 
+    elif "DGPCM_code" in true_shares.columns: 
         true_shares.rename(columns={"DGPCM_code":"crop"},inplace=True)
   
     posterior_probabilities_region_pivot=posterior_probabilities_region.pivot(index="CELLCODE",columns="crop",values="posterior_probability").reset_index()
+
+    
+    
     true_shares_pivot=true_shares.pivot(index="CELLCODE",columns="crop",values="cropshare_true").reset_index()
 
     relevant_cells_prediction=np.array(posterior_probabilities_region_pivot["CELLCODE"])
@@ -223,7 +225,6 @@ for nuts2 in selected_nuts2_regs:
     all_pearsonr_df_comparison=pd.concat((all_pearsonr_df_comparison,pearson_df))
 
 
-#%%
 all_pearsonr_df_comparison_1km=all_pearsonr_df_comparison
 Path(output_path).mkdir(parents=True, exist_ok=True)
 all_pearsonr_df_comparison_1km.to_csv(output_path+country+str(year)+"_pearsonr_and_wMAE_comparison_DGPCM_RSCM_1km.csv")
@@ -250,6 +251,13 @@ for nuts2 in selected_nuts2_regs:
     relevant_cells_observed = true_shares["CELLCODE"].value_counts().keys()
 
     posterior_probabilities_region=posterior_probabilities_relevant[posterior_probabilities_relevant["CELLCODE"].isin(relevant_cells_observed)]
+    
+    if "CAPRI_code" in true_shares.columns:
+        true_shares.rename(columns={"CAPRI_code":"crop"},inplace=True)
+    elif "DGPCM_code" in true_shares.columns: 
+        true_shares.rename(columns={"DGPCM_code":"crop"},inplace=True)
+    
+    
     #for some cells more than one value is available, because it is at the border of several NUTS3 regions...
     #to get one value for each crop per cell, we group the df by crops and cells and take the mean.
     #If a cell only appears once per crop in the df this doesn't change anything, 
@@ -401,7 +409,8 @@ for nuts2 in selected_nuts2_regs:
     pearson_df_10km=pd.DataFrame(pearson_dict_10km)
     pearson_df_10km.insert(0,"NUTS_ID",np.repeat(nuts2,len(pearson_df_10km)))
     all_pearsonr_df_comparison_10km=pd.concat((all_pearsonr_df_comparison_10km,pearson_df_10km))
-#%%
+
+
 all_pearsonr_df_comparison_10km.to_csv(output_path+country+str(year)+"_pearsonr_and_wMAE_comparison_DGPCM_RSCM_10km.csv")
 
 
@@ -458,8 +467,8 @@ plt.title("weighted Mean Absolute Error - 1km resolution - France 2018")
 plt.ylim(0,0.23)
 plt.xticks(rotation=90)
 sns.move_legend(ax, "lower center", bbox_to_anchor=(.5,-0.3), ncol=2, title=None, frameon=False)
-#plt.savefig(output_path+"wMAE_1km_boxplot.png")
-#plt.close()
+plt.savefig(output_path+"wMAE_1km_boxplot.png")
+plt.close()
 #%%
 ax=sns.boxplot(data=all_wMAE_df_melted_10km,x="crop",y="wMAE",hue="crop map")
 #plt.hlines(xmin=-0.5,xmax=len(selected_crops)-0.5,y=0,linestyles="dotted",color="black")
@@ -468,9 +477,10 @@ plt.title("weighted Mean Absolute Error - 10km resolution - France 2018")
 plt.ylim(0,0.23)
 plt.xticks(rotation=90)
 sns.move_legend(ax, "lower center", bbox_to_anchor=(.5,-0.3), ncol=2, title=None, frameon=False)
-#plt.savefig(output_path+"wMAE_10km_boxplot.png")
-#plt.close()
+plt.savefig(output_path+"wMAE_10km_boxplot.png")
+plt.close()
 # %%
+"""
 ax=sns.boxplot(data=all_wRMSE_df_melted_1km,x="crop",y="wRMSE",hue="crop map")
 #plt.hlines(xmin=-0.5,xmax=len(selected_crops)-0.5,y=0,linestyles="dotted",color="black")
 plt.ylabel("weighted Root Mean Squared Error")
@@ -478,7 +488,7 @@ plt.title("weighted Root Mean Squared Error - 10km resolution - France 2018")
 plt.ylim(0,0.3)
 plt.xticks(rotation=90)
 sns.move_legend(ax, "lower center", bbox_to_anchor=(.5,-0.3), ncol=2, title=None, frameon=False)
-#%%
+
 ax=sns.boxplot(data=all_pearsonr_df_melted_10km,x="crop",y="r",hue="crop map")
 plt.hlines(xmin=-0.5,xmax=len(selected_crops)-0.5,y=0,linestyles="dotted",color="black")
 plt.ylabel("Pearson correlation coefficient")
@@ -486,30 +496,30 @@ plt.title("Pearson r - 10km resolution - France 2018")
 plt.ylim(-0.35,1)
 plt.xticks(rotation=90)
 sns.move_legend(ax, "lower center", bbox_to_anchor=(.5,-0.3), ncol=2, title=None, frameon=False)
+"""
 
 # %%
-
-# %%
-"""LOOK IN MORE DETAIL AT AMAE AND DIFFERENCES BETWEEN REGIONS"""
+"""LOOK IN MORE DETAIL AT wMAE AND DIFFERENCES BETWEEN REGIONS"""
 wMAE_1km=all_pearsonr_and_wMAE_df_comparison_1km[["NUTS_ID","crop","wMAE_DGPCM_truth","wMAE_RSCM_truth"]]
 # %%
 NUTS_gpd=gpd.read_file(raw_data_path+"NUTS/NUTS_RG_01M_2016_3035.shp.zip!/NUTS_RG_01M_2016_3035.shp")
 #%%
+
 selected_crops=["GRAS","SWHE","OFAR","LMAIZ","BARL","LRAPE","SUNF","OCER","DWHE","POTA","OATS","SOYA","ROOF","RYEM","PARI"]
 DGPCM_bt_RSCM_df=pd.DataFrame()
 for crop in selected_crops:
     
     selection=wMAE_1km[wMAE_1km["crop"]==crop].drop_duplicates()
     max=np.max([selection.wMAE_DGPCM_truth.max(),selection.wMAE_RSCM_truth.max()])
-    plt.scatter(x=selection.wMAE_DGPCM_truth,y=selection.wMAE_RSCM_truth)
-    plt.plot([0,max],[0,max])
+#    plt.scatter(x=selection.wMAE_DGPCM_truth,y=selection.wMAE_RSCM_truth)
+#    plt.plot([0,max],[0,max])
     selection["DGPCM<RSCM"]=np.where(selection.wMAE_DGPCM_truth<selection.wMAE_RSCM_truth,1,0)
     DGPCM_bt_RSCM_df=pd.concat((DGPCM_bt_RSCM_df,selection[["NUTS_ID","crop","DGPCM<RSCM"]]))
-    plt.xlabel("wMAE_DGPCM")
-    plt.ylabel("wMAE_RSCM")
-    plt.title(crop)
-plt.show()
-# %%
+#    plt.xlabel("wMAE_DGPCM")
+#    plt.ylabel("wMAE_RSCM")
+#    plt.title(crop)
+#plt.show()
+
 
 DGPCM_bt_RSCM_df_regs=DGPCM_bt_RSCM_df[["NUTS_ID","DGPCM<RSCM"]].groupby("NUTS_ID").sum().reset_index()
 
@@ -531,8 +541,15 @@ def cropname_conversion_func(conversion_path):
     cropname_conversion.drop_duplicates(inplace=True)
     cropname_conversion_dict= { cropname_conversion.iloc[i,0] : cropname_conversion.iloc[i,1] for i in range(0, len(cropname_conversion) ) }
     return cropname_conversion_dict
+#%%
+for file in os.listdir(intermediary_data_path+"/Regional_Aggregates/"):
+    if file[:8]=="cropdata":
+        yearstr=file[9:-4]
+        if np.isin(year,np.arange(int(yearstr[:4]),int(yearstr[4:])+1)).astype(int).sum()==1:
+            break
+    
 
-cropdata=pd.read_csv(intermediary_data_path+"/Regional_Aggregates/cropdata_20102020.csv")
+cropdata=pd.read_csv(intermediary_data_path+"/Regional_Aggregates/"+file)
 # %%
 cropdata_selection=cropdata[(cropdata["country"]==country)&(cropdata["year"]==year)]
 cropdata_selection=cropdata_selection[["NUTS_ID","crop","area"]]
@@ -597,22 +614,5 @@ national_comparison_df=pd.DataFrame({
     "LUCAS_crop_share":LUCAS_crop_share_list
 })
 
-#%%
-national_comparison_df
-
-#%%
 national_comparison_df.to_csv(output_path+"regionalized_comparison_between_DGPCM_and_RSCM_allcrops.csv")
-# %%
-DGPCM_bt_RSCM_df[["crop","crop_share"]].groupby("crop").mean().r
-# %%
-"""COMPARE DISTRIBUTION OF TRUE CROP SHARES WITH ESTIMATEED DISTRIBUTION"""
-all_true_shares_df=pd.DataFrame()
-for nuts2 in np.unique(selected_nuts2_regs)[:1]:
-    true_shares = pd.read_csv(IACS_path+nuts2+"_"+str(year)+".csv")
-# %%
-a=true_shares[["CAPRI_code","cropshare_true"]]
-# %%
-crop="GRAS"
-plt.hist(a[a["CAPRI_code"]==crop].cropshare_true,bins=10,density=True)
-plt.hist(posterior_probabilities_relevant[posterior_probabilities_relevant["crop"]==crop].posterior_probability,bins=10,density=True,alpha=0.7)
 # %%

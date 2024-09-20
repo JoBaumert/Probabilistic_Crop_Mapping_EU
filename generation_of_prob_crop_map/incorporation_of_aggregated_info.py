@@ -39,7 +39,8 @@ import functions_for_prediction as ffp
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 # %%
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2"
+#GPU settings, activate if needed:
+#os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2"
 #jax.config.update('jax_platform_name', 'cpu')
 
 #%%
