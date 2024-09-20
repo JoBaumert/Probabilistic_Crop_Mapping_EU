@@ -127,13 +127,13 @@ bash job_preprocessing.sh
 bash job_estimation_and_simulation.sh
 ```
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this bash script initiates the python scripts to estimate model parameters using LUCAS data <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(equation 6 of journal  paper), to calculate prior crop probabilities for the entire country<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(equation 1 using estimated parameters), to incorporate aggregated crop information (equations <br> 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12-16 in the main paper and A.1-A.4 in the appendix), and to sample randomly from the <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;posterior probabilities to generate crop share estimates (equation 2 and section 2.2.2).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Additionally, a visualization is automatically generated showing the expected crop <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;shares of Grass, Soft Wheat and Maize in the respective country. 
+this bash script initiates the python scripts to estimate model parameters using LUCAS data 
+(equation 6 of journal  paper), to calculate prior crop probabilities for the entire country
+(equation 1 using estimated parameters), to incorporate aggregated crop information (equations 
+12-16 in the main paper and A.1-A.4 in the appendix), and to sample randomly from the 
+posterior probabilities to generate crop share estimates (equation 2 and section 2.2.2).
+Additionally, a visualization is automatically generated showing the expected crop 
+shares of Grass, Soft Wheat and Maize in the respective country. 
 
 4. after the posterior crop probabilites and crop shares have been simulated for at least one country and year, the results can be visualized and validated as described in the paper in the section "Results". As quantitative result validation is performed for France, most of the result scripts only work for France and require IACS data as well as the remote sensing-based crop map EUCROPMAP (see input data listed above). The respective python scripts are listed in the table below and are all saved in the directory "data_preparation_and_analysis". You can run them in the command line as follows, assuming that you are in the "data_preparation_and_analysis" directory:
 
