@@ -86,7 +86,7 @@ The input data used comes from multiple sources (see table below). To fully repl
 [2] Tóth, G., Jones, A., Montanarella, L. (eds.) 2013. LUCAS Topsoil Survey. Methodology, data and results. JRC Technical Reports. Luxembourg. Publications Office of the European Union, EUR26102 – Scientific and Technical Research series <br>
 [3] EC-JRC-AGRI4CAST. 2022. “Gridded Agro-Meteorological Data in Europe. European Commission Joint Research Centre. Institute for Environment and Sustainability. Monitor-ing Agricultural Resources (MARS) Unit.” Accessed December 09, 2022 
 [4] Ballabio, C., P. Panagos, and L. Monatanarella. 2016. “Mapping topsoil physical properties at European scale using the LUCAS database.” Geoderma 261:110–23. doi:10.1016/j.geoderma.2015.07.006. <br>
-[5] Data funded under GMES preparatory action 2009 on Reference Data Access by the European Commission, DG Enterprise and Industry, provided by EEA <br>
+[5] European Commission. 2010. Digital Elevation Model over Europe from the GMES RDA project. Data funded under GMES preparatory action 2009 on Reference Data Access by the European Commission, DG Enterprise and Industry, provided by EEA <br>
 [6] based on the recommendation at the 1st European Workshop on Reference Grids in 2003 and later INSPIRE geographical grid systems <br>
 [7] eurostat/ GISCO <br>
 [8] eurostat
